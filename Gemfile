@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.7'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.3.13', '< 0.5'
+gem 'ibm_db_odbc', '~> 0.8.3', :source=> 'http://gems.gcinmass.com'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -33,6 +34,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'sqlite3'
 end
 
 group :development do
@@ -42,4 +44,3 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-

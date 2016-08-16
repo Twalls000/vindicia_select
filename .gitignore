@@ -15,3 +15,7 @@
 # Ignore Vagrant
 /Vagrantfile
 /.vagrant
+
+# Ignore DB stuff
+config/database.yml
+db/*.sqlite3

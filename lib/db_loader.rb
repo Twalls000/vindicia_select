@@ -3,6 +3,11 @@ class DbLoader
 
   DB_PREFIX = Rails.env.production? ? "g" : "q"
 
+  CONNECTIONS = {
+    "USAT" => "champion",
+    "USAT-LAWSON" => "lawson"
+  }
+
   def initialize(gci_unit=nil)
     @gci_unit = gci_unit
   end

@@ -44,6 +44,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'sqlite3'
   gem "capistrano", '~> 3'
+  gem 'capistrano-bundler', '~> 1.1.1'
   gem 'capistrano-rails'
 end
 

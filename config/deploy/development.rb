@@ -1,13 +1,25 @@
-# server-based syntax
-# ======================
-# Defines a single server with a list of roles and multiple properties.
-# You can define all roles on a single server, or split them:
+set :stage, :development
 
-# server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
-# server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
-# server 'db.example.com', user: 'deploy', roles: %w{db}
+role :app, %w{ent-mocdvnmas05}
+role :web, %w{ent-mocdvnmas05}
+role :db,  %w{ent-mocdvnmas05}
 
+set :keep_releases, 2
 
+set :ssh_options, {
+    keys: ['~/.ssh/id_rsa'],
+    user: "capuser"
+  }
+
+set :deploy_to, '/opt/apps/vindicia-select/'
+set :branch, 'master'
+set :rails_env, "development"
+
+before "deploy:assets:precompile", :copy_app_config do
+  on roles(:app) do
+    #execute "cp -fa #{release_path}/config/deploy/development/* #{release_path}/config/"
+  end
+end
 
 # role-based syntax
 # ==================

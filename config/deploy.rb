@@ -1,36 +1,60 @@
 # config valid only for current version of Capistrano
 lock '3.6.0'
 
-set :application, 'vindicia_select'
-set :repo_url, 'git@bitbucket.org:gannett_it/vindicia_select.git'
+set :application, 'vindicia-select'
+set :repo_url, 'https://deployer-gannett:gann3tt@bitbucket.org/gannett_it/vindicia_select.git'
 
-# Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+# Setup SCM as git
+set :scm, :git
+# set :scm_verbose, true
+set :scm_user, "deployer-gannett" # The server's user for deploys
+set :scm_password, "gann3tt"
+# set :use_sudo, false
+set :local_scm_command, "git"
+set :scm_command, "/usr/local/bin/git"
 
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
-
-# Default value for :scm is :git
-# set :scm, :git
-
-# Default value for :format is :airbrussh.
-# set :format, :airbrussh
-
-# You can configure the Airbrussh format using :format_options.
-# These are the defaults.
-# set :format_options, command_output: true, log_file: 'log/capistrano.log', color: :auto, truncate: :auto
-
-# Default value for :pty is false
-# set :pty, true
-
-# Default value for :linked_files is []
-# append :linked_files, 'config/database.yml', 'config/secrets.yml'
+# Linux deploy to
+set :user, "capuser"
+# set :use_sudo, false
+set :deploy_via, :remote_cache
+set :ssh_options, { :forward_agent => true }
+set :rvm_type, :system
+set :default_env, { 'PATH' => '/opt/ruby216/bin:$PATH' }
+set :default_shell, '/bin/bash -l'
+set :format, :pretty
+set :log_level, :debug
+set :pty, true
+set :git_ssl_no_verify, true
 
 # Default value for linked_dirs is []
-# append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system')
 
-# Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+namespace :deploy do
+  after 'deploy:publishing', 'deploy:restart'
+  desc 'Provision env before assets:precompile'
+  task :fix_bug_env do
+    set :rails_env, (fetch(:rails_env) || fetch(:stage))
+  end
 
-# Default value for keep_releases is 5
-# set :keep_releases, 5
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      # Your restart mechanism here, for example:
+      execute :touch, release_path.join('tmp/restart.txt')
+    end
+  end
+
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+    end
+  end
+
+  after :finishing, 'deploy:cleanup'
+
+end
+task :set_umask do
+  on roles(:all) do |host|
+    execute "umask 0002"
+  end
+end
+before "deploy:starting", "set_umask"

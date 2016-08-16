@@ -43,6 +43,8 @@ group :development, :test do
   gem 'byebug'
   gem 'pry-byebug'
   gem 'sqlite3'
+  gem "capistrano", '~> 3'
+  gem 'capistrano-rails'
 end
 
 group :development do

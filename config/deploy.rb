@@ -2,13 +2,13 @@
 lock '3.6.0'
 
 set :application, 'vindicia-select'
-set :repo_url, 'https://deployer-gannett:gann3tt@bitbucket.org/gannett_it/vindicia_select.git'
+set :repo_url, 'https://deployer-gannett:gann3tt!@bitbucket.org/gannett_it/vindicia_select.git'
 
 # Setup SCM as git
 set :scm, :git
 # set :scm_verbose, true
 set :scm_user, "deployer-gannett" # The server's user for deploys
-set :scm_password, "gann3tt"
+set :scm_password, "gann3tt!"
 # set :use_sudo, false
 set :local_scm_command, "git"
 set :scm_command, "/usr/local/bin/git"

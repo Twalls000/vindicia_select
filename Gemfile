@@ -18,6 +18,8 @@ gem 'coffee-rails', '~> 4.1.0'
 # This is the Vindicia API gem. It includes Savon
 gem 'vindicia_cash_box_api', '2.1.6', :source=> 'http://gems.gcinmass.com'
 
+gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

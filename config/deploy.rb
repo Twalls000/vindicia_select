@@ -57,4 +57,11 @@ task :set_umask do
     execute "umask 0002"
   end
 end
+task :set_database_yml do
+  on roles(:all) do
+    execute "cp #{fetch(:release_path)}/config/database.yml.#{fetch(:stage)} " +
+      "#{fetch(:release_path)}/config/database.yml"
+  end
+end
 before "deploy:starting", "set_umask"
+before 'deploy:updated', 'set_database_yml'

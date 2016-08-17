@@ -1,9 +1,11 @@
+<% require 'gci-simple-encryption' %>
+
 development:
   adapter: mysql2
   encoding: utf8
   pool: 5
   username: <%= ENV['VINDICIA_SELECT_DB_USERNAME'] %>
-  password: <%= SimpleEncryption.aes_decrypt(Base64.decode64(ENV['VINDICIA_SELECT_DB_PASSWORD'])) %>
+  password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['VINDICIA_SELECT_DB_PASSWORD'])) %>
   database: vindicia_select_development
   host: ent-mocdvgen03
 

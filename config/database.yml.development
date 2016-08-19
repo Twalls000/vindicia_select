@@ -22,3 +22,14 @@ test:
   pool: 5
   timeout: 5000
   database: db/test.sqlite3
+
+q9999: &gci
+  adapter: ibm_db_odbc
+  datasource: marvel
+  username: jrmoore
+  password: S4turD4y1
+  schema: q9999files
+
+g8872:
+  <<: *gci
+  schema: g8872files

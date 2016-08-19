@@ -33,3 +33,7 @@ q9999: &gci
 g8872:
   <<: *gci
   schema: g8872files
+
+g1532:
+  <<: *gci
+  schema: g1532files

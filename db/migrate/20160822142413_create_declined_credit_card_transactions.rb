@@ -33,6 +33,7 @@ class CreateDeclinedCreditCardTransactions < ActiveRecord::Migration
       t.string :avs_code
       t.string :cvn_code 
       t.string :name_values
+      t.belongs_to :declined_credit_card_batch
       t.timestamps null: false
     end
   end

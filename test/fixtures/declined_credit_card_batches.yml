@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  status: 
+  run_timestamp: 
+
+two:
+  status: 
+  run_timestamp: 

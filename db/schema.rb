@@ -11,7 +11,49 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160819143428) do
+ActiveRecord::Schema.define(version: 20160822142413) do
+
+  create_table "declined_credit_card_batches", force: :cascade do |t|
+    t.string   "status",        limit: 255
+    t.datetime "run_timestamp"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  create_table "declined_credit_card_transactions", force: :cascade do |t|
+    t.datetime "declined_timestamp"
+    t.float    "amount",                       limit: 24
+    t.string   "division_number",              limit: 255
+    t.string   "merchant_transaction_id",      limit: 255
+    t.string   "select_transaction_id",        limit: 255
+    t.string   "subscription_id",              limit: 255
+    t.date     "subscription_start_date"
+    t.date     "previous_billing_date"
+    t.integer  "previous_billing_count",       limit: 4
+    t.integer  "customer_id",                  limit: 4
+    t.string   "payment_method",               limit: 255
+    t.string   "credit_card_number",           limit: 255
+    t.string   "credit_card_account_hash",     limit: 255
+    t.date     "credit_card_expiration_date"
+    t.string   "account_holder_name",          limit: 255
+    t.string   "billing_address_line1",        limit: 255
+    t.string   "billing_address_line2",        limit: 255
+    t.string   "billing_address_line3",        limit: 255
+    t.string   "billing_addr_city",            limit: 255
+    t.string   "billing_address_county",       limit: 255
+    t.string   "billing_address_district",     limit: 255
+    t.string   "billing_address_postal_code",  limit: 255
+    t.string   "billing_address_country",      limit: 255
+    t.string   "affiliate_id",                 limit: 255
+    t.string   "affiliate_sub_id",             limit: 255
+    t.string   "billing_statement_identifier", limit: 255
+    t.string   "auth_code",                    limit: 255
+    t.string   "avs_code",                     limit: 255
+    t.string   "cvn_code",                     limit: 255
+    t.string   "name_values",                  limit: 255
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+  end
 
   create_table "declined_credit_cards", force: :cascade do |t|
     t.datetime "created_at", null: false

@@ -37,7 +37,7 @@ module ChangeDb
     def on_db(gci_unit)
       begin
         con = DbLoader.new(gci_unit).connection
-        self.establish_connection(con)
+        self.establish_connection(con.to_sym)
         @gci_unit = gci_unit
       end
       self

@@ -19,6 +19,7 @@ gem 'therubyracer', platforms: :ruby
 gem 'vindicia_cash_box_api', '2.1.6', :source=> 'http://gems.gcinmass.com'
 
 gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
+gem 'composite_primary_keys'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

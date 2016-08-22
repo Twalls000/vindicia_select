@@ -70,6 +70,8 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     colorize (0.8.1)
+    composite_primary_keys (8.1.4)
+      activerecord (~> 4.2.0)
     concurrent-ruby (1.0.2)
     debug_inspector (0.0.2)
     erubis (2.7.0)
@@ -218,6 +220,7 @@ DEPENDENCIES
   capistrano-bundler (~> 1.1.1)
   capistrano-rails
   coffee-rails (~> 4.1.0)
+  composite_primary_keys
   gci-simple-encryption (~> 0.1.3)!
   httplog
   ibm_db_odbc (~> 0.8.3)!

@@ -1,5 +1,6 @@
 class DeclinedCreditCard < Base
-  self.table_name = "ccdc".to_sym
+  self.table_name = :ccdc
+  self.primary_key = [:batch_id, :account_number]
 
   alias_attribute :pub_code,        :prspub
   alias_attribute :batch_id,        :prbtch
@@ -10,7 +11,10 @@ class DeclinedCreditCard < Base
   alias_attribute :decline_status,  :prnsts
   alias_attribute :decline_reson,   :prndcr
 
-  # attribute_names, 
-  def method_name
+  belongs_to :subscription, foreign_key: [:prspub, :prpact]
+
+  # attribute_names
+  def self.summary(gci_unit)
+    self.on_db(gci_unit).select("ccdc.*, subscrip.hsper# ").joins(:subscription)
   end
 end

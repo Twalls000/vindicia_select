@@ -4,7 +4,7 @@ class Base < ActiveRecord::Base
 
   include ChangeDb
     
-  def self.base_search(gci_unit, params={}, order = nil, limit=nil)
-    self.on_db(gci_unit).where(params).order(order).limit(limit)
+  def self.base_search(gci_unit, params={}, select=nil, joins=nil, order = nil, limit=nil)
+    self.on_db(gci_unit).select(select).where(params).joins(joins).order(order).limit(limit)
   end
 end

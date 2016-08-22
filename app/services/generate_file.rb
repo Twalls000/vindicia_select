@@ -15,7 +15,7 @@ class GenerateFile
     transactions = []
     include_markets_and_pub.each do |gci_and_pub|
       DeclinedCreditCard.summary(gci_and_pub[:gci_unit].to_s).map do |declined_cc|
-        puts batch.declined_credit_card_transactions.build(declined_cc)
+        puts batch.declined_credit_card_transactions.build(declined_cc.attributes)
       end
     end
   end

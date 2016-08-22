@@ -9,10 +9,16 @@ class GenerateFile
   end
 
   def include_markets_and_pub
-    MarketPublciation.all.each { |mp| mp }
+    MarketPublciation.all
   end
 
   def process
-    
+    batch = DeclinedCreditCardBatch.new
+    transactions = batch.build
+    # include_markets_and_pub.each do |gci_and_pub|
+    #   transactions = DeclinedCreditCard.summary(gci_and_pub[:gci_unit]).map do |declined_cc|
+    #     DeclinedCreditCardTransaction.new
+    #   end
+    # end
   end
 end

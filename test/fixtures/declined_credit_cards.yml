@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  prspub: GN
+  prbtch: 1234
+  prbdat: <%= Date.today %>
+  prpact: 123456789
+  prcamt: 10.50
+  prdamt: 0
+  prnsts: Failed
+  prndcr: Just because
+  udtdat: <%= Date.today %>
+  udttim: <%= Time.now %>
+  crdnbr: 123456789
+  ccctyp: VISA
+  cccexd: <%= 2.weeks.from_now %>
+  ccname: John Doe
+  ccadr1: 1234 Some Street
+  ccadr2: ""
+  ccctst: ANYTOWN,ST
+  pozip5: 12345

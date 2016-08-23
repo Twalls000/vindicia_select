@@ -13,9 +13,12 @@ class GenerateFile
   def process
     batch = DeclinedCreditCardBatch.new
 
-    include_markets_and_pub.each do |gci_and_pub|
-      DeclinedCreditCard.summary(gci_and_pub[:gci_unit].to_s).map do |declined_cc|
+    include_markets_and_pub.each do |market_pub|
+      DeclinedCreditCard.summary(market_pub.gci_unit).map do |declined_cc|
         transaction = DeclinedCreditCardTransaction.new
+        transaction.declined_timestamp = declined_cc.declined_timestamp
+        transaction.merchant_transaction_id = declined_cc.merchant_transaction_id
+
         # This is to have the aliased attributes as keys, and the aliases the values
         cc_aliased_attributes = declined_cc.attribute_aliases.invert
 

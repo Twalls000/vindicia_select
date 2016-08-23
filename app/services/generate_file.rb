@@ -31,7 +31,7 @@ class GenerateFile
         batch.declined_credit_card_transactions << transaction
       end
     end
-
+    batch.save
     batch
   end
 end

@@ -13,4 +13,6 @@ class CreditCard < Base
   alias_attribute :city_state,      :ccctst
   alias_attribute :zip_code,        :pozip5
 
+  belongs_to :declined_credit_card, foreign_key: [:pub, :actnbr], primary_key: [:prspub, :prpact]
+
 end

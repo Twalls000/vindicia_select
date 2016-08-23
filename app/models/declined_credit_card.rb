@@ -12,13 +12,26 @@ class DeclinedCreditCard < Base
   alias_attribute :decline_reason,  :prndcr
   alias_attribute :audit_date,      :udtdat
   alias_attribute :audit_time,      :udttim
+  # These aliases are for the Credit Card model
+  alias_attribute :card_number,     :crdnbr
+  alias_attribute :card_type,       :ccctyp
+  alias_attribute :expiration_date, :cccexd
+  alias_attribute :name,            :ccname
+  alias_attribute :address_line1,   :ccadr1
+  alias_attribute :address_line2,   :ccadr2
+  alias_attribute :city_state,      :ccctst
+  alias_attribute :zip_code,        :pozip5
+  # This alias is for the Subscription model
+  alias_attribute :customer_number, :'hsact#'
 
   belongs_to :subscription, foreign_key: [:prspub, :prpact]
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit)
-    self.on_db(gci_unit).select("ccdc.*, subscrip.hsper# ").joins(:subscription, :credit_card)
+  def self.summary(gci_unit, pub_code)
+    self.on_db(gci_unit).where({ pub_code: pub_code }).
+      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.* ").
+      joins(:subscription, :credit_card)
   end
 
   def declined_timestamp
@@ -26,6 +39,6 @@ class DeclinedCreditCard < Base
   end
 
   def merchant_transaction_id
-    "#{ prspub }-#{ prbtch }-#{ prbdat }-#{ prpact }"
+    "#{ gci_unit }-#{ prspub }-#{ prbtch }-#{ prbdat }-#{ prpact }"
   end
 end

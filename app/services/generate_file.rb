@@ -16,18 +16,20 @@ class GenerateFile
     include_markets_and_pub.each do |mp|
       DeclinedCreditCard.summary(mp.gci_unit, mp.pub_code).map do |declined_cc|
         transaction = DeclinedCreditCardTransaction.new
-        transaction.declined_timestamp = declined_cc.declined_timestamp
-        transaction.merchant_transaction_id = declined_cc.merchant_transaction_id
-        transaction.credit_card_expiration_date = declined_cc.credit_card_expiration_date
-        transaction.account_holder_name = 
-        transaction.billing_address_line1 = 
-        transaction.
-        transaction.
-        transaction.
-        transaction.
-        transaction.
-        transaction.
-        
+        trans_attributes = {
+          declined_timestamp:          declined_cc.declined_timestamp,
+          merchant_transaction_id:     declined_cc.merchant_transaction_id,
+          credit_card_expiration_date: declined_cc.expiration_date,
+          account_holder_name:         declined_cc.name.strip,
+          billing_address_line1:       declined_cc.address_line1.strip,
+          billing_address_line2:       declined_cc.address_line2.strip,
+          billing_addr_city:           declined_cc.city_state.split(",").first.strip,
+          billing_address_district:    declined_cc.city_state.split(",").last.strip,
+          billing_address_postal_code: declined_cc.zip_code,
+          billing_address_country:     "US"
+        }
+
+        transaction.attributes = trans_attributes
 
         # This is to have the aliased attributes as keys, and the aliases the values
         cc_aliased_attributes = declined_cc.attribute_aliases.invert

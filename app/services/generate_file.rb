@@ -28,7 +28,6 @@ class GenerateFile
           billing_address_postal_code: declined_cc.zip_code,
           billing_address_country:     "US"
         }
-
         transaction.attributes = trans_attributes
 
         # This is to have the aliased attributes as keys, and the aliases the values

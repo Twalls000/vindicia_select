@@ -1,5 +1,5 @@
 class DeclinedCreditCardTransaction < ActiveRecord::Base
-  before_save :set_defaults
+  before_create :set_defaults
   belongs_to :declined_credit_card_batch
 
   INITIAL_STATUS = 'Failed'

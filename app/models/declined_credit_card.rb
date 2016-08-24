@@ -23,9 +23,12 @@ class DeclinedCreditCard < Base
   alias_attribute :zip_code,        :pozip5
   # This alias is for the Subscription model
   alias_attribute :customer_id,     :'hsper#'
+  # This alias is for the Card Control model
+  alias_attribute :division_number, :'cmmer#'
 
   belongs_to :subscription, foreign_key: [:prspub, :prpact]
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
+  belongs_to :credit_card_control, foreign_key: [:prspub, :ccctyp]
 
   # attribute_names
   def self.summary(gci_unit, pub_code)

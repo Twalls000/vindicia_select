@@ -33,7 +33,7 @@ class GenerateFile
 
         declined_cc.attributes.each do |name, value|
           if transaction.attributes.keys.include? cc_aliased_attributes[name]
-            trans_attributes[cc_aliased_attributes[name]] = value
+            trans_attributes[cc_aliased_attributes[name]] = value.try(:strip) || value
           end
         end
 

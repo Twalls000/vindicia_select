@@ -28,16 +28,17 @@ class GenerateFile
           billing_address_postal_code: declined_cc.zip_code,
           billing_address_country:     "US"
         }
-        transaction.attributes = trans_attributes
 
         # This is to have the aliased attributes as keys, and the aliases the values
         cc_aliased_attributes = declined_cc.attribute_aliases.invert
 
         declined_cc.attributes.each do |name, value|
           if transaction.attributes.keys.include? cc_aliased_attributes[name]
-            transaction.send("#{cc_aliased_attributes[name]}=", value)
+            trans_attributes[cc_aliased_attributes[name]] = value
           end
         end
+
+        transaction.attributes = trans_attributes
 
         batch.declined_credit_card_transactions << transaction
       end

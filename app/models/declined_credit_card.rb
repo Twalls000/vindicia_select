@@ -33,8 +33,8 @@ class DeclinedCreditCard < Base
   # attribute_names
   def self.summary(gci_unit, pub_code)
     self.on_db(gci_unit).where({ pub_code: pub_code }).
-      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.* ").
-      joins(:subscription, :credit_card)
+      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.* ").
+      joins(:subscription, :credit_card, :credit_card_control)
   end
 
   def declined_timestamp

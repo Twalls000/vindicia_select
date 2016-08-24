@@ -25,8 +25,7 @@ class GenerateFile
           billing_address_line2:       declined_cc.address_line2.strip,
           billing_addr_city:           declined_cc.city_state.split(",").first.strip,
           billing_address_district:    declined_cc.city_state.split(",").last.strip,
-          billing_address_postal_code: declined_cc.zip_code,
-          billing_address_country:     "US"
+          billing_address_postal_code: declined_cc.zip_code
         }
 
         # This is to have the aliased attributes as keys, and the aliases the values

@@ -22,7 +22,7 @@ class DeclinedCreditCard < Base
   alias_attribute :city_state,      :ccctst
   alias_attribute :zip_code,        :pozip5
   # This alias is for the Subscription model
-  alias_attribute :customer_number, :'hsact#'
+  alias_attribute :customer_id,     :'hsper#'
 
   belongs_to :subscription, foreign_key: [:prspub, :prpact]
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]

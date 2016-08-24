@@ -11,81 +11,82 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160823133453) do
+ActiveRecord::Schema.define(version: 20160824134110) do
 
   create_table "credit_card_batches", force: :cascade do |t|
-    t.string   "status"
+    t.string   "status",        limit: 255
     t.datetime "run_timestamp"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "credit_card_transactions", force: :cascade do |t|
-    t.string   "status"
+    t.string   "status",                      limit: 255
     t.date     "credit_card_expiration_date"
-    t.string   "account_holder_name"
-    t.string   "billing_address_line_1"
-    t.string   "billing_address_line_2"
-    t.string   "billing_address_line_3"
-    t.string   "billing_addr_city"
-    t.string   "billing_address_county"
-    t.string   "billing_address_district"
-    t.string   "billing_address_postal_code"
-    t.string   "billing_address_country"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.string   "account_holder_name",         limit: 255
+    t.string   "billing_address_line_1",      limit: 255
+    t.string   "billing_address_line_2",      limit: 255
+    t.string   "billing_address_line_3",      limit: 255
+    t.string   "billing_addr_city",           limit: 255
+    t.string   "billing_address_county",      limit: 255
+    t.string   "billing_address_district",    limit: 255
+    t.string   "billing_address_postal_code", limit: 255
+    t.string   "billing_address_country",     limit: 255
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
-    t.string   "status"
+    t.string   "status",        limit: 255
     t.datetime "run_timestamp"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|
     t.datetime "declined_timestamp"
-    t.float    "amount"
-    t.string   "currency"
-    t.string   "status"
-    t.string   "division_number"
-    t.string   "merchant_transaction_id"
-    t.string   "select_transaction_id"
-    t.string   "subscription_id"
+    t.float    "amount",                        limit: 24
+    t.string   "currency",                      limit: 255
+    t.string   "status",                        limit: 255
+    t.string   "division_number",               limit: 255
+    t.string   "merchant_transaction_id",       limit: 255
+    t.string   "select_transaction_id",         limit: 255
+    t.string   "subscription_id",               limit: 255
     t.date     "subscription_start_date"
     t.date     "previous_billing_date"
-    t.integer  "previous_billing_count"
-    t.integer  "customer_id"
-    t.string   "payment_method"
-    t.string   "credit_card_number"
-    t.string   "credit_card_account_hash"
+    t.integer  "previous_billing_count",        limit: 4
+    t.integer  "customer_id",                   limit: 4
+    t.string   "payment_method",                limit: 255
+    t.string   "credit_card_number",            limit: 255
+    t.string   "credit_card_account_hash",      limit: 255
     t.date     "credit_card_expiration_date"
-    t.string   "account_holder_name"
-    t.string   "billing_address_line1"
-    t.string   "billing_address_line2"
-    t.string   "billing_address_line3"
-    t.string   "billing_addr_city"
-    t.string   "billing_address_county"
-    t.string   "billing_address_district"
-    t.string   "billing_address_postal_code"
-    t.string   "billing_address_country"
-    t.string   "affiliate_id"
-    t.string   "affiliate_sub_id"
-    t.string   "billing_statement_identifier"
-    t.string   "auth_code"
-    t.string   "avs_code"
-    t.string   "cvn_code"
-    t.string   "name_values"
-    t.integer  "declined_credit_card_batch_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.string   "account_holder_name",           limit: 255
+    t.string   "billing_address_line1",         limit: 255
+    t.string   "billing_address_line2",         limit: 255
+    t.string   "billing_address_line3",         limit: 255
+    t.string   "billing_addr_city",             limit: 255
+    t.string   "billing_address_county",        limit: 255
+    t.string   "billing_address_district",      limit: 255
+    t.string   "billing_address_postal_code",   limit: 255
+    t.string   "billing_address_country",       limit: 255
+    t.string   "affiliate_id",                  limit: 255
+    t.string   "affiliate_sub_id",              limit: 255
+    t.string   "billing_statement_identifier",  limit: 255
+    t.string   "auth_code",                     limit: 255
+    t.string   "avs_code",                      limit: 255
+    t.string   "cvn_code",                      limit: 255
+    t.string   "name_values",                   limit: 255
+    t.integer  "declined_credit_card_batch_id", limit: 4
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.boolean  "payment_method_tokenized"
   end
 
   create_table "market_publications", force: :cascade do |t|
-    t.string   "gci_unit"
-    t.string   "pub_code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "gci_unit",   limit: 255
+    t.string   "pub_code",   limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
 end

@@ -28,13 +28,13 @@ class DeclinedCreditCard < Base
 
   belongs_to :subscription, foreign_key: [:prspub, :prpact]
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
-  belongs_to :credit_card_control, foreign_key: [:prspub, :ccctyp]
 
   # attribute_names
   def self.summary(gci_unit, pub_code)
     self.on_db(gci_unit).where({ pub_code: pub_code }).
-      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.* ").
-      joins(:subscription, :credit_card, :credit_card_control)
+      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.*, crdctl.cmmer# as division_number ").
+      joins(:subscription, :credit_card,
+        " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp")
   end
 
   def declined_timestamp

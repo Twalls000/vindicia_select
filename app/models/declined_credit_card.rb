@@ -23,6 +23,11 @@ class DeclinedCreditCard < Base
   alias_attribute :zip_code,        :pozip5
   # This alias is for the Subscription model
   alias_attribute :customer_id,     :'hsper#'
+  # This alias is for the Customer model
+  alias_attribute :first_name,      :fnam
+  alias_attribute :last_name,       :lnam
+  # This alias is for the Customer model
+
   # This alias is for the Card Control model
   alias_attribute :division_number, :'cmmer#'
 
@@ -32,9 +37,12 @@ class DeclinedCreditCard < Base
   # attribute_names
   def self.summary(gci_unit, pub_code)
     self.on_db(gci_unit).where({ pub_code: pub_code }).
-      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.*, crdctl.cmmer# as division_number ").
+      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.cmmer# as division_number, " +
+        "prbs.fnam, prbs.lnam, addr. ").
       joins(:subscription, :credit_card,
-        " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp")
+        " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
+        " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
+        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ")
   end
 
   def declined_timestamp
@@ -43,5 +51,13 @@ class DeclinedCreditCard < Base
 
   def merchant_transaction_id
     "#{ gci_unit }-#{ prspub }-#{ prbtch }-#{ prbdat }-#{ prpact }"
+  end
+
+  def account_holder_name
+    name.blank? ? "#{ first_name.strip } #{ last_name.strip }" : name.strip
+  end
+
+  def billing_address_line1
+    address_line1.blank? ? "" : address_line1.strip
   end
 end

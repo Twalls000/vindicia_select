@@ -3,8 +3,11 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
 
   has_many :declined_credit_card_transactions
 
+  INITIAL_STATUS = "New"
+
   def set_defaults
-    self.status = "New"
-    self.run_timestamp = Time.now
+    self.status = INITIAL_STATUS
+    self.create_start_timestamp = Time.now
   end
+
 end

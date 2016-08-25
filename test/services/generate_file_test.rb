@@ -20,4 +20,10 @@ class GenerateFileTest < ActiveSupport::TestCase
   class Process < GenerateFileTest
     # Tests
   end
+
+  class DeclinedCreditCardBatchClass < GenerateFileTest
+    test "it should create a new declined credit card batch" do
+      assert_instance_of DeclinedCreditCardBatch, @gen_file.start_batch
+    end
+  end
 end

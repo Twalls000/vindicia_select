@@ -26,7 +26,19 @@ class DeclinedCreditCard < Base
   # This alias is for the Customer model
   alias_attribute :first_name,      :fnam
   alias_attribute :last_name,       :lnam
-  # This alias is for the Customer model
+  # This alias is for the Address model
+  alias_attribute :unit_number,     :unnbr
+  alias_attribute :pre_direction,   :predir
+  alias_attribute :street_name,     :street
+  alias_attribute :box_number,      :boxnbr
+  #alias_attribute :         ,      :suffix Let's use the actual suffix name
+  alias_attribute :post_direction,  :pstdir
+  alias_attribute :subunit_type,    :suntyp
+  alias_attribute :subunit_number,  :sunnbr
+  alias_attribute :city_name,       :city
+  alias_attribute :state,           :astate
+  alias_attribute :country,         :cntry
+  #alias_attribute :        ,       :pozip5 N/A because of name conflict
 
   # This alias is for the Card Control model
   alias_attribute :division_number, :'cmmer#'
@@ -38,7 +50,8 @@ class DeclinedCreditCard < Base
   def self.summary(gci_unit, pub_code)
     self.on_db(gci_unit).where({ pub_code: pub_code }).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.cmmer# as division_number, " +
-        "prbs.fnam, prbs.lnam, addr. ").
+        "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
+        "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,
         " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
         " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
@@ -58,6 +71,34 @@ class DeclinedCreditCard < Base
   end
 
   def billing_address_line1
-    address_line1.blank? ? "" : address_line1.strip
+    use_alternate_address? ? build_address_line1 : address_line1.strip
+  end
+
+  def billing_address_line2
+    use_alternate_address? ? build_address_line2 : address_line2.strip
+  end
+
+  def billing_addr_city
+    use_alternate_address? ? city_name.strip : city_state.split(",").first.strip
+  end
+
+  def billing_address_district
+    use_alternate_address? ? state.strip : city_state.split(",").last.strip
+  end
+
+  def billing_address_postal_code
+    use_alternate_address? ? pozip5 : zip_code
+  end
+
+  def use_alternate_address?
+    address_line1.blank? || zip_code.zero?
+  end
+
+  def build_address_line1
+    "#{post_direction.strip} #{pre_direction.strip} #{street_name.strip} #{suffix.strip} #{post_direction.strip}".strip
+  end
+
+  def build_address_line2
+    "#{subunit_type.strip} #{subunit_number.strip}".strip
   end
 end

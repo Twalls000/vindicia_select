@@ -43,11 +43,11 @@ class GenerateFile
       merchant_transaction_id:     declined_cc.merchant_transaction_id,
       credit_card_expiration_date: declined_cc.expiration_date,
       account_holder_name:         declined_cc.account_holder_name,
-      billing_address_line1:       declined_cc.address_line1.strip,
-      billing_address_line2:       declined_cc.address_line2.strip,
-      billing_addr_city:           declined_cc.city_state.split(",").first.strip,
-      billing_address_district:    declined_cc.city_state.split(",").last.strip,
-      billing_address_postal_code: declined_cc.zip_code
+      billing_address_line1:       declined_cc.billing_address_line1,
+      billing_address_line2:       declined_cc.billing_address_line2,
+      billing_addr_city:           declined_cc.billing_addr_city,
+      billing_address_district:    declined_cc.billing_address_district,
+      billing_address_postal_code: declined_cc.billing_address_postal_code
     }
   end
 

@@ -5,6 +5,7 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
 
   INITIAL_STATUS = "New"
 
+private
   def set_defaults
     self.status = INITIAL_STATUS
     self.create_start_timestamp = Time.now

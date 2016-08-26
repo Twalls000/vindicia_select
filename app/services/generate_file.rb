@@ -7,7 +7,7 @@ class GenerateFile
   end
 
   def include_markets_and_pub
-    MarketPublication.all
+    VindiciaMarketPublication.all
   end
 
   def process

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160824134110) do
+ActiveRecord::Schema.define(version: 20160826193504) do
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
     t.string   "status",                 limit: 255
@@ -65,6 +65,18 @@ ActiveRecord::Schema.define(version: 20160824134110) do
     t.string   "pub_code",   limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+  end
+
+  create_table "vindicia_market_publications", force: :cascade do |t|
+    t.string   "gci_unit",            limit: 255
+    t.string   "pub_code",            limit: 255
+    t.string   "library",             limit: 255
+    t.datetime "start_last_range"
+    t.datetime "end_last_range"
+    t.integer  "import_time_seconds", limit: 4
+    t.integer  "vindicia_batch_size", limit: 4
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
 end

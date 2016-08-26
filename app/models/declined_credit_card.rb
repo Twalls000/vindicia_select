@@ -49,7 +49,8 @@ class DeclinedCreditCard < Base
   # attribute_names
   def self.summary(gci_unit, pub_code)
     self.on_db(gci_unit).where({ pub_code: pub_code }).
-      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.*, crdctl.cmmer# as division_number, " +
+      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
+      "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
         "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,

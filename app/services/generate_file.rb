@@ -28,7 +28,6 @@ class GenerateFile
             trans_attributes[attribute] = value.try(:strip) || value
           end
         end
-
         transaction.attributes = trans_attributes
         transaction.save
       end

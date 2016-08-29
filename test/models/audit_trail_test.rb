@@ -14,8 +14,5 @@ class AuditTrailTest < ActiveSupport::TestCase
       assert_not_nil @audit_trail.declined_credit_card_transaction
     end
 
-    test "the audit trail should have changed values if there are any" do
-
-    end
   end
 end

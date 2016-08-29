@@ -2,10 +2,10 @@
 
 one:
   event: MyString
-  declined_credit_card_transaction_id: 1
+  declined_credit_card_transaction: one
   changed_values: MyText
 
 two:
   event: MyString
-  declined_credit_card_transaction_id: 1
+  declined_credit_card_transaction: one
   changed_values: MyText

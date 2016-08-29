@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160824134110) do
+ActiveRecord::Schema.define(version: 20160829145753) do
+
+  create_table "audit_trails", force: :cascade do |t|
+    t.string   "event"
+    t.integer  "declined_credit_card_transaction_id"
+    t.text     "changed_values"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
     t.string   "status",                 limit: 255

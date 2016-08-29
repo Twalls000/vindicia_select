@@ -14,19 +14,41 @@
 ActiveRecord::Schema.define(version: 20160829145753) do
 
   create_table "audit_trails", force: :cascade do |t|
-    t.string   "event"
-    t.integer  "declined_credit_card_transaction_id"
-    t.text     "changed_values"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.string   "event",                               limit: 255
+    t.integer  "declined_credit_card_transaction_id", limit: 4
+    t.text     "changed_values",                      limit: 65535
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+  end
+
+  create_table "credit_card_batches", force: :cascade do |t|
+    t.string   "status",        limit: 255
+    t.datetime "run_timestamp"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  create_table "credit_card_transactions", force: :cascade do |t|
+    t.string   "status",                      limit: 255
+    t.date     "credit_card_expiration_date"
+    t.string   "account_holder_name",         limit: 255
+    t.string   "billing_address_line_1",      limit: 255
+    t.string   "billing_address_line_2",      limit: 255
+    t.string   "billing_address_line_3",      limit: 255
+    t.string   "billing_addr_city",           limit: 255
+    t.string   "billing_address_county",      limit: 255
+    t.string   "billing_address_district",    limit: 255
+    t.string   "billing_address_postal_code", limit: 255
+    t.string   "billing_address_country",     limit: 255
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
-    t.string   "status",                 limit: 255
-    t.datetime "create_start_timestamp"
-    t.datetime "create_end_timestamp"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.string   "status",        limit: 255
+    t.datetime "run_timestamp"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|

@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   remote: http://gems.gcinmass.com/
   specs:
+    aasm (4.10.1)
     actionmailer (4.2.7.1)
       actionpack (= 4.2.7.1)
       actionview (= 4.2.7.1)
@@ -214,6 +215,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aasm
   awesome_print
   byebug
   capistrano (~> 3)

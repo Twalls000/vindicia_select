@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  event: MyString
+  declined_credit_card_transaction: one
+  changed_values: MyText
+
+two:
+  event: MyString
+  declined_credit_card_transaction: one
+  changed_values: MyText

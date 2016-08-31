@@ -47,8 +47,10 @@ class DeclinedCreditCard < Base
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit, pub_code)
-    self.on_db(gci_unit).where("prspub=?", pub_code).
+  def self.summary(gci_unit, pub_code, limit, keys)
+    self.on_db(gci_unit).
+      where("prspub=? and (prbtch>? and prbdat>? and prpact>?)",
+        pub_code, keys[:batch_id], keys[:batch_date], keys[:account_number]).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
         "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
@@ -56,7 +58,9 @@ class DeclinedCreditCard < Base
       joins(:subscription, :credit_card,
         " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
         " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
-        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ")
+        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ").
+      limit(limit).
+      order("ccdc.prspub ASC, ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.pract ASC")
   end
 
   def declined_timestamp

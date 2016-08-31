@@ -11,6 +11,16 @@ class MarketPublication < ActiveRecord::Base
   serialize :declined_credit_card_batch_keys
 
   def select_next_batch
+    declined_ccs = DeclinedCreditCard.summary(gci_unit, pub_code, declined_credit_card_batch_size, declined_credit_card_batch_keys)
+    last_cc = declined_ccs.last
+    declined_credit_card_batch_keys = {
+      pub_code: pub_code,
+      batch_id: last_cc.batch_id,
+      batch_date: last_cc.batch_date,
+      account_number: last_cc.account_number
+    }
 
+    save
+    declined_ccs
   end
 end

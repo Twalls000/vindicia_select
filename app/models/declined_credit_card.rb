@@ -47,8 +47,9 @@ class DeclinedCreditCard < Base
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit, pub_code)
-    self.on_db(gci_unit).where({ pub_code: pub_code }).
+  def self.summary(gci_unit, pub_code, timestamp)
+    self.on_db(gci_unit).where("prspub=? and (ccdc.udtdat>? or (ccdc.udtdat=? and ccdc.udttim>?))",
+      pub_code, declined_date(timestamp), declined_date(timestamp), declined_time(timestamp)).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
       "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
@@ -61,6 +62,14 @@ class DeclinedCreditCard < Base
 
   def declined_timestamp
     Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
+  end
+
+  def declined_date(timestamp)
+    timestamp.strftime("%Y%m%d").to_i
+  end
+
+  def declined_time(timestamp)
+    timestamp.strftime("%H%M%S").to_i
   end
 
   def merchant_transaction_id

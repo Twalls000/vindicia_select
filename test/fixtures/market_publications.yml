@@ -8,6 +8,7 @@ one:
   gci_unit: 9999
   pub_code: GN
   vindicia_batch_size: 1
-  import_time_seconds: 1
-  start_last_range: <%= Time.now %>
-  end_last_range: <%= Time.now + 1.hour %>
+  declined_credit_card_batch_size: 1
+  declined_credit_card_batch_keys:
+    pub_code: GN
+    gci_unit: 9999

@@ -69,14 +69,13 @@ ActiveRecord::Schema.define(version: 20160829145753) do
   end
 
   create_table "market_publications", force: :cascade do |t|
-    t.string   "gci_unit",            limit: 255
-    t.string   "pub_code",            limit: 255
-    t.datetime "start_last_range"
-    t.datetime "end_last_range"
-    t.integer  "import_time_seconds", limit: 4
-    t.integer  "vindicia_batch_size", limit: 4
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "gci_unit",                        limit: 255
+    t.string   "pub_code",                        limit: 255
+    t.string   "declined_credit_card_batch_keys", limit: 255
+    t.integer  "declined_credit_card_batch_size", limit: 4
+    t.integer  "vindicia_batch_size",             limit: 4
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
 end

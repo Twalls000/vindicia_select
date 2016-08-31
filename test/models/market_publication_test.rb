@@ -17,10 +17,6 @@ class MarketPublicationTest < ActiveSupport::TestCase
       @market_publication.pub_code = "G"
       assert_not @market_publication.valid?
     end
-    test "not ok dates" do
-      @market_publication.start_last_range = Time.now + 5.hours
-      assert_not @market_publication.valid?
-    end
     test "not ok uniqueness" do
       mkt = MarketPublication.new(@market_publication.attributes.except("id"))
       assert_not mkt.valid?

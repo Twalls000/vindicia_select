@@ -13,4 +13,9 @@ class MarketPublication < ActiveRecord::Base
       errors.add(:start_last_range, "is not valid")
     end
   end
+
+  def select_next_batch
+    end_last_range
+    
+  end
 end

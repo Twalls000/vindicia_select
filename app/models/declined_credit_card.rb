@@ -49,7 +49,7 @@ class DeclinedCreditCard < Base
   # attribute_names
   def self.summary(gci_unit, pub_code, limit, keys)
     self.on_db(gci_unit).
-      where("prspub=? and (prbtch>? and prbdat>? and prpact>?)",
+      where("prspub=? and (prbtch>=? and prbdat>=? and prpact>?)",
         pub_code, keys[:batch_id], keys[:batch_date], keys[:account_number]).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
         "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +

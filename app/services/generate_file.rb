@@ -15,7 +15,7 @@ class GenerateFile
     batch = start_batch
 
     include_markets_and_pub.each do |mp|
-      DeclinedCreditCard.summary(mp.gci_unit, mp.pub_code, mp.end_last_range).map do |declined_cc|
+      mp.select_next_batch.map do |declined_cc|
         transaction = batch.declined_credit_card_transactions.build
         trans_attributes = load_transaction_attributes(declined_cc)
 

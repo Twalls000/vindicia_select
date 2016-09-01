@@ -22,8 +22,12 @@ class MarketPublication < ActiveRecord::Base
   end
 
 private
-  def initialize_declined_credit_card_batch_keys(args = {})
-    self.declined_credit_card_batch_keys =
-      DeclinedCreditCard.first_record_by_date(@batch_date, gci_unit, pub_code).first.batch_keys
+  def initialize_declined_credit_card_batch_keys
+    batch_keys =
+      DeclinedCreditCard.first_record_by_date(@batch_date, gci_unit, pub_code).first.try(:batch_keys) ||
+        DeclinedCreditCard.new.batch_keys
+    batch_keys[:pub_code] = pub_code
+
+    self.declined_credit_card_batch_keys = batch_keys
   end
 end

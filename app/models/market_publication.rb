@@ -14,8 +14,7 @@ class MarketPublication < ActiveRecord::Base
 
   def select_next_batch
     declined_ccs = DeclinedCreditCard.summary(gci_unit, pub_code, declined_credit_card_batch_size, declined_credit_card_batch_keys)
-    last_cc = declined_ccs.last
-    declined_credit_card_batch_keys = last_cc.batch_keys
+    self.declined_credit_card_batch_keys = declined_ccs.last.batch_keys
 
     save
     declined_ccs

@@ -12,28 +12,36 @@ class GenerateFile
 
   def process
 
-    batch = start_batch
-
     include_markets_and_pub.each do |mp|
-      mp.select_next_batch.map do |declined_cc|
-        transaction = batch.declined_credit_card_transactions.build
-        trans_attributes = load_transaction_attributes(declined_cc)
+      batch = mp.select_next_batch
+      first_key = batch.first.batch_keys
+      last_key = batch.last.batch_keys
 
-        # This is to have the aliased attributes as keys, and the aliases the values
-        cc_aliased_attributes = declined_cc.attribute_aliases.invert
-
-        declined_cc.attributes.each do |name, value|
-          attribute = cc_aliased_attributes[name]
-          if transaction.attributes.keys.include? attribute
-            trans_attributes[attribute] = value.try(:strip) || value
-          end
-        end
-        transaction.attributes = trans_attributes
-        transaction.save
-      end
+      self.delay.create_batch_jobs
     end
 
-    finish_batch(batch)
+    # batch = start_batch
+
+    # include_markets_and_pub.each do |mp|
+    #   mp.select_next_batch.map do |declined_cc|
+    #     transaction = batch.declined_credit_card_transactions.build
+    #     trans_attributes = load_transaction_attributes(declined_cc)
+    #
+    #     # This is to have the aliased attributes as keys, and the aliases the values
+    #     cc_aliased_attributes = declined_cc.attribute_aliases.invert
+    #
+    #     declined_cc.attributes.each do |name, value|
+    #       attribute = cc_aliased_attributes[name]
+    #       if transaction.attributes.keys.include? attribute
+    #         trans_attributes[attribute] = value.try(:strip) || value
+    #       end
+    #     end
+    #     transaction.attributes = trans_attributes
+    #     transaction.save
+    #   end
+    # end
+
+    # finish_batch(batch)
   end
 
   def load_transaction_attributes(declined_cc)
@@ -48,6 +56,10 @@ class GenerateFile
       billing_address_district:    declined_cc.billing_address_district,
       billing_address_postal_code: declined_cc.billing_address_postal_code
     }
+  end
+
+  def create_batch_jobs
+
   end
 
   def start_batch

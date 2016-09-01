@@ -5,6 +5,10 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
 
   INITIAL_STATUS = "New"
 
+  def size
+    declined_credit_card_transactions.count
+  end
+
 private
   def set_defaults
     self.status = INITIAL_STATUS

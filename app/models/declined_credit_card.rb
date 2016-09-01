@@ -47,7 +47,7 @@ class DeclinedCreditCard < Base
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit, pub_code, limit, keys)
+  def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys:)
     self.on_db(gci_unit).
       where("prspub=? and (prbtch>=? and prbdat>=? and prpact>?)",
         pub_code, keys[:batch_id], keys[:batch_date], keys[:account_number]).

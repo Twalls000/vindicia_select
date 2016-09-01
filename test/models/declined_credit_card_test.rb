@@ -23,4 +23,22 @@ class DeclinedCreditCardTest < ActiveSupport::TestCase
       assert_equal "9999-GN-RS100-20100101-1", @trans.merchant_transaction_id
     end
   end
+
+  class BatchKeys < DeclinedCreditCardTest
+    test 'returns a hash with the batch id, batch date, and account number' do
+      expected = { batch_id: @trans.batch_id,
+                   batch_date: @trans.batch_date,
+                   account_number: @trans.account_number }
+
+      assert_equal @trans.batch_keys, expected
+    end
+
+    test "returns correct default values" do
+      expected = { batch_id: "",
+                   batch_date: Date.today.strftime("%Y%m%d").to_i,
+                   account_number: 0 }
+
+      assert_equal DeclinedCreditCard.new.batch_keys, expected
+    end
+  end
 end

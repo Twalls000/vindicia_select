@@ -60,7 +60,19 @@ class DeclinedCreditCard < Base
         " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
         " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ").
       limit(limit).
-      order("ccdc.prspub ASC, ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.pract ASC")
+      order("ccdc.prspub ASC, ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.prpact ASC")
+  end
+
+  def self.first_record_by_date(date, gci_unit, pub_code)
+    self.on_db(gci_unit).where("prspub=? and prbdat>=?", pub_code, date.strftime("%Y%m%d").to_i).
+    limit(1).order("ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.prpact ASC")
+  end
+
+  def batch_keys
+    { pub_code: pub_code,
+      batch_id: batch_id,
+      batch_date: batch_date,
+      account_number: account_number }
   end
 
   def declined_timestamp

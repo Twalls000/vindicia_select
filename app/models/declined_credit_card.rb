@@ -70,7 +70,7 @@ class DeclinedCreditCard < Base
 
   def batch_keys
     { batch_id: batch_id.strip,
-      batch_date: batch_date.zero? ? Date.today.strftime("%Y%m%d") : batch_date,
+      batch_date: batch_date.zero? ? Date.today.strftime("%Y%m%d").to_i : batch_date,
       account_number: account_number }
   end
 

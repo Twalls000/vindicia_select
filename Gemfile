@@ -52,6 +52,7 @@ group :development, :test do
   gem "capistrano", '= 3.6.0'
   gem 'capistrano-bundler', '~> 1.1.1'
   gem 'capistrano-rails'
+  gem "minitest"
 end
 
 group :development do

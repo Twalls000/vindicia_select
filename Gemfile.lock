@@ -228,6 +228,7 @@ DEPENDENCIES
   ibm_db_odbc (~> 0.8.3)!
   jbuilder (~> 2.0)
   jquery-rails
+  minitest
   mysql2 (>= 0.3.13, < 0.5)
   pry-byebug
   rails (= 4.2.7.1)

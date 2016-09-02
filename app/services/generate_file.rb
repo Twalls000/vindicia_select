@@ -11,37 +11,16 @@ class GenerateFile
   end
 
   def process
+    results =
+      include_markets_and_pub.map do |mp|
+        batch = mp.select_next_batch
+        first_key = batch.first.batch_keys
+        last_key = batch.last.batch_keys
 
-    include_markets_and_pub.each do |mp|
-      batch = mp.select_next_batch
-      first_key = batch.first.batch_keys
-      last_key = batch.last.batch_keys
+        self.delay.create_declined_batch(gci_unit:mp.gci_unit, pub_code:mp.pub_code first_key:first_key, last_key:last_key)
+      end
 
-      self.delay.create_batch_jobs
-    end
-
-    # batch = start_batch
-
-    # include_markets_and_pub.each do |mp|
-    #   mp.select_next_batch.map do |declined_cc|
-    #     transaction = batch.declined_credit_card_transactions.build
-    #     trans_attributes = load_transaction_attributes(declined_cc)
-    #
-    #     # This is to have the aliased attributes as keys, and the aliases the values
-    #     cc_aliased_attributes = declined_cc.attribute_aliases.invert
-    #
-    #     declined_cc.attributes.each do |name, value|
-    #       attribute = cc_aliased_attributes[name]
-    #       if transaction.attributes.keys.include? attribute
-    #         trans_attributes[attribute] = value.try(:strip) || value
-    #       end
-    #     end
-    #     transaction.attributes = trans_attributes
-    #     transaction.save
-    #   end
-    # end
-
-    # finish_batch(batch)
+    results
   end
 
   def load_transaction_attributes(declined_cc)
@@ -58,8 +37,28 @@ class GenerateFile
     }
   end
 
-  def create_batch_jobs
+  def create_declined_batch(gci_unit:, pub_code:, first_key:, last_key:)
+    batch = start_batch
+    credit_cards = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code, limit:nil, start_keys:first_key, end_keys:last_key)
 
+    credit_cards.each do |declined_cc|
+      transaction = batch.declined_credit_card_transactions.build
+      trans_attributes = load_transaction_attributes(declined_cc)
+
+      # This is to have the aliased attributes as keys, and the aliases the values
+      cc_aliased_attributes = declined_cc.attribute_aliases.invert
+
+      declined_cc.attributes.each do |name, value|
+        attribute = cc_aliased_attributes[name]
+        if transaction.attributes.keys.include? attribute
+          trans_attributes[attribute] = value.try(:strip) || value
+        end
+      end
+      transaction.attributes = trans_attributes
+      transaction.save
+    end
+
+    finish_batch(batch)
   end
 
   def start_batch

@@ -47,10 +47,9 @@ class DeclinedCreditCard < Base
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys:)
+  def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys: {})
     self.on_db(gci_unit).
-      where("prspub=? and (prbtch>=? and prbdat>=? and prpact>?)",
-        pub_code, keys[:batch_id], keys[:batch_date], keys[:account_number]).
+      where(*self.summary_where_params(pub_code, start_keys, end_keys)).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
         "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
@@ -66,6 +65,23 @@ class DeclinedCreditCard < Base
   def self.first_record_by_date(date, gci_unit, pub_code)
     self.on_db(gci_unit).where("prspub=? and prbdat>=?", pub_code, date.strftime("%Y%m%d").to_i).
     limit(1).order("ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.prpact ASC")
+  end
+
+  def self.summary_where_params(pub_code, start_keys, end_keys)
+    params = []
+    query_string = ->(addl_params){ "prspub=? and (prbtch>=? and prbdat>=? and prpact>?#{addl_params})" }
+    addl_params =
+      if !end_keys.empty?
+        " and prbtch<? and prbdat<? and prpact>?"
+      end
+
+    params << query_string.call(addl_params)
+    params += [pub_code, start_keys[:batch_id], start_keys[:batch_date], start_keys[:account_number]]
+    if addl_params
+      params += [end_keys[:batch_id], end_keys[:batch_date], end_keys[:account_number]]
+    end
+
+    params
   end
 
   def batch_keys

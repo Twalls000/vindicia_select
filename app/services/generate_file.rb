@@ -17,7 +17,7 @@ class GenerateFile
         first_key = batch.first.batch_keys
         last_key = batch.last.batch_keys
 
-        self.delay.create_declined_batch(gci_unit:mp.gci_unit, pub_code:mp.pub_code first_key:first_key, last_key:last_key)
+        self.delay.create_declined_batch(gci_unit:mp.gci_unit, pub_code:mp.pub_code, first_key:first_key, last_key:last_key)
       end
 
     results

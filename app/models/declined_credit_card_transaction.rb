@@ -11,8 +11,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   attr_accessor :pub_code, :batch_id
 
   aasm column: "status" do
-    after_all_transitions :update_audit_trail_on_state_change
-    state :entry, initial: true, after_enter: :update_audit_trail_on_state_change
+    # after_all_transitions :update_audit_trail_on_state_change
+    state :entry, initial: true#, after_enter: :update_audit_trail_on_state_change
   end
 
 private

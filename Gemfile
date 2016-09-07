@@ -30,6 +30,8 @@ gem 'composite_primary_keys'
 # Background processing
 gem 'delayed_job'
 gem 'delayed_job_active_record'
+gem 'delayed_job_web'
+
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon

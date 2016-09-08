@@ -50,6 +50,7 @@ class DeclinedBatches
           trans_attributes[attribute] = value.try(:strip) || value
         end
       end
+      transaction.market_publication_id = transaction.market_publication.id
       transaction.attributes = trans_attributes
       transaction.save
     end

@@ -1,4 +1,4 @@
-class GenerateFile
+class DeclinedBatches
 
   attr_accessor :run_date
 

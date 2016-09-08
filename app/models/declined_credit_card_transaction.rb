@@ -3,6 +3,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   before_create :set_defaults
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
+  belongs_to :market_publication, foreign_key: [:gci_unit, :pub_code]
+  delegate :gci_unit, :pub_code, to: :market_publication
 
   INITIAL_CHARGE_STATUS = 'Failed'
   DEFAULT_CURRENCY = 'USD'

@@ -1,29 +1,14 @@
 <% require 'gci-simple-encryption' %>
 production:
-  version: "16.0"
+  version: "1.1"
   endpoint: "https://soap.vindicia.com"
   namespace: "http://soap.vindicia.com"
   password: <%= GciSimpleEncryption.decrypt_hex("324c4b396f764e49352f4377475549595a6731706d5676437a684958584c427a48725643796f6c503548696165585262365058614f6a6e75584c466e0a513459410a") %>
   login: gannett_soap
 
-# development:
-#   version: "16.0"
-#   endpoint: "https://soap.prodtest.sj.vindicia.com"
-#   namespace: "http://soap.vindicia.com"
-#   password: <%= GciSimpleEncryption.decrypt_hex("324c4b396f764e49352f4377475549595a6731706d5676437a684958584c427a48725643796f6c503548696165585262365058614f6a6e75584c466e0a513459410a") %>
-#   login: gannett_soap
-
-# development:
-#   version: "16.0"
-#   endpoint: "https://soap.prodtest.sj.vindicia.com"
-#   namespace: "http://soap.vindicia.com"
-#   password: <%= GciSimpleEncryption.decrypt_hex("447075554767792f673432775677433272476d4a7772765942767643576d665159653244652b51677842476a5052627363317a324153306e6741684d0a65396f6b0a") %>
-#   login: mg2devgannett_soap
-
-
 development:
-  version: "19.0"
-  endpoint: "https://soap.prodtest.sj.vindicia.com"
+  version: "1.1"
+  endpoint: "https://soap.staging.sj.vindicia.com"
   namespace: "http://soap.vindicia.com"
-  password: sTa4p20TZMuXjQvdhOxJFgeUaAm6ahGC
-  login: mg2dbgannett_soap
+  password: <%= GciSimpleEncryption.decrypt_hex("324c4b396f764e49352f4377475549595a6731706d5676437a684958584c427a48725643796f6c503548696165585262365058614f6a6e75584c466e0a513459410a") %>
+  login: gannett_soap

@@ -16,7 +16,6 @@ class MarketPublication < ActiveRecord::Base
     declined_ccs = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code,
       limit:declined_credit_card_batch_size, start_keys:declined_credit_card_batch_keys)
     self.declined_credit_card_batch_keys = declined_ccs.last.batch_keys
-
     save
     declined_ccs
   end

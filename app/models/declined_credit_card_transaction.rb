@@ -15,10 +15,13 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   aasm column: "status" do
     # after_all_transitions :update_audit_trail_on_state_change
     state :entry, initial: true#, after_enter: :update_audit_trail_on_state_change
-    state :in_batch
+    state :pending, :in_error
 
-    event :batch do
-      transitions from: :entry, to: :in_batch
+    event :send_to_vindicia do
+      transitions from: :entry, to: :pending
+    end
+    event :mark_in_error do
+      transitions from: :entry, to: :in_error
     end
   end
 

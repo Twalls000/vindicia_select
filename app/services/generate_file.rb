@@ -50,6 +50,7 @@ class GenerateFile
 
     credit_cards.each do |declined_cc|
       transaction = declined_batch.declined_credit_card_transactions.build
+      transaction.batch # Puts the transaction in in_batch state
       trans_attributes = load_transaction_attributes(declined_cc)
 
       # This is to have the aliased attributes as keys, and the aliases the values

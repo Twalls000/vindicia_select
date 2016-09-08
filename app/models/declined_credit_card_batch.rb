@@ -1,5 +1,7 @@
 class DeclinedCreditCardBatch < ActiveRecord::Base
   before_create :set_defaults
+  serialize :start_keys
+  serialize :end_keys
 
   has_many :declined_credit_card_transactions
 

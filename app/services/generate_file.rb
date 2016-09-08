@@ -13,15 +13,16 @@ class GenerateFile
   def process
     results =
       include_markets_and_pub.map do |mp|
-        batch = mp.select_next_batch
-        first_key = batch.first.batch_keys
-        last_key = batch.last.batch_keys
+        declined_batch = DeclinedCreditCardBatch.new
+        card_batch = mp.select_next_batch
+        declined_batch.start_keys = card_batch.first.batch_keys
+        declined_batch.end_keys = card_batch.last.batch_keys
+        declined_batch.gci_unit = mp.gci_unit
+        declined_batch.pub_code = mp.pub_code
+        declined_batch.save
 
         self.delay(queue: "create_declined_batches").
-          create_declined_batch(gci_unit: mp.gci_unit,
-                                pub_code: mp.pub_code,
-                                first_key:first_key,
-                                last_key:last_key)
+          create_declined_batch(declined_batch.id)
       end
 
     results
@@ -41,12 +42,14 @@ class GenerateFile
     }
   end
 
-  def create_declined_batch(gci_unit:, pub_code:, first_key:, last_key:)
-    batch = start_batch
-    credit_cards = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code, limit:nil, start_keys:first_key, end_keys:last_key)
+  def create_declined_batch(declined_batch_id)
+    declined_batch = DeclinedCreditCardBatch.find(declined_batch_id)
+    credit_cards = DeclinedCreditCard.summary(gci_unit:declined_batch.gci_unit,
+      pub_code:declined_batch.pub_code, limit:nil, start_keys:declined_batch.start_keys,
+      end_keys:declined_batch.end_keys)
 
     credit_cards.each do |declined_cc|
-      transaction = batch.declined_credit_card_transactions.build
+      transaction = declined_batch.declined_credit_card_transactions.build
       trans_attributes = load_transaction_attributes(declined_cc)
 
       # This is to have the aliased attributes as keys, and the aliases the values
@@ -62,14 +65,7 @@ class GenerateFile
       transaction.save
     end
 
-    finish_batch(batch)
-  end
-
-  def start_batch
-    batch = DeclinedCreditCardBatch.new
-    batch.save
-
-    batch
+    finish_batch(declined_batch)
   end
 
   def finish_batch(batch)

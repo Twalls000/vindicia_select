@@ -8,9 +8,9 @@ class MarketPublication < ActiveRecord::Base
   validates_uniqueness_of :pub_code, scope: :gci_unit
   # validates :declined_credit_card_batch_keys, presence: true
   validates :declined_credit_card_batch_size,
-    presence: true, numericality: { only_integer: true }
+    presence: true, numericality: { only_integer: true, greater_than: 1 }
   validates :vindicia_batch_size,
-    presence: true, numericality: { only_integer: true }
+    presence: true, numericality: { only_integer: true, greater_than: 1 }
 
   def select_next_batch
     declined_ccs = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code,

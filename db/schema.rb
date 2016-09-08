@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160901193458) do
+ActiveRecord::Schema.define(version: 20160908124204) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -27,6 +27,10 @@ ActiveRecord::Schema.define(version: 20160901193458) do
     t.datetime "create_end_timestamp"
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
+    t.string   "start_keys",             limit: 255
+    t.string   "end_keys",               limit: 255
+    t.string   "pub_code",               limit: 255
+    t.string   "gci_unit",               limit: 255
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|

@@ -29,7 +29,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   scope :oldest_unsent, ->{
-    where(status: "entry").order_by("created_at ASC")
+    where(status: "entry").order("created_at ASC")
   }
 
 private

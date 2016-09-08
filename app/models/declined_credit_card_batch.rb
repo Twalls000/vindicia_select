@@ -1,4 +1,5 @@
 class DeclinedCreditCardBatch < ActiveRecord::Base
+  include AASM
   before_create :set_defaults
   serialize :start_keys
   serialize :end_keys

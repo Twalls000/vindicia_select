@@ -4,7 +4,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
 
-  INITIAL_STATUS = 'Failed'
+  INITIAL_CHARGE_STATUS = 'Failed'
   DEFAULT_CURRENCY = 'USD'
   DEFAULT_TOKENIZED = true
   DEFAULT_COUNTRY = 'US'
@@ -18,7 +18,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 private
   def set_defaults
     self.currency = DEFAULT_CURRENCY
-    self.status = INITIAL_STATUS
+    self.charge_status = INITIAL_CHARGE_STATUS
     self.payment_method_tokenized = DEFAULT_TOKENIZED
     self.billing_address_country = DEFAULT_COUNTRY
   end

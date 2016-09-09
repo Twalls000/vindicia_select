@@ -25,7 +25,6 @@ class SendForCapture
         trans.sent_to_vindicia!
       else
         trans.mark_in_error!
-        # TODO: Create an AuditTrail with the error that was sent back
       end
     end
   end

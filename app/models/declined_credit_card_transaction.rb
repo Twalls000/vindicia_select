@@ -25,7 +25,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   end
 
   scope :by_gci_unit_pub_code, ->(gci_unit, pub_code){
-    where(pub_code: pub_code, gci_unit: gci_unit)
+    where("merchant_transaction_id LIKE ?", "#{gci_unit}-#{pub_code}%")
   }
 
   scope :oldest_unsent, ->{

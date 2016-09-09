@@ -70,7 +70,7 @@ class DeclinedCreditCard < Base
   def self.summary_where_params(pub_code, start_keys, end_keys)
     query_string = ->(addl_params){
       ["prspub=? and ((prbtch=? and prbdat=? and prpact>?) or (prbtch=? and prbdat>?) or prbtch>? ) #{addl_params}"] }
-    addl_params = " and (prbtch<?) or (prbtch=? and prbdat<?) or (prbtch=? and prbdat=? and prpact<?")  unless end_keys.empty?
+    addl_params = " and (prbtch<?) or (prbtch=? and prbdat<?) or (prbtch=? and prbdat=? and prpact<?)"  unless end_keys.empty?
 
     params = query_string.call(addl_params)
     params += [pub_code, start_keys[:batch_id], start_keys[:batch_date], start_keys[:account_number],

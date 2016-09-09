@@ -51,9 +51,4 @@ class SendForCapture
       false
     end
   end
-
-    #
-    # This section will
-    #
-
 end

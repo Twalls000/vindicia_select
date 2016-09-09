@@ -21,12 +21,34 @@ class SendForCapture
       success = send_transaction(trans)
 
       # Updates the transaction's status
-      success ? trans.send_to_vindicia! : trans.mark_in_error!
+      if success
+        trans.sent_to_vindicia!
+      else
+        trans.mark_in_error!
+      end
     end
   end
 
   def self.send_transaction(transaction)
-    # Send to vindicia
+    begin
+      # Send to vindicia
+        # If there is an error
+          # Create an AuditTrail with the error that was sent back
+          # return false
+        # Otherwise
+          # return true
+
+      true # Change when we actually send to vindicia
+    rescue => e
+      audit_trail = AuditTrail.new(
+        declined_credit_card_transaction_id: transaction.id,
+        event: e.message,
+        exception: e
+      )
+      audit_trail.save
+      # maybe send an email?
+      false
+    end
   end
 
     #

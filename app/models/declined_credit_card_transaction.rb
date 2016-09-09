@@ -16,7 +16,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     state :entry, initial: true#, after_enter: :update_audit_trail_on_state_change
     state :pending, :in_error
 
-    event :send_to_vindicia do
+    event :sent_to_vindicia do
       transitions from: :entry, to: :pending
     end
     event :mark_in_error do
@@ -25,7 +25,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   end
 
   scope :by_gci_unit_pub_code, ->(gci_unit, pub_code){
-    where(pub_code: pub_code, gci_unit: gci_unit)
+    where("merchant_transaction_id LIKE ?", "#{gci_unit}-#{pub_code}%")
   }
 
   scope :oldest_unsent, ->{

@@ -47,16 +47,44 @@ class DeclinedCreditCard < Base
   belongs_to :credit_card, foreign_key: [:prspub, :prpact]
 
   # attribute_names
-  def self.summary(gci_unit, pub_code)
-    self.on_db(gci_unit).where({ pub_code: pub_code }).
+  def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys: {})
+    self.on_db(gci_unit).
+      where(*self.summary_where_params(pub_code, start_keys, end_keys)).
       select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
-      "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
+        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
         "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,
         " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
         " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
-        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ")
+        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ").
+      limit(limit).
+      order("ccdc.prspub ASC, ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.prpact ASC")
+  end
+
+  def self.first_record_by_date(date, gci_unit, pub_code)
+    self.on_db(gci_unit).where("prspub=? and prbdat>=?", pub_code, date.strftime("%Y%m%d").to_i).
+    limit(1).order("ccdc.prbtch ASC, ccdc.prbdat ASC, ccdc.prpact ASC")
+  end
+
+  def self.summary_where_params(pub_code, start_keys, end_keys)
+    query_string = ->(addl_params){
+      ["prspub=? and ((prbtch=? and prbdat=? and prpact>?) or (prbtch=? and prbdat>?) or prbtch>? ) #{addl_params}"] }
+    addl_params = " and (prbtch<?) or (prbtch=? and prbdat<?) or (prbtch=? and prbdat=? and prpact<?)"  unless end_keys.empty?
+
+    params = query_string.call(addl_params)
+    params += [pub_code, start_keys[:batch_id], start_keys[:batch_date], start_keys[:account_number],
+      start_keys[:batch_id], start_keys[:batch_date], start_keys[:batch_id]]
+    params += [end_keys[:batch_id], end_keys[:batch_id], end_keys[:batch_date],
+      end_keys[:batch_id], end_keys[:batch_date], end_keys[:account_number]]  unless end_keys.empty?
+
+    params
+  end
+
+  def batch_keys
+    { batch_id: batch_id.strip,
+      batch_date: batch_date.zero? ? Date.today.strftime("%Y%m%d").to_i : batch_date,
+      account_number: account_number }
   end
 
   def declined_timestamp

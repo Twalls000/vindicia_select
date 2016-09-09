@@ -31,7 +31,25 @@ class SendForCapture
   end
 
   def self.send_transaction(transaction)
-    # Send to vindicia
+    begin
+      # Send to vindicia
+        # If there is an error
+          # Create an AuditTrail with the error that was sent back
+          # return false
+        # Otherwise
+          # return true
+
+      true # Change when we actually send to vindicia
+    rescue => e
+      audit_trail = AuditTrail.new(
+        declined_credit_card_transaction_id: transaction.id,
+        event: e.message,
+        exception: e
+      )
+      audit_trail.save
+      # maybe send an email?
+      false
+    end
   end
 
     #

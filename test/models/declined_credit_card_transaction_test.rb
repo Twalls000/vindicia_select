@@ -16,8 +16,19 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
   end
 
   class WorkFlow < DeclinedCreditCardTransactionTest
-    test "the workflow should initialize correctly" do
+    test "workflow should initialize correctly" do
       assert @trans.entry?
+    end
+    test "workflow should transition from entry to pending" do
+      @trans.sent_to_vindicia!
+      assert @trans.pending?
+    end
+    test "workflow should transition from entry to in_error" do
+      @trans.mark_in_error!
+      assert @trans.in_error?
+    end
+    test "workflow states" do
+      assert_equal [:entry, :pending, :in_error], DeclinedCreditCardTransaction.aasm.states.map(&:name)
     end
   end
 end

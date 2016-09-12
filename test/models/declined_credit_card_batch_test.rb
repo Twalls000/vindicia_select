@@ -24,7 +24,7 @@ class DeclinedCreditCardBatchTest < ActiveSupport::TestCase
 
   class WorkFlow < DeclinedCreditCardBatchTest
     test "ensure the workflow is correct" do
-      assert_equal true, @trans.new?
+      assert @trans.new?
     end
   end
 end

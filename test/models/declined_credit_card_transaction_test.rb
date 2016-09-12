@@ -14,4 +14,10 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert_equal @trans.payment_method_tokenized, DeclinedCreditCardTransaction::DEFAULT_TOKENIZED
     end
   end
+
+  class WorkFlow < DeclinedCreditCardTransactionTest
+    test "the workflow should initialize correctly" do
+      assert @trans.entry?
+    end
+  end
 end

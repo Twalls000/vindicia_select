@@ -1,4 +1,7 @@
 class DeclinedCreditCardBatch < ActiveRecord::Base
+  validates :gci_unit, presence: true
+  validates :pub_code, presence: true
+
   include AASM
   before_create :set_defaults
   serialize :start_keys

@@ -6,18 +6,18 @@ class DeclinedBatches
   # table.
   #
   def self.process
-    results =
-      include_markets_and_pub.map do |mp|
-        declined_batch = DeclinedCreditCardBatch.new
-        card_batch = mp.select_next_batch
+    include_markets_and_pub.map do |mp|
+      declined_batch = DeclinedCreditCardBatch.new
+      card_batch = mp.select_next_batch
+      unless card_batch.empty?
         declined_batch.start_keys = card_batch.first.batch_keys
         declined_batch.end_keys = card_batch.last.batch_keys
         declined_batch.gci_unit = mp.gci_unit
         declined_batch.pub_code = mp.pub_code
         declined_batch.save
-
         DeclinedBatchesJob.perform_later declined_batch.id
       end
+    end
   end
 
   def self.include_markets_and_pub

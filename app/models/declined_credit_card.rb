@@ -1,4 +1,5 @@
 class DeclinedCreditCard < Base
+  include SendToGenesys
   self.table_name = :ccvc
   self.primary_key = [:vsppub, :vsbtch, :vsbdat, :vspact]
 
@@ -144,7 +145,7 @@ class DeclinedCreditCard < Base
   end
 
   def save
-    
+
   end
 
 end

@@ -15,6 +15,7 @@ class DeclinedCreditCard < Base
   alias_attribute :auth_code,       :vsrscd
   alias_attribute :avs_code,        :vsnavs
   alias_attribute :customer_id,     :vsctid
+  alias_attribute :audit_timestamp, :vstmst
   # These aliases are for the Credit Card model
   alias_attribute :card_number,     :crdnbr
   alias_attribute :card_type,       :ccctyp
@@ -89,7 +90,11 @@ class DeclinedCreditCard < Base
   end
 
   def declined_timestamp
-    Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
+    begin
+      Time.strptime(audit_timestamp)
+    rescue
+      Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
+    end
   end
 
   def merchant_transaction_id
@@ -130,5 +135,11 @@ class DeclinedCreditCard < Base
 
   def build_address_line2
     "#{subunit_type.strip} #{subunit_number.strip}".strip
+  end
+
+  # How does the credit/debit amounts work?
+  # Do we need a diff? 
+  def amount
+    credit_amount
   end
 end

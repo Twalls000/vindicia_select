@@ -138,8 +138,13 @@ class DeclinedCreditCard < Base
   end
 
   # How does the credit/debit amounts work?
-  # Do we need a diff? 
+  # Do we need a diff?
   def amount
     credit_amount
   end
+
+  def save
+    
+  end
+
 end

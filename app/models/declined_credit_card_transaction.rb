@@ -12,8 +12,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   attr_accessor :pub_code, :batch_id
 
   aasm column: "status" do
-    # after_all_transitions :update_audit_trail_on_state_change
-    state :entry, initial: true#, after_enter: :update_audit_trail_on_state_change
+    state :entry, initial: true
     state :pending, :in_error
 
     event :sent_to_vindicia do
@@ -38,9 +37,5 @@ private
     self.charge_status = INITIAL_CHARGE_STATUS
     self.payment_method_tokenized = DEFAULT_TOKENIZED
     self.billing_address_country = DEFAULT_COUNTRY
-  end
-
-  def update_audit_trail_on_state_change
-    audit_trails.build event: status, changed_values: changes
   end
 end

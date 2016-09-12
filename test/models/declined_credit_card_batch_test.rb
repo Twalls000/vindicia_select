@@ -23,8 +23,17 @@ class DeclinedCreditCardBatchTest < ActiveSupport::TestCase
   end
 
   class WorkFlow < DeclinedCreditCardBatchTest
-    test "ensure the workflow is correct" do
-      assert @trans.new?
+    test "workflow should initialize correctly" do
+      assert @trans.entry?
+    end
+    test "workflow states" do
+      assert_equal [:entry], DeclinedCreditCardBatch.aasm.states.map(&:name)
+    end
+    test "workflow events" do
+      assert_equal [], DeclinedCreditCardBatch.aasm.events.map(&:name)
+    end
+    test "workflow permitted based on entry state" do
+      assert_equal [], @trans.aasm.events(:permitted => true).map(&:name)
     end
   end
 end

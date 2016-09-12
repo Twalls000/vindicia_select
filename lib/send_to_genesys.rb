@@ -6,7 +6,11 @@ module SendToGenesys
   class_methods do
 
     def send_transaction(transaction)
-      # transaction gets passed in and sent to Genesys
+      if chargeback_success?(transaction)
+        set_as_successful(transaction)
+      else
+        set_to_printed_bill(transaction)
+      end 
     end
 
     def chargeback_success?(transaction)

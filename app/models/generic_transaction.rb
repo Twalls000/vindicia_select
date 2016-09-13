@@ -11,31 +11,33 @@ class GenericTransaction < ActiveRecord::Base
                             :last_changed_on, :last_changed_at
   validates_inclusion_of :character_coding, :in => ['', ' ', 'A', 'E']
 
-  def self.last_serial_number_for_unit(gci_unit)
-    where('gci_unit = ?', gci_unit).select("max(id) as serial_number")[0].serial_number rescue nil
+  ### Create transaction to support each site ###
+  def self.write_to_genesys(model)
+    now = Time.now
+    tran = GenericTransaction.new
+    tran.gci_unit = model.gci_unit
+    tran.transaction_number = 0
+    tran.sequence_number = HOSTING_LOCATION
+    tran.function_type = FUNCTION_TYPE
+    tran.function_data = generate_sql(model)
+    tran.character_coding = ' '
+    tran.ascii_delimiter = ' '
+    tran.last_changed_on = now.strftime("%Y%m%d")
+    tran.last_changed_at = now.strftime("%H%M%S")
+    result = tran.save
+
   end
 
-  def self.last_transaction_time_for_unit(gci_unit)
-    serial_number = last_serial_number_for_unit(gci_unit)
-    if serial_number
-      entry = where(['gci_unit = ? and id = ?', gci_unit,
-            serial_number]).select('last_changed_on, last_changed_at').first
-      entry.transaction_time
-    else
-      nil
-    end
+  def self.get_circ_database(gci_unit)
+    GenericTransaction.find_by_sql("select gecirc from c_erls where gciunt=#{ gci_unit }").first.try(:gecirc)
   end
 
-  ### Instance Methods ###
-
-  def transaction_time
-    date = last_changed_on
-    time = last_changed_at
-    begin
-      Time.local(date / 10000, date / 100 % 100, date % 100,
-          time / 10000, time / 100 % 100, time % 100)
-    rescue
-      nil
-    end
+  # Why is this hard coded?
+  # Simply put, we are supporting 1 model w/1 possible SQL statement.
+  # If that changes then make this class inheritable and this code dynamic.
+  def self.generate_sql(model)
+    "UPDATE #{ get_circ_database(model.gci_unit).strip }.CCVC SET VSSTS = #{ model.status } " +
+    "WHERE VSPPUB = '#{ model.pub_code }' and VSBTCH = '#{ model.batch_id}' and " +
+    "VSBDAT = #{ model.batch_date } and VSPACT = #{ model.account_number }"
   end
 end

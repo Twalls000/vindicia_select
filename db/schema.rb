@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160909150345) do
+ActiveRecord::Schema.define(version: 20160913183607) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -73,6 +73,11 @@ ActiveRecord::Schema.define(version: 20160909150345) do
     t.boolean  "payment_method_tokenized"
     t.string   "charge_status",                 limit: 255
     t.integer  "market_publication_id",         limit: 4
+    t.string   "gci_unit",                      limit: 255
+    t.string   "pub_code",                      limit: 255
+    t.string   "batch_id",                      limit: 255
+    t.integer  "batch_date",                    limit: 4
+    t.integer  "account_number",                limit: 4
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

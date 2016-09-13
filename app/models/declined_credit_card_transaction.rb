@@ -9,7 +9,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   DEFAULT_CURRENCY = 'USD'
   DEFAULT_TOKENIZED = true
   DEFAULT_COUNTRY = 'US'
-  attr_accessor :pub_code, :batch_id
+  attr_accessor :batch_id
 
   aasm column: "status" do
     state :entry, initial: true
@@ -23,8 +23,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     end
   end
 
-  scope :by_gci_unit_pub_code, ->(gci_unit, pub_code){
-    where("merchant_transaction_id LIKE ?", "#{gci_unit}-#{pub_code}%")
+  scope :by_gci_unit_and_pub_code, ->(gci_unit, pub_code){
+    where(gci_unit:gci_unit, pub_code:pub_code)
   }
 
   scope :oldest_unsent, ->{

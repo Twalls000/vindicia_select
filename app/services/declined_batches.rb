@@ -66,10 +66,10 @@ class DeclinedBatches
       declined_timestamp:          declined_cc.declined_timestamp,
       merchant_transaction_id:     declined_cc.merchant_transaction_id,
       credit_card_expiration_date: declined_cc.expiration_date,
-      account_holder_name:         declined_cc.account_holder_name.squeeze,
-      billing_address_line1:       declined_cc.billing_address_line1.squeeze,
-      billing_address_line2:       declined_cc.billing_address_line2.squeeze,
-      billing_addr_city:           declined_cc.billing_addr_city.squeeze,
+      account_holder_name:         declined_cc.account_holder_name.squeezed,
+      billing_address_line1:       declined_cc.billing_address_line1.squeezed,
+      billing_address_line2:       declined_cc.billing_address_line2.squeezed,
+      billing_addr_city:           declined_cc.billing_addr_city.squeezed,
       billing_address_district:    declined_cc.billing_address_district,
       billing_address_postal_code: declined_cc.billing_address_postal_code
     }

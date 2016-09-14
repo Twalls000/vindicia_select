@@ -138,12 +138,6 @@ class DeclinedCreditCard < Base
     "#{subunit_type.strip} #{subunit_number.strip}".strip
   end
 
-  # How does the credit/debit amounts work?
-  # Do we need a diff?
-  def amount
-    credit_amount
-  end
-
   def save
 
   end

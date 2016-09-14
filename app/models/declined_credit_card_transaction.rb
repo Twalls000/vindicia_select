@@ -32,14 +32,18 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   def vindicia_fields
-    attrs = attributes.except('created_at', 'updated_at', 'status', 'charge_status', 'declined_timestamp', 'payment_method')
+    attrs = attributes.except('created_at', 'updated_at', 'status',
+      'charge_status', 'declined_timestamp', 'payment_method',
+      'credit_card_number')
+
     attrs.merge!({
       # TODO: remove the following line when tokens supported by Vindicia
       'payment_method_tokenized' => false,
-      'payment_method_id' => 'CreditCard',
-      'status' => charge_status,
-      'timestamp' => declined_timestamp,
-      'subscription_id' => merchant_transaction_id
+      'payment_method_id'        => 'CreditCard',
+      'status'                   => charge_status,
+      'timestamp'                => declined_timestamp,
+      'subscription_id'          => merchant_transaction_id,
+      'credit_card_account'      => credit_card_number
     })
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
 

@@ -31,6 +31,21 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     where(status: "entry").order("created_at ASC")
   }
 
+  def vindicia_fields
+    attrs = attributes.except('created_at', 'updated_at', 'status', 'charge_status', 'declined_timestamp', 'payment_method')
+    attrs.merge!({
+      # TODO: remove the following line when tokens supported by Vindicia
+      'payment_method_tokenized' => false,
+      'payment_method_id' => 'CreditCard',
+      'status' => charge_status,
+      'timestamp' => declined_timestamp,
+      'subscription_id' => merchant_transaction_id
+    })
+    attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
+
+    attrs
+  end
+
 private
   def set_defaults
     self.currency = DEFAULT_CURRENCY

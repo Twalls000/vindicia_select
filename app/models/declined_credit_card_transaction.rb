@@ -9,7 +9,6 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   DEFAULT_CURRENCY = 'USD'
   DEFAULT_TOKENIZED = true
   DEFAULT_COUNTRY = 'US'
-  attr_accessor :batch_id
 
   aasm column: "status" do
     state :entry, initial: true
@@ -20,6 +19,12 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     end
     event :mark_in_error do
       transitions from: :entry, to: :in_error
+    end
+    event :captured_funds do
+      transitions from: :pending, to: :processed
+    end
+    event :failed_to_capture_funds do
+      transitions from: :pending, to: :printed_bill
     end
   end
 
@@ -48,6 +53,16 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
 
     attrs
+  end
+
+  # Combine status to present back to Genesys
+  def transaction_status
+    case aasm.current_state
+      when :entry, :pending then "pending"
+      when :processed then "CC"
+      when :printed_bill then "PB"
+      when :in_error then "error"
+    end
   end
 
 private

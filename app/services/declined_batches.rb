@@ -40,7 +40,6 @@ class DeclinedBatches
 
       # This is to have the aliased attributes as keys, and the aliases the values
       cc_aliased_attributes = declined_cc.attribute_aliases.invert
-
       declined_cc.attributes.each do |name, value|
         attribute = cc_aliased_attributes[name]
         if transaction.attributes.keys.include? attribute

@@ -1,17 +1,22 @@
 class DeclinedCreditCard < Base
-  self.table_name = :ccdc
-  self.primary_key = [:prbtch, :prspub, :prpact]
+  include SendToGenesys
+  self.table_name = :ccvc
+  self.primary_key = [:vsppub, :vsbtch, :vsbdat, :vspact]
 
-  alias_attribute :pub_code,        :prspub
-  alias_attribute :batch_id,        :prbtch
-  alias_attribute :batch_date,      :prbdat
-  alias_attribute :account_number,  :prpact
-  alias_attribute :amount,          :prcamt
-  alias_attribute :debit_amount,    :prdamt
-  alias_attribute :decline_status,  :prnsts
-  alias_attribute :decline_reason,  :prndcr
+  alias_attribute :pub_code,        :vsppub
+  alias_attribute :batch_id,        :vsbtch
+  alias_attribute :batch_date,      :vsbdat
+  alias_attribute :account_number,  :vspact
+  alias_attribute :credit_amount,   :vscamt
+  alias_attribute :debit_amount,    :vsdamt
+  alias_attribute :decline_status,  :vsrscd
+  alias_attribute :decline_reason,  :vsrstx
   alias_attribute :audit_date,      :udtdat
   alias_attribute :audit_time,      :udttim
+  alias_attribute :auth_code,       :vsrscd
+  alias_attribute :avs_code,        :vsnavs
+  alias_attribute :customer_id,     :vsctid
+  alias_attribute :audit_timestamp, :vstmst
   # These aliases are for the Credit Card model
   alias_attribute :card_number,     :crdnbr
   alias_attribute :card_type,       :ccctyp
@@ -21,8 +26,6 @@ class DeclinedCreditCard < Base
   alias_attribute :address_line2,   :ccadr2
   alias_attribute :city_state,      :ccctst
   alias_attribute :zip_code,        :pozip5
-  # This alias is for the Subscription model
-  alias_attribute :customer_id,     :'hsper#'
   # This alias is for the Customer model
   alias_attribute :first_name,      :fnam
   alias_attribute :last_name,       :lnam
@@ -43,28 +46,60 @@ class DeclinedCreditCard < Base
   # This alias is for the Card Control model
   alias_attribute :division_number, :'cmmer#'
 
-  belongs_to :subscription, foreign_key: [:prspub, :prpact]
-  belongs_to :credit_card, foreign_key: [:prspub, :prpact]
+  belongs_to :subscription, foreign_key: [:vsppub, :vspact]
+  belongs_to :credit_card, foreign_key: [:vsppub, :vspact]
 
   # attribute_names
-  def self.summary(gci_unit, pub_code)
-    self.on_db(gci_unit).where({ pub_code: pub_code }).
-      select("#{gci_unit}, ccdc.*, subscrip.hsper#, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
-      "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
+  def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys: {})
+    self.on_db(gci_unit).
+      where(*self.summary_where_params(pub_code, start_keys, end_keys)).
+      select("#{gci_unit}, ccvc.*, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
+        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
         "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,
         " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
-        " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ",
-        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ")
+        " INNER JOIN prbs ON prbs.cusnbr = ccvc.vsctid ",
+        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ").
+      limit(limit).
+      order("ccvc.vsppub ASC, ccvc.vsbtch ASC, ccvc.vsbdat ASC, ccvc.vspact ASC")
+  end
+
+  def self.first_record_by_date(date, gci_unit, pub_code)
+    self.on_db(gci_unit).where("vsppub=? and vsbdat>=?", pub_code, date.strftime("%Y%m%d").to_i).
+    limit(1).order("ccvc.vsbtch ASC, ccvc.vsbdat ASC, ccvc.vspact ASC")
+  end
+
+  def self.summary_where_params(pub_code, start_keys, end_keys)
+    query_string = ->(addl_params){
+      ["vsppub=? and ((vsbtch=? and vsbdat=? and vspact>?) or (vsbtch=? and vsbdat>?) or vsbtch>? ) #{addl_params}"] }
+    addl_params = " and (vsbtch<?) or (vsbtch=? and vsbdat<?) or (vsbtch=? and vsbdat=? and vspact<?)"  unless end_keys.empty?
+
+    params = query_string.call(addl_params)
+    params += [pub_code, start_keys[:batch_id], start_keys[:batch_date], start_keys[:account_number],
+      start_keys[:batch_id], start_keys[:batch_date], start_keys[:batch_id]]
+    params += [end_keys[:batch_id], end_keys[:batch_id], end_keys[:batch_date],
+      end_keys[:batch_id], end_keys[:batch_date], end_keys[:account_number]]  unless end_keys.empty?
+
+    params
+  end
+
+  def batch_keys
+    { batch_id: batch_id.strip,
+      batch_date: batch_date.zero? ? Date.today.strftime("%Y%m%d").to_i : batch_date,
+      account_number: account_number }
   end
 
   def declined_timestamp
-    Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
+    begin
+      Time.strptime(audit_timestamp)
+    rescue
+      Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
+    end
   end
 
   def merchant_transaction_id
-    "#{ gci_unit }-#{ prspub }-#{ prbtch }-#{ prbdat }-#{ prpact }"
+    "#{ gci_unit }-#{ vsppub }-#{ vsbtch }-#{ vsbdat }-#{ vspact }"
   end
 
   def account_holder_name
@@ -102,4 +137,15 @@ class DeclinedCreditCard < Base
   def build_address_line2
     "#{subunit_type.strip} #{subunit_number.strip}".strip
   end
+
+  # How does the credit/debit amounts work?
+  # Do we need a diff?
+  def amount
+    credit_amount
+  end
+
+  def save
+
+  end
+
 end

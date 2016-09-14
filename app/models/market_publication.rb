@@ -1,16 +1,35 @@
 class MarketPublication < ActiveRecord::Base
+  before_create :initialize_declined_credit_card_batch_keys
+  attr_accessor :batch_date
+  serialize :declined_credit_card_batch_keys
+
+  scope :by_gci_unit_and_pub_code, -> (gci_unit, pub_code) { where(gci_unit:gci_unit, pub_code:pub_code) }
+
   validates :gci_unit, presence: true, length: { is: 4 }
   validates :pub_code, presence: true, length: { is: 2 }
   validates_uniqueness_of :pub_code, scope: :gci_unit
-  validates :vindicia_batch_size, numericality: { only_integer: true }
-  validates :import_time_seconds, numericality: { only_integer: true }
-  validates :end_last_range, presence: true
-  validates :start_last_range, presence: true
-  validate  :date_range
+  # validates :declined_credit_card_batch_keys, presence: true
+  validates :declined_credit_card_batch_size,
+    presence: true, numericality: { only_integer: true, greater_than: 1 }
+  validates :vindicia_batch_size,
+    presence: true, numericality: { only_integer: true, greater_than: 1 }
 
-  def date_range
-    if end_last_range && start_last_range && start_last_range > end_last_range
-      errors.add(:start_last_range, "is not valid")
-    end
+  def select_next_batch
+    declined_ccs = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code,
+      limit:declined_credit_card_batch_size, start_keys:declined_credit_card_batch_keys)
+    self.declined_credit_card_batch_keys = declined_ccs.last.try(:batch_keys)
+    save  if declined_credit_card_batch_keys
+
+    declined_ccs
+  end
+
+private
+  def initialize_declined_credit_card_batch_keys
+    batch_keys =
+      DeclinedCreditCard.first_record_by_date(@batch_date, gci_unit, pub_code).first.try(:batch_keys) ||
+        DeclinedCreditCard.new.batch_keys
+    batch_keys[:pub_code] = pub_code
+
+    self.declined_credit_card_batch_keys = batch_keys
   end
 end

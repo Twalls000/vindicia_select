@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160829145753) do
+ActiveRecord::Schema.define(version: 20160913183607) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20160829145753) do
     t.text     "changed_values",                      limit: 65535
     t.datetime "created_at",                                        null: false
     t.datetime "updated_at",                                        null: false
+    t.text     "exception",                           limit: 65535
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
@@ -27,6 +28,10 @@ ActiveRecord::Schema.define(version: 20160829145753) do
     t.datetime "create_end_timestamp"
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
+    t.string   "start_keys",             limit: 255
+    t.string   "end_keys",               limit: 255
+    t.string   "pub_code",               limit: 255
+    t.string   "gci_unit",               limit: 255
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|
@@ -66,17 +71,40 @@ ActiveRecord::Schema.define(version: 20160829145753) do
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
     t.boolean  "payment_method_tokenized"
+    t.string   "charge_status",                 limit: 255
+    t.integer  "market_publication_id",         limit: 4
+    t.string   "gci_unit",                      limit: 255
+    t.string   "pub_code",                      limit: 255
+    t.string   "batch_id",                      limit: 255
+    t.integer  "batch_date",                    limit: 4
+    t.integer  "account_number",                limit: 4
   end
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   limit: 4,          default: 0, null: false
+    t.integer  "attempts",   limit: 4,          default: 0, null: false
+    t.text     "handler",    limit: 4294967295,             null: false
+    t.text     "last_error", limit: 4294967295
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue", using: :btree
+
   create_table "market_publications", force: :cascade do |t|
-    t.string   "gci_unit",            limit: 255
-    t.string   "pub_code",            limit: 255
-    t.datetime "start_last_range"
-    t.datetime "end_last_range"
-    t.integer  "import_time_seconds", limit: 4
-    t.integer  "vindicia_batch_size", limit: 4
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "gci_unit",                        limit: 255
+    t.string   "pub_code",                        limit: 255
+    t.string   "declined_credit_card_batch_keys", limit: 255
+    t.integer  "declined_credit_card_batch_size", limit: 4
+    t.integer  "vindicia_batch_size",             limit: 4
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
 end

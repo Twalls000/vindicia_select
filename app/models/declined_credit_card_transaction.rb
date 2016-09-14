@@ -32,7 +32,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   def vindicia_fields
-    attrs = attributes.except('created_at', 'updated_at', 'status', 'payment_method_tokenized', 'charge_status', 'declined_timestamp', 'payment_method', 'credit_card_number', 'market_publication_id', 'declined_credit_card_batch_id', 'gci_unit', 'pub_code', 'batch_id')
+    attrs = attributes.except("batch_id", "charge_status", "created_at", "credit_card_number", "declined_credit_card_batch_id", "declined_timestamp", "gci_unit", "market_publication_id", "payment_method", "payment_method_tokenized", "pub_code", "status", "updated_at")
 
     attrs.merge!({
       'status'                      => charge_status,

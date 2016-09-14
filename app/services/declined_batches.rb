@@ -62,6 +62,7 @@ class DeclinedBatches
   end
 
   def self.load_transaction_attributes(declined_cc)
+    puts declined_cc.inspect
     {
       declined_timestamp:          declined_cc.declined_timestamp,
       merchant_transaction_id:     declined_cc.merchant_transaction_id,
@@ -72,7 +73,8 @@ class DeclinedBatches
       billing_addr_city:           declined_cc.billing_addr_city.squeezed,
       billing_address_district:    declined_cc.billing_address_district,
       billing_address_postal_code: declined_cc.billing_address_postal_code,
-      division_number:             declined_cc.division_number
+      division_number:             declined_cc.division_number,
+      amount:                      declined_cc.credit_amount
     }
   end
 end

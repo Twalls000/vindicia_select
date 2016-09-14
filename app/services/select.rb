@@ -4,7 +4,7 @@ class Select
 
     param_transactions = transactions.map(&:vindicia_fields)
 
-    # call(:bill_transactions, { transactions: param_transactions })
+    call(:bill_transactions, { transactions: param_transactions })
   end
 
   def self.call(method_name, params = {})

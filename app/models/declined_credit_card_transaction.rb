@@ -37,19 +37,26 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   def vindicia_fields
-    attrs = attributes.except('created_at', 'updated_at', 'status',
-      'charge_status', 'declined_timestamp', 'payment_method',
-      'credit_card_number')
+    attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')
 
     attrs.merge!({
-      # TODO: remove the following line when tokens supported by Vindicia
-      'payment_method_tokenized' => false,
-      'payment_method_id'        => 'CreditCard',
-      'status'                   => charge_status,
-      'timestamp'                => declined_timestamp,
-      'subscription_id'          => merchant_transaction_id,
-      'credit_card_account'      => credit_card_number
+      'status'                      => charge_status,
+      'timestamp'                   => declined_timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"),
+      'subscription_id'             => merchant_transaction_id,
+      # Will be the token when they are supported
+      'payment_method_id'           => '4111_1111_1111_1111',
+      'previous_billing_count'      => previous_billing_count.to_i,
+      'credit_card_account_hash'    => credit_card_account_hash.to_s,
+      'payment_method_is_tokenized' => payment_method_tokenized,
+      'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date),
     })
+
+    # TODO: remove the following line when tokens supported by Vindicia
+    attrs.merge!({ 'payment_method_is_tokenized' => false, 'credit_card_account' => 4111_1111_1111_1111 })
+    # TODO: revmove the following line when the fields are populated properly
+    attrs.merge!({ 'amount' => 25.0 })
+
+    attrs.delete_if { |key,value| value.nil? }
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
 
     attrs

@@ -15,4 +15,8 @@ class Select
     # end
     resp
   end
+
+  def self.convert_gci_cc_expiration_date_to_vindicia(gci_date)
+    Date.strptime(gci_date.to_s.rjust(4,'0'), '%m%y').strftime('%Y%m')
+  end
 end

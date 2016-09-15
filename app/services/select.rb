@@ -7,6 +7,13 @@ class Select
     call(:bill_transactions, { transactions: param_transactions })
   end
 
+  def self.fetch_billing_results(timestamp, end_timestamp = nil, page = 0, page_size = 50)
+    timestamp = date_to_vindicia timestamp
+    end_timestamp = date_to_vindicia(end_timestamp) if end_timestamp
+
+    call(:fetch_billing_results, { timestamp: timestamp, end_timestamp: end_timestamp, page: page, page_size: page_size })
+  end
+
   def self.call(method_name, params = {})
     resp = Vindicia::Connection.call("Select",method_name.to_sym,params)
 

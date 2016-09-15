@@ -32,19 +32,11 @@ class Select
     case response
     when String && /http/
       return default_return
-    when Hash, Savon::Response
-      return_val =
-        if response.is_a? Hash
-          response.first[1][:return]
-        else
-          response.hash[:envelope][:body].first[1][:return]
-        end
+    when Savon::Response
+      return_val = response.hash[:envelope][:body].first[1][:return]
       raise("Error with soap_id #{return_val[:soap_id]} (code #{return_val[:return_code]}): #{return_val[:return_string]}")
-    when Vindicia::TransactionValidationResponse
-      trans_id = response.merchant_transaction_id
-      code = response.code
-      desc = response.description
-      raise "Error with merchant_transaction_id #{trans_id} (code #{code}): #{desc}"
+    when Vindicia::Transaction
+      return Array(response)
     else
       return response
     end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160909150345) do
+ActiveRecord::Schema.define(version: 20160913183607) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event"
@@ -73,26 +73,27 @@ ActiveRecord::Schema.define(version: 20160909150345) do
     t.boolean  "payment_method_tokenized"
     t.string   "charge_status"
     t.integer  "market_publication_id"
+    t.string   "gci_unit"
+    t.string   "pub_code"
+    t.string   "batch_id"
+    t.integer  "batch_date"
+    t.integer  "account_number"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
-    t.integer  "priority",                                  default: 0, null: false
-    t.integer  "attempts",                                  default: 0, null: false
-    t.text     "handler",                limit: 4294967295,             null: false
-    t.text     "last_error",             limit: 4294967295
+    t.integer  "priority",                      default: 0, null: false
+    t.integer  "attempts",                      default: 0, null: false
+    t.text     "handler",    limit: 4294967295,             null: false
+    t.text     "last_error", limit: 4294967295
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
     t.string   "queue"
-    t.integer  "delayed_reference_id"
-    t.string   "delayed_reference_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "delayed_jobs", ["delayed_reference_id"], name: "delayed_jobs_delayed_reference_id"
-  add_index "delayed_jobs", ["delayed_reference_type"], name: "delayed_jobs_delayed_reference_type"
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
   add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue"
 

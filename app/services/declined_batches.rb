@@ -6,20 +6,18 @@ class DeclinedBatches
   # table.
   #
   def self.process
-    results =
-      include_markets_and_pub.map do |mp|
-        declined_batch = DeclinedCreditCardBatch.new
-        card_batch = mp.select_next_batch
+    include_markets_and_pub.map do |mp|
+      declined_batch = DeclinedCreditCardBatch.new
+      card_batch = mp.select_next_batch
+      unless card_batch.empty?
         declined_batch.start_keys = card_batch.first.batch_keys
         declined_batch.end_keys = card_batch.last.batch_keys
         declined_batch.gci_unit = mp.gci_unit
         declined_batch.pub_code = mp.pub_code
         declined_batch.save
-
         DeclinedBatchesJob.perform_later declined_batch.id
       end
-
-    results
+    end
   end
 
   def self.include_markets_and_pub
@@ -42,13 +40,13 @@ class DeclinedBatches
 
       # This is to have the aliased attributes as keys, and the aliases the values
       cc_aliased_attributes = declined_cc.attribute_aliases.invert
-
       declined_cc.attributes.each do |name, value|
         attribute = cc_aliased_attributes[name]
         if transaction.attributes.keys.include? attribute
           trans_attributes[attribute] = value.try(:strip) || value
         end
       end
+      transaction.gci_unit = declined_batch.gci_unit
       transaction.market_publication_id = transaction.market_publication.id
       transaction.attributes = trans_attributes
       transaction.save
@@ -63,16 +61,19 @@ class DeclinedBatches
   end
 
   def self.load_transaction_attributes(declined_cc)
+    puts declined_cc.inspect
     {
       declined_timestamp:          declined_cc.declined_timestamp,
       merchant_transaction_id:     declined_cc.merchant_transaction_id,
       credit_card_expiration_date: declined_cc.expiration_date,
-      account_holder_name:         declined_cc.account_holder_name,
-      billing_address_line1:       declined_cc.billing_address_line1,
-      billing_address_line2:       declined_cc.billing_address_line2,
-      billing_addr_city:           declined_cc.billing_addr_city,
+      account_holder_name:         declined_cc.account_holder_name.squeezed,
+      billing_address_line1:       declined_cc.billing_address_line1.squeezed,
+      billing_address_line2:       declined_cc.billing_address_line2.squeezed,
+      billing_addr_city:           declined_cc.billing_addr_city.squeezed,
       billing_address_district:    declined_cc.billing_address_district,
-      billing_address_postal_code: declined_cc.billing_address_postal_code
+      billing_address_postal_code: declined_cc.billing_address_postal_code,
+      division_number:             declined_cc.division_number,
+      amount:                      declined_cc.credit_amount
     }
   end
 end

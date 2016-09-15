@@ -1,4 +1,7 @@
 class DeclinedCreditCardBatch < ActiveRecord::Base
+  validates :gci_unit, presence: true
+  validates :pub_code, presence: true
+
   include AASM
   before_create :set_defaults
   serialize :start_keys
@@ -7,7 +10,7 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
   has_many :declined_credit_card_transactions
 
   aasm column: "status" do
-    state :new, initial: true
+    state :entry, initial: true
   end
 
   def size

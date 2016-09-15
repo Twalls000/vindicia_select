@@ -10,7 +10,7 @@ class SendForCapture
 
     transactions_to_send =
       DeclinedCreditCardTransaction.oldest_unsent.
-        by_gci_unit_pub_code(gci_unit, pub_code).
+        by_gci_unit_and_pub_code(gci_unit, pub_code).
         limit(mp.market_publication.vindicia_batch_size)
 
     SendForCaptureJob.perform_later transactions_to_send.to_a
@@ -50,9 +50,4 @@ class SendForCapture
       false
     end
   end
-
-    #
-    # This section will
-    #
-
 end

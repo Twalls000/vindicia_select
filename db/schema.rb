@@ -14,97 +14,97 @@
 ActiveRecord::Schema.define(version: 20160913183607) do
 
   create_table "audit_trails", force: :cascade do |t|
-    t.string   "event"
-    t.integer  "declined_credit_card_transaction_id"
-    t.text     "changed_values"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.text     "exception"
+    t.string   "event",                               limit: 255
+    t.integer  "declined_credit_card_transaction_id", limit: 4
+    t.text     "changed_values",                      limit: 65535
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.text     "exception",                           limit: 65535
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
-    t.string   "status"
+    t.string   "status",                 limit: 255
     t.datetime "create_start_timestamp"
     t.datetime "create_end_timestamp"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.string   "start_keys"
-    t.string   "end_keys"
-    t.string   "pub_code"
-    t.string   "gci_unit"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.string   "start_keys",             limit: 255
+    t.string   "end_keys",               limit: 255
+    t.string   "pub_code",               limit: 255
+    t.string   "gci_unit",               limit: 255
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|
     t.datetime "declined_timestamp"
-    t.float    "amount"
-    t.string   "currency"
-    t.string   "status"
-    t.string   "division_number"
-    t.string   "merchant_transaction_id"
-    t.string   "select_transaction_id"
-    t.string   "subscription_id"
+    t.float    "amount",                        limit: 24
+    t.string   "currency",                      limit: 255
+    t.string   "status",                        limit: 255
+    t.string   "division_number",               limit: 255
+    t.string   "merchant_transaction_id",       limit: 255
+    t.string   "select_transaction_id",         limit: 255
+    t.string   "subscription_id",               limit: 255
     t.date     "subscription_start_date"
     t.date     "previous_billing_date"
-    t.integer  "previous_billing_count"
-    t.integer  "customer_id"
-    t.string   "payment_method"
-    t.string   "credit_card_number"
-    t.string   "credit_card_account_hash"
+    t.integer  "previous_billing_count",        limit: 4
+    t.integer  "customer_id",                   limit: 4
+    t.string   "payment_method",                limit: 255
+    t.string   "credit_card_number",            limit: 255
+    t.string   "credit_card_account_hash",      limit: 255
     t.date     "credit_card_expiration_date"
-    t.string   "account_holder_name"
-    t.string   "billing_address_line1"
-    t.string   "billing_address_line2"
-    t.string   "billing_address_line3"
-    t.string   "billing_addr_city"
-    t.string   "billing_address_county"
-    t.string   "billing_address_district"
-    t.string   "billing_address_postal_code"
-    t.string   "billing_address_country"
-    t.string   "affiliate_id"
-    t.string   "affiliate_sub_id"
-    t.string   "billing_statement_identifier"
-    t.string   "auth_code"
-    t.string   "avs_code"
-    t.string   "cvn_code"
-    t.string   "name_values"
-    t.integer  "declined_credit_card_batch_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.string   "account_holder_name",           limit: 255
+    t.string   "billing_address_line1",         limit: 255
+    t.string   "billing_address_line2",         limit: 255
+    t.string   "billing_address_line3",         limit: 255
+    t.string   "billing_addr_city",             limit: 255
+    t.string   "billing_address_county",        limit: 255
+    t.string   "billing_address_district",      limit: 255
+    t.string   "billing_address_postal_code",   limit: 255
+    t.string   "billing_address_country",       limit: 255
+    t.string   "affiliate_id",                  limit: 255
+    t.string   "affiliate_sub_id",              limit: 255
+    t.string   "billing_statement_identifier",  limit: 255
+    t.string   "auth_code",                     limit: 255
+    t.string   "avs_code",                      limit: 255
+    t.string   "cvn_code",                      limit: 255
+    t.string   "name_values",                   limit: 255
+    t.integer  "declined_credit_card_batch_id", limit: 4
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.boolean  "payment_method_tokenized"
-    t.string   "charge_status"
-    t.integer  "market_publication_id"
-    t.string   "gci_unit"
-    t.string   "pub_code"
-    t.string   "batch_id"
-    t.integer  "batch_date"
-    t.integer  "account_number"
+    t.string   "charge_status",                 limit: 255
+    t.integer  "market_publication_id",         limit: 4
+    t.string   "gci_unit",                      limit: 255
+    t.string   "pub_code",                      limit: 255
+    t.string   "batch_id",                      limit: 255
+    t.integer  "batch_date",                    limit: 4
+    t.integer  "account_number",                limit: 4
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
-    t.integer  "priority",                      default: 0, null: false
-    t.integer  "attempts",                      default: 0, null: false
+    t.integer  "priority",   limit: 4,          default: 0, null: false
+    t.integer  "attempts",   limit: 4,          default: 0, null: false
     t.text     "handler",    limit: 4294967295,             null: false
     t.text     "last_error", limit: 4294967295
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string   "locked_by"
-    t.string   "queue"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
-  add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue"
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue", using: :btree
 
   create_table "market_publications", force: :cascade do |t|
-    t.string   "gci_unit"
-    t.string   "pub_code"
-    t.string   "declined_credit_card_batch_keys"
-    t.integer  "declined_credit_card_batch_size"
-    t.integer  "vindicia_batch_size"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "gci_unit",                        limit: 255
+    t.string   "pub_code",                        limit: 255
+    t.string   "declined_credit_card_batch_keys", limit: 255
+    t.integer  "declined_credit_card_batch_size", limit: 4
+    t.integer  "vindicia_batch_size",             limit: 4
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
 end

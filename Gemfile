@@ -27,11 +27,13 @@ gem 'httplog'
 gem 'awesome_print'
 gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
 gem 'composite_primary_keys'
-# Background processing
+
+# Background processing, Cron jobs
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'
 gem 'daemons'
+gem 'whenever', :require => false
 
 # Workflow
 gem 'aasm'

@@ -36,7 +36,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
     attrs.merge!({
       'status'                      => charge_status,
-      'timestamp'                   => declined_timestamp.strftime("%Y-%m-%dT%H:%M:%S%:z"),
+      'timestamp'                   => Select.date_to_vindicia(declined_timestamp),
       'subscription_id'             => merchant_transaction_id,
       # Will be the token when they are supported
       'payment_method_id'           => '4111_1111_1111_1111',

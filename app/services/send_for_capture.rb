@@ -17,35 +17,31 @@ class SendForCapture
   end
 
   def self.send_transactions_for_capture(transactions)
-    transactions.each do |trans|
-      success = send_transaction(trans)
-
-      # Updates the transaction's status
-      if success
-        trans.sent_to_vindicia!
-      else
-        trans.mark_in_error!
-      end
-    end
+    send_transactions transactions
   end
 
-  def self.send_transaction(transaction)
+  def self.send_transactions(transactions)
     begin
-      # Send to vindicia
-        # If there is an error
-          # Create an AuditTrail with the error that was sent back
-          # return false
-        # Otherwise
-          # return true
+      response = Select.bill_transactions transactions
 
-      true # Change when we actually send to vindicia
+      if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)
+        response.select { |r| r.is_a? Vindicia::TransactionValidationResponse }.each do |vtvr|
+          trans = transactions.select { |t| t.merchant_transaction_id == vtvr.merchant_transaction_id }.first
+          trans.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+          trans.mark_in_error
+          trans.save
+        end
+      end
+      transactions.select { |t| !t.in_error? }.each { |t| t.sent_to_vindicia! }
+
+      response == true ? true : false
     rescue => e
-      audit_trail = AuditTrail.new(
-        declined_credit_card_transaction_id: transaction.id,
-        event: e.message,
-        exception: e
-      )
-      audit_trail.save
+      transactions.each do |trans|
+        trans.audit_trails.build(event: e.message, exception: e)
+        trans.mark_in_error
+      end
+      transactions.map(&:save)
+
       # maybe send an email?
       false
     end

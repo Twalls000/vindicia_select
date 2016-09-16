@@ -1,6 +1,8 @@
+# Use this file to easily define all of your cron jobs.
+#
 set :output, "/log/#{Rails.env}_cron.log"
-
-# Run every 5 minutes between 8AM and 5PM
-every 1.day, at: (8...17).map { |hour| (0..55).map { |minute| "#{hour}:#{minute.to_s.rjust(2, "0")}" if minute % 5 == 0 } }.flatten.compact do
-  DeclinedBatches.process
+env :PATH, ENV['PATH']
+env :GEM_PATH, ENV['GEM_PATH']
+every 5.minutes do
+  rake "process_declined_credit_cards"
 end

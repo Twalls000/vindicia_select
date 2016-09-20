@@ -3,7 +3,6 @@ class Select
     transactions = Array(transactions)
 
     param_transactions = transactions.map(&:vindicia_fields)
-
     call(:bill_transactions, { transactions: param_transactions })
   end
 
@@ -21,7 +20,7 @@ class Select
   end
 
   def self.date_to_vindicia(date)
-    date.strftime("%Y-%m-%dT%H:%M:%S%Z")
+    date.strftime("%Y-%m-%dT%H:%M:%S%:z")
   end
 
   def self.convert_gci_cc_expiration_date_to_vindicia(gci_date)

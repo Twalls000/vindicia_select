@@ -21,11 +21,11 @@ class Select
   end
 
   def self.date_to_vindicia(date)
-    date.strftime("%Y-%m-%dT%H:%M:%S%:z")
+    date.strftime("%Y-%m-%dT%H:%M:%S%Z")
   end
 
   def self.convert_gci_cc_expiration_date_to_vindicia(gci_date)
-    Date.strptime(gci_date.to_s.rjust(4,'0'), '%m%y').strftime('%Y%m')
+    gci_date.strftime('%Y%m')
   end
 
   def self.response_handler(response, default_return = true)

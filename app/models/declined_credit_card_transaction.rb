@@ -20,6 +20,9 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :send_to_vindicia do
       transitions from: :queued_to_send, to: :pending
     end
+    event :error_sending_to_vindicia do
+      transitions from: :queued_to_send, to: :in_error
+    end
     event :mark_in_error do
       transitions from: :entry, to: :in_error
     end

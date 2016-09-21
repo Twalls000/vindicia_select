@@ -45,8 +45,6 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   scope :get_queued_to_send_transactions, ->(ids){ where("id in (?)", ids).where(:status=>"queued_to_send") }
 
   def vindicia_fields
-    puts "declined_timestamp: #{declined_timestamp.inspect}"
-    puts "declined_timestamp: #{declined_timestamp.class}"
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')
     attrs.merge!({
       'status'                      => charge_status,

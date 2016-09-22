@@ -25,9 +25,6 @@ class SendForCapture
   def self.send_transactions_for_capture(transactions_array)
     #begin
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
-      puts transactions.size
-      puts transactions.inspect
-      puts transactions_array.inspect
       response = Select.bill_transactions transactions
 
       if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)

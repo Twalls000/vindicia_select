@@ -61,7 +61,6 @@ class DeclinedBatches
   end
 
   def self.load_transaction_attributes(declined_cc)
-    puts declined_cc.inspect
     {
       declined_timestamp:          declined_cc.declined_timestamp,
       merchant_transaction_id:     declined_cc.merchant_transaction_id,

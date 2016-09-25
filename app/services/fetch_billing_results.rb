@@ -8,7 +8,7 @@ class FetchBillingResults
   def initialize(args = {})
     @start_timestamp = args.fetch(:start_timestamp)
     @end_timestamp = args.fetch(:end_timestamp)  if args[:end_timestamp]
-    @page = args[:end_timestamp] ? args.fetch(:page) : 0
+    @page = args[:page] ? args.fetch(:page) : 0
     @page_size = args.fetch(:page_size)
   end
 
@@ -32,19 +32,32 @@ class FetchBillingResults
         @page, @page_size)
       process_response response
       @page+=1
-    end until response.empty?
+    end # ADD BACK WHEN YOU UNDERSTAND until response.empty?
   end
 
-  def process_response
-    if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)
-      response.select { |r| r.is_a? Vindicia::TransactionValidationResponse }.each do |vtvr|
-        trans = transactions.select { |t| t.merchant_transaction_id == vtvr.merchant_transaction_id }.first
-        trans.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-        vtvr.code.to_s == "200" ? trans.send_to_vindicia : trans.error_sending_to_vindicia
-        trans.save
+  def process_response response
+    if response.is_a?(Array) && response.map(&:class).include?(Vindicia::Transaction)
+      response.select { |r| r.is_a? Vindicia::Transaction }.each do |transaction|
+        declined_card = DeclinedCreditCardTransaction.
+          find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
+        if declined_card
+          declined_card.named_values = transaction.name_values
+          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+        end
+          binding.pry
+#TransactionStatusType
+#selectTransactionId
+#AutoBillVID
+#authCode
+        declined_card.save
       end
     end
   end
+
   # Call api. select through transaction objects
   # check "status" of each for above
   # if recovered then tell Genesys

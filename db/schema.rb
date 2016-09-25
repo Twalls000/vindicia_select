@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913183607) do
+ActiveRecord::Schema.define(version: 20160923132808) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -68,8 +68,8 @@ ActiveRecord::Schema.define(version: 20160913183607) do
     t.string   "cvn_code",                      limit: 255
     t.string   "name_values",                   limit: 255
     t.integer  "declined_credit_card_batch_id", limit: 4
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.boolean  "payment_method_tokenized"
     t.string   "charge_status",                 limit: 255
     t.integer  "market_publication_id",         limit: 4
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20160913183607) do
     t.string   "batch_id",                      limit: 255
     t.integer  "batch_date",                    limit: 4
     t.integer  "account_number",                limit: 4
+    t.text     "named_values",                  limit: 65535
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

@@ -54,7 +54,7 @@ class DeclinedCreditCard < Base
     self.on_db(gci_unit).
       where(*self.summary_where_params(pub_code, start_keys, end_keys)).
       select("#{gci_unit}, ccvc.*, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
-        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer# as division_number, " +
+        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer#, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
         "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,
@@ -136,12 +136,6 @@ class DeclinedCreditCard < Base
 
   def build_address_line2
     "#{subunit_type.strip} #{subunit_number.strip}".strip
-  end
-
-  # How does the credit/debit amounts work?
-  # Do we need a diff?
-  def amount
-    credit_amount
   end
 
   def save

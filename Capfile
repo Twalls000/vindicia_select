@@ -20,6 +20,8 @@ require "capistrano/deploy"
 # require 'capistrano/chruby'
 require 'capistrano/bundler'
 require 'capistrano/rails'
+require 'capistrano/delayed_job'
+require "whenever/capistrano"
 # require 'capistrano/rails/assets'
 # require 'capistrano/rails/migrations'
 # require 'capistrano/passenger'

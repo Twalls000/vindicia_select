@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914141424) do
+ActiveRecord::Schema.define(version: 20160913183607) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 20160914141424) do
     t.float    "amount",                        limit: 24
     t.string   "currency",                      limit: 255
     t.string   "status",                        limit: 255
-    t.string   "division_id",                   limit: 255
+    t.string   "division_number",               limit: 255
     t.string   "merchant_transaction_id",       limit: 255
     t.string   "select_transaction_id",         limit: 255
     t.string   "subscription_id",               limit: 255

@@ -27,11 +27,13 @@ gem 'httplog'
 gem 'awesome_print'
 gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
 gem 'composite_primary_keys'
-# Background processing
+
+# Background processing, Cron jobs
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'
 gem 'daemons'
+gem 'whenever'
 
 # Workflow
 gem 'aasm'
@@ -55,6 +57,7 @@ group :development, :test do
   gem "capistrano", '= 3.6.0'
   gem 'capistrano-bundler', '~> 1.1.1'
   gem 'capistrano-rails'
+  gem 'capistrano3-delayed-job', '~> 1.0'
   gem "minitest"
 end
 

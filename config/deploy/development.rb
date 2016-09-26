@@ -21,6 +21,14 @@ before "deploy:assets:precompile", :copy_app_config do
   end
 end
 
+# Delayed jobs for this environment.
+set :delayed_job_queues, ['create_declined_batches','fetch_billing_results', 'send_for_capture']
+set :delayed_job_pools, { 'create_declined_batches' => 1 }
+set :delayed_job_pools, { 'fetch_billing_results' => 3 }
+set :delayed_job_pools, { 'send_for_capture' => 3 }
+set :delayed_job_pid_dir, '/tmp'
+
+
 # role-based syntax
 # ==================
 

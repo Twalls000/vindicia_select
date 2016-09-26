@@ -18,8 +18,6 @@ class DeclinedBatches
 
         DeclinedBatchesJob.perform_later declined_batch.id
       end
-
-    results
   end
 
   def self.include_markets_and_pub

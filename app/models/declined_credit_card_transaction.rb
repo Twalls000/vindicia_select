@@ -16,7 +16,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     state :entry, initial: true#, after_enter: :update_audit_trail_on_state_change
     state :pending, :in_error
 
-    event :send_to_vindicia do
+    event :sent_to_vindicia do
       transitions from: :entry, to: :pending
     end
     event :mark_in_error do

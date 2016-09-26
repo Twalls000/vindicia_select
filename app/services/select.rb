@@ -14,7 +14,6 @@ class Select
   end
 
   def self.call(method_name, params = {})
-    binding.pry
     resp = Vindicia::Connection.call("Select", method_name.to_sym, params)
     response_handler resp, (method_name == :bill_transactions ? true : [])
   end

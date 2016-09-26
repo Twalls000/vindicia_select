@@ -137,9 +137,4 @@ class DeclinedCreditCard < Base
   def build_address_line2
     "#{subunit_type.strip} #{subunit_number.strip}".strip
   end
-
-  def save
-
-  end
-
 end

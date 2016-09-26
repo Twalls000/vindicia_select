@@ -3,7 +3,6 @@ class Select
     transactions = Array(transactions)
 
     param_transactions = transactions.map(&:vindicia_fields)
-
     call(:bill_transactions, { transactions: param_transactions })
   end
 
@@ -15,8 +14,7 @@ class Select
   end
 
   def self.call(method_name, params = {})
-    resp = Vindicia::Connection.call("Select",method_name.to_sym,params)
-
+    resp = Vindicia::Connection.call("Select", method_name.to_sym, params)
     response_handler resp, (method_name == :bill_transactions ? true : [])
   end
 
@@ -25,28 +23,86 @@ class Select
   end
 
   def self.convert_gci_cc_expiration_date_to_vindicia(gci_date)
-    Date.strptime(gci_date.to_s.rjust(4,'0'), '%m%y').strftime('%Y%m')
+    gci_date.strftime('%Y%m')
   end
 
   def self.response_handler(response, default_return = true)
     case response
     when String && /http/
       return default_return
-    when Hash, Savon::Response
-      return_val =
-        if response.is_a? Hash
-          response.first[1][:return]
-        else
-          response.hash[:envelope][:body].first[1][:return]
-        end
+    when Savon::Response
+      return_val = response.hash[:envelope][:body].first[1][:return]
       raise("Error with soap_id #{return_val[:soap_id]} (code #{return_val[:return_code]}): #{return_val[:return_string]}")
-    when Vindicia::TransactionValidationResponse
-      trans_id = response.merchant_transaction_id
-      code = response.code
-      desc = response.description
-      raise "Error with merchant_transaction_id #{trans_id} (code #{code}): #{desc}"
+    when Vindicia::Transaction
+      return Array(response)
     else
       return response
     end
+  end
+
+  private
+  def create_vindicia_class(vindicia_class)
+    class_name = vindicia_class.name
+    attributes = vindicia_class.attributes
+
+    Vindicia.const_set(class_name, Class.new() do
+      include ActiveModel::Model
+      include ActiveModel::Validations
+
+      self.const_set('ATTRIBUTES',attributes)
+
+      attr_accessor *attributes
+
+      def initialize(attributes={})
+        attributes.keys.each do |name|
+          is_vindicia_object = attributes[name].is_a?(Hash) && attributes[name][:"@xsi:type"].split(':')[0] =='vin'
+          if is_vindicia_object && attributes[name].is_a?(Hash)
+            class_name = "Vindicia::#{attributes[name][:"@xsi:type"].split(':')[1]}"
+            begin
+              send("#{name}=", class_name.constantize.new(attributes[name]))
+            rescue
+              vindicia_class = Vindicia::Schema.new.classes.select {|class_obj| class_obj.name == class_name.split('::')[1]}.first
+              if vindicia_class
+                Vindicia::SingleClassBuilder.new vindicia_class
+                send("#{name}=", class_name.constantize.new(attributes[name]))
+              else
+                return gem_original_require(class_name)
+              end
+            end
+          else
+            send("#{name}=", attributes[name]) rescue nil
+          end
+
+        end
+      end
+
+      def attributes
+        self.class::ATTRIBUTES.inject({}) do |hash, key|
+          hash.merge({ key => self.send(key) })
+        end
+      end
+
+      def self.class_methods
+        Vindicia::Connection.client_resource_model(self.name.split('::').last).operations rescue []
+      end
+
+    end)
+
+  end
+
+  def create_vindicia_class_methods(vindicia_class)
+    class_name = vindicia_class.name
+    class_methods = "Vindicia::#{class_name}".constantize.class_methods rescue []
+
+    "Vindicia::#{class_name}".constantize.send :define_method, :vindicia_methods do
+      "Vindicia::#{class_name}".constantize.class_methods rescue []
+    end
+
+    class_methods.each do |method_name|
+      "Vindicia::#{class_name}".constantize.define_singleton_method(method_name.to_sym) do |params = {}|
+        Vindicia::Connection.call("#{class_name}",method_name.to_sym,params)
+      end
+    end
+
   end
 end

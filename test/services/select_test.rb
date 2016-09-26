@@ -134,7 +134,7 @@ class SelectTest < ActiveSupport::TestCase
 
   class ConvertGCICCExpirationDateToVindicia < SelectTest
     test 'converts credit card expiration date to Vindicia format' do
-      assert_equal "200903", Select.convert_gci_cc_expiration_date_to_vindicia(309)
+      assert_equal "200903", Select.convert_gci_cc_expiration_date_to_vindicia(Date.parse("March 10 2009"))
     end
   end
 

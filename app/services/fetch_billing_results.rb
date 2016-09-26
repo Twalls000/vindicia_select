@@ -40,26 +40,15 @@ class FetchBillingResults
       response.select { |r| r.is_a? Vindicia::Transaction }.each do |transaction|
         declined_card = DeclinedCreditCardTransaction.
           find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
+        binding.pry
         if declined_card
           declined_card.named_values = transaction.name_values
-          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
-          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
-          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
-          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
-          transaction.name_values.find {|e|  e[:name]== "vin:AutoBillVID"}
+          declined_card.charge_status = transaction.status
+          declined_card.select_transaction_id = transaction.select_transaction_id
+          declined_card.auth_code = transaction.auth_code
+          declined_card.save
         end
-          binding.pry
-#TransactionStatusType
-#selectTransactionId
-#AutoBillVID
-#authCode
-        declined_card.save
       end
     end
   end
-
-  # Call api. select through transaction objects
-  # check "status" of each for above
-  # if recovered then tell Genesys
-  # if anything else then tell Genesys
 end

@@ -23,11 +23,18 @@ test:
   timeout: 5000
   database: db/test.sqlite3
 
+ods_library:
+  adapter: ibm_db_odbc
+  datasource: marvel
+  username: username
+  password: password
+  schema: godsfiles2
+
 q9999: &gci
   adapter: ibm_db_odbc
   datasource: marvel
-  username: jrmoore
-  password: S4turD4y1
+  username: username
+  password: password
   schema: q9999files
 
 g8872:

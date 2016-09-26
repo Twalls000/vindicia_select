@@ -1,9 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  status: 
-  create_start_timestamp: 
+  status:
+  create_start_timestamp: <%= Time.now %>
+  gci_unit: 9999
+  pub_code: GN
 
 two:
-  status: 
-  create_start_timestamp: 
+  status:
+  create_start_timestamp: <%= Time.now %>
+  gci_unit: 8872
+  pub_code: US

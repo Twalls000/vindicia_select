@@ -10,16 +10,12 @@ class CreateDelayedJobs < ActiveRecord::Migration
       table.datetime :failed_at                         # Set when all retries have failed (actually, by default, the record is deleted instead)
       table.string   :locked_by                         # Who is working on this object (if locked)
       table.string   :queue                             # The name of the queue this job is in
-      table.integer  :delayed_reference_id              # Allow job types to link to entries
-      table.string   :delayed_reference_type            # Assign the job type
 
       table.timestamps null: true
     end
 
     add_index :delayed_jobs, [:priority, :run_at], name: "delayed_jobs_priority"
     add_index :delayed_jobs, [:queue], :name => 'delayed_jobs_queue'
-    add_index :delayed_jobs, [:delayed_reference_id],   :name => 'delayed_jobs_delayed_reference_id'
-    add_index :delayed_jobs, [:delayed_reference_type], :name => 'delayed_jobs_delayed_reference_type'
   end
 
   def self.down

@@ -28,7 +28,21 @@ class FetchBillingResultsTest < ActiveSupport::TestCase
   end
 
   class Process < FetchBillingResultsTest
-    # Tests
+    test 'FetchBillingResultsJob::perform_later is called' do
+      # the perform_later lambda is called when
+      # FetchBillingResultsJob::perform_later, the stubbed method, is called in
+      # FetchBillingResults::process. This lambda changes the value of test_var,
+      # thus ensuring that FetchBillingResultsJob::perform_later was called.
+
+      test_var = false
+      perform_later = ->{
+        test_var = true
+      }
+      FetchBillingResultsJob.stub(:perform_later, perform_later) do
+        FetchBillingResults.process
+      end
+      assert test_var
+    end
   end
 
   class FetchBillingResultsMethod < FetchBillingResultsTest

@@ -81,6 +81,14 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     attrs
   end
 
+  def status_update
+    if charge_status == "Captured"
+      self.captured_funds
+    else
+      self.failed_to_capture_funds
+    end
+  end
+
   # Combine status to present back to Genesys
   def transaction_status
     case aasm.current_state

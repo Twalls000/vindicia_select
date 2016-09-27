@@ -45,6 +45,7 @@ class FetchBillingResults
           declined_card.charge_status = transaction.status
           declined_card.select_transaction_id = transaction.select_transaction_id
           declined_card.auth_code = transaction.auth_code
+          declined_card.status_update
           declined_card.save
         end
       end

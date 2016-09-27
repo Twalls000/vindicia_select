@@ -23,7 +23,7 @@ class SendForCapture
   end
 
   def self.send_transactions_for_capture(transactions_array)
-    #begin
+    begin
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
       response = Select.bill_transactions transactions
 
@@ -37,14 +37,14 @@ class SendForCapture
       end
 
       response == true ? true : false
-    #rescue => e
-    #  transactions.each do |trans|
-    #    trans.audit_trails.build(event: e.message, exception: e)
-    #    trans.mark_in_error
-    #  end
-    #  transactions.map(&:save)
-    #  # maybe send an email?
-    #  false
-    #end
+    rescue => e
+      transactions.each do |trans|
+        trans.audit_trails.build(event: e.message, exception: e)
+        trans.mark_in_error
+      end
+      transactions.map(&:save)
+      # maybe send an email?
+      false
+    end
   end
 end

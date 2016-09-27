@@ -12,7 +12,7 @@ set :ssh_options, {
   }
 
 set :deploy_to, '/opt/apps/vindicia-select/'
-set :branch, 'slsmkt-985b'
+set :branch, ask('Please enter the branch:', "jira tkt?")
 set :rails_env, 'development'
 
 before "deploy:assets:precompile", :copy_app_config do

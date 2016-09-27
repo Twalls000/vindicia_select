@@ -7,8 +7,8 @@ class FetchBillingResults
   # The page may default to 0, if not provided.
   def initialize(args = {})
     @start_timestamp = args.fetch(:start_timestamp)
-    @end_timestamp = args.fetch(:end_timestamp)  if args[:end_timestamp]
-    @page = args[:page] ? args.fetch(:page) : 0
+    @end_timestamp = args[:end_timestamp]
+    @page = args.fetch(:page, 0)
     @page_size = args.fetch(:page_size)
   end
 

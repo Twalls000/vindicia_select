@@ -40,7 +40,6 @@ class FetchBillingResults
       response.select { |r| r.is_a? Vindicia::Transaction }.each do |transaction|
         declined_card = DeclinedCreditCardTransaction.
           find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
-        binding.pry
         if declined_card
           declined_card.named_values = transaction.name_values
           declined_card.charge_status = transaction.status

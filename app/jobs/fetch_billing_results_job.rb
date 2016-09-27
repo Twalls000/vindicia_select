@@ -22,7 +22,7 @@ class FetchBillingResultsJob < ActiveJob::Base
     eval "Vindicia::Transaction"
 
     #
-    # Complete and total hack!
+    # End Of Complete and total hack!
     #
 
     # Get the definitions to pull the data back

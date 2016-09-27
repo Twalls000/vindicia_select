@@ -5,7 +5,8 @@ class ReturnNotificationSetting < ActiveRecord::Base
   validates :days_before_failure, numericality: { only_integer: true }
 
   def set_failed_transactions
-    days_before_failure #set the date for the scope!
-    DeclinedCreditCardTransaction.failed_billing_results
+    DeclinedCreditCardTransaction.failed_billing_results(days_before_failure).each do |failed|
+      failed.failed_to_get_reply!
+    end
   end
 end

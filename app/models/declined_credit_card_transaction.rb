@@ -13,7 +13,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
   aasm column: "status" do
     state :entry, initial: true
-    state :queued_to_send, :pending, :in_error
+    state :queued_to_send, :pending, :in_error, :processed, :printed_bill,
+      :no_reply
 
     event :queue_to_vindicia do
       transitions from: :entry, to: :queued_to_send
@@ -33,6 +34,9 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :failed_to_capture_funds do
       transitions from: :pending, to: :printed_bill
     end
+    event :failed_to_get_reply do
+      transitions from: :pending, to: :no_reply
+    end
   end
 
   scope :by_gci_unit_and_pub_code, ->(gci_unit, pub_code){
@@ -49,7 +53,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     where(merchant_transaction_id:merchant_transaction_id)
   }
 
-  scope :failed_billing_results, ->(days_before_failure) { where(created_at:days_before_failure) }
+  scope :failed_billing_results, ->(days_before_failure) {
+    where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day) }
 
   def vindicia_fields
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')

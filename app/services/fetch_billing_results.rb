@@ -32,7 +32,7 @@ class FetchBillingResults
         @page, @page_size)
       process_response response
       @page+=1
-    end # ADD BACK WHEN YOU UNDERSTAND until response.empty?
+    end until response.empty?
   end
 
   def process_response response

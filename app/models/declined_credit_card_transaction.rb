@@ -38,13 +38,18 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   scope :by_gci_unit_and_pub_code, ->(gci_unit, pub_code){
     where(gci_unit:gci_unit, pub_code:pub_code)
   }
+
   scope :oldest_unsent, ->{
     where(status: "entry").order("created_at ASC")
   }
+
   scope :get_queued_to_send_transactions, ->(ids){ where("id in (?)", ids).where(:status=>"queued_to_send") }
+
   scope :find_by_merchant_transaction_id, ->(merchant_transaction_id){
     where(merchant_transaction_id:merchant_transaction_id)
   }
+
+  scope :failed_billing_results, ->(days_before_failure) { where(created_at:days_before_failure) }
 
   def vindicia_fields
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')

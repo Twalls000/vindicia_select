@@ -25,10 +25,12 @@ class FetchBillingResultsJob < ActiveJob::Base
     # Complete and total hack!
     #
 
-    # TODO do we add these to the submission? Make them scalable?
-    # in short, these settings are for testing.
-    fetch_billing_results = FetchBillingResults.new(page_size:10,
-      start_timestamp:Time.now-7.days, end_timestamp:Time.now-4.days)
+    # Get the definitions to pull the data back
+    return_notification_setting = ReturnNotificationSetting.first
+
+    fetch_billing_results = FetchBillingResults.new(page_size:return_notification_setting.page,
+      start_timestamp:Time.now-return_notification_setting.checking_number_of_days.days,
+      end_timestamp:Time.now-return_notification_setting.range_to_check.days)
     fetch_billing_results.fetch_billing_results
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160923132808) do
+ActiveRecord::Schema.define(version: 20160926194731) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -106,6 +106,15 @@ ActiveRecord::Schema.define(version: 20160923132808) do
     t.integer  "vindicia_batch_size",             limit: 4
     t.datetime "created_at",                                  null: false
     t.datetime "updated_at",                                  null: false
+  end
+
+  create_table "return_notification_settings", force: :cascade do |t|
+    t.integer  "checking_number_of_days", limit: 4
+    t.integer  "range_to_check",          limit: 4
+    t.integer  "page",                    limit: 4
+    t.integer  "days_before_failure",     limit: 4
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
 end

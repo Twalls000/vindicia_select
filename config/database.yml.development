@@ -9,13 +9,12 @@ development:
   database: vindicia_select_development
   host: ent-mocdvgen03
 
-db2:
+ods_library:
   adapter: ibm_db_odbc
   datasource: marvel
-  database: database_name
-  username: username
-  password: password
-  schema: schema
+  username: <%= ENV['ICON_DB_USERNAME'] %>
+  password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['ICON_DB_PASSWORD'])) %>
+  schema: godsfiles2
 
 test:
   adapter: sqlite3
@@ -23,18 +22,11 @@ test:
   timeout: 5000
   database: db/test.sqlite3
 
-ods_library:
-  adapter: ibm_db_odbc
-  datasource: marvel
-  username: username
-  password: password
-  schema: godsfiles2
-
 q9999: &gci
   adapter: ibm_db_odbc
   datasource: marvel
-  username: username
-  password: password
+  username: <%= ENV['ICON_DB_USERNAME'] %>
+  password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['ICON_DB_PASSWORD'])) %>
   schema: q9999files
 
 g8872:

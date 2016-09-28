@@ -13,7 +13,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
   aasm column: "status" do
     state :entry, initial: true
-    state :queued_to_send, :pending, :in_error
+    state :queued_to_send, :pending, :in_error, :processed, :printed_bill,
+      :no_reply
 
     event :queue_to_vindicia do
       transitions from: :entry, to: :queued_to_send
@@ -33,18 +34,27 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :failed_to_capture_funds do
       transitions from: :pending, to: :printed_bill
     end
+    event :failed_to_get_reply do
+      transitions from: :pending, to: :no_reply
+    end
   end
 
   scope :by_gci_unit_and_pub_code, ->(gci_unit, pub_code){
     where(gci_unit:gci_unit, pub_code:pub_code)
   }
+
   scope :oldest_unsent, ->{
     where(status: "entry").order("created_at ASC")
   }
+
   scope :get_queued_to_send_transactions, ->(ids){ where("id in (?)", ids).where(:status=>"queued_to_send") }
+
   scope :find_by_merchant_transaction_id, ->(merchant_transaction_id){
     where(merchant_transaction_id:merchant_transaction_id)
   }
+
+  scope :failed_billing_results, ->(days_before_failure) {
+    where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day) }
 
   def vindicia_fields
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')
@@ -69,6 +79,14 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
 
     attrs
+  end
+
+  def status_update
+    if charge_status == "Captured"
+      self.captured_funds
+    else
+      self.failed_to_capture_funds
+    end
   end
 
   # Combine status to present back to Genesys

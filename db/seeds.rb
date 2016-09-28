@@ -19,4 +19,11 @@ if Rails.env == "development"
   })
 
   mp.save
+
+  ReturnNotificationSetting.delete_all
+
+  ReturnNotificationSetting.new({checking_number_of_days:2,
+    range_to_check:1,
+    page:10,
+    days_before_failure:0}).save
 end

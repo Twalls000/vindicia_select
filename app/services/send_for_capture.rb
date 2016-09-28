@@ -5,14 +5,15 @@ class SendForCapture
   def self.process
     begin
       mp = get_next_batch
-      # Get the transactions and mark them for processing
-      transactions_to_send =
-        DeclinedCreditCardTransaction.oldest_unsent.
-          by_gci_unit_and_pub_code(mp.gci_unit, mp.pub_code).
-          limit(mp.vindicia_batch_size)
-      transactions_to_send.each { |t| t.queue_to_vindicia! }
+      if mp
+        # Get the transactions and mark them for processing
+        transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
+            by_gci_unit_and_pub_code(mp.gci_unit, mp.pub_code).
+            limit(mp.vindicia_batch_size)
+        transactions_to_send.each { |t| t.queue_to_vindicia! }
 
-      SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
+        SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
+      end
       mp = get_next_batch
     end until mp.nil?
   end
@@ -23,7 +24,7 @@ class SendForCapture
   end
 
   def self.send_transactions_for_capture(transactions_array)
-    #begin
+    begin
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
       response = Select.bill_transactions transactions
 
@@ -37,14 +38,14 @@ class SendForCapture
       end
 
       response == true ? true : false
-    #rescue => e
-    #  transactions.each do |trans|
-    #    trans.audit_trails.build(event: e.message, exception: e)
-    #    trans.mark_in_error
-    #  end
-    #  transactions.map(&:save)
-    #  # maybe send an email?
-    #  false
-    #end
+    rescue => e
+      transactions.each do |trans|
+        trans.audit_trails.build(event: e.message, exception: e)
+        trans.mark_in_error
+      end
+      transactions.map(&:save)
+      # maybe send an email?
+      false
+    end
   end
 end

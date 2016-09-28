@@ -22,10 +22,9 @@ before "deploy:assets:precompile", :copy_app_config do
 end
 
 # Delayed jobs for this environment.
-set :delayed_job_pools, { 'create_declined_batches' => 1 }
-set :delayed_job_pools, { 'fetch_billing_results' => 3 }
-set :delayed_job_pools, { 'send_for_capture' => 3 }
-set :delayed_job_pools, { 'failed_billing_results' => 1 }
+set :delayed_job_pools, { 'failed_billing_results' => 1,
+  'create_declined_batches' => 1, 'fetch_billing_results' => 3,
+  'send_for_capture' => 3 }
 set :delayed_job_pid_dir, '/tmp'
 
 

@@ -6,7 +6,7 @@ We will process the background jobs to gather transactions into a temporary tran
 
 * Status: Entry
 
-2. send_for_capture - This is sending to Vindicia Select by calling the API Select.billTransactions
+1. send_for_capture - This is sending to Vindicia Select by calling the API Select.billTransactions
 
 * Status: queued_to_send (in process to send)
 
@@ -14,7 +14,7 @@ We will process the background jobs to gather transactions into a temporary tran
 
 * Status: in_error
 
-3. fetch_billing_results - This job will call Vindicia Select's API to retrieve transactions that are ready to be returned.
+1. fetch_billing_results - This job will call Vindicia Select's API to retrieve transactions that are ready to be returned.
 
 * Status: processed
 
@@ -22,6 +22,6 @@ We will process the background jobs to gather transactions into a temporary tran
 
 * Status: in_error
 
-4. failed_billing_results:
+1. failed_billing_results:
 
 * Status: no_reply

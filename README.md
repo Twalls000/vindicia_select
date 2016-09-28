@@ -1,7 +1,7 @@
 # Vindicia Select
 
 ## Queue Processes
-> We will process the background jobs to gather transactions into a temporary transaction table, to send the transactions to Vindicia Select, and to pull transactions back from Vindicia Select
+We will process the background jobs to gather transactions into a temporary transaction table, to send the transactions to Vindicia Select, and to pull transactions back from Vindicia Select
 1. declined_batches - Create the table entries Declined Credit Card Batches. The submitted job will create the Declined Credit Card Transactions.
 
 * Status: Entry

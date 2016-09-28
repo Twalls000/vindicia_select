@@ -15,8 +15,13 @@ We will process the background jobs to gather transactions into a temporary tran
 * Status: in_error
 
 3. fetch_billing_results - This job will call Vindicia Select's API to retrieve transactions that are ready to be returned.
+
 * Status: processed
+
 * Status: printed_bill
+
 * Status: in_error
+
 4. failed_billing_results:
+
 * Status: no_reply

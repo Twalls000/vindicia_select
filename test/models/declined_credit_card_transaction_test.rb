@@ -41,5 +41,8 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       @trans.status="in_error"
       assert_equal [], @trans.aasm.events(:permitted => true).map(&:name)
     end
+    test 'status_update should reflect results from Vindicia' do
+      @trans.charge_status="Captured"
+    end
   end
 end

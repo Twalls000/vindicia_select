@@ -1,6 +1,6 @@
 # Use this file to easily define all of your cron jobs.
 #
-set :output, File.join(Whenever.path, "log", "vindicia_cron.log")
+set :output, File.join("#{Whenever.path}/../../shared", "log", "vindicia_cron.log")
 env :PATH, ENV['PATH']
 env :GEM_PATH, ENV['GEM_PATH']
 every 1.day, :at => '12:15 am' do

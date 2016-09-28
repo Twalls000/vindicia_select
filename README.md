@@ -17,8 +17,8 @@ This is sending to Vindicia Select by calling the API Select.billTransactions
 ### fetch_billing_results
 This job will call Vindicia Select's API to retrieve transactions that are ready to be returned.
 
-* Status: processed
-* Status: printed_bill
+* Status: processed (Funds were captured)
+* Status: printed_bill (Funds were not captured, set to printed bill)
 * Status: in_error
 
 ### failed_billing_results: This is a daily job to set status for transactions with no reply.

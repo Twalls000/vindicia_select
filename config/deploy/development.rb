@@ -12,7 +12,7 @@ set :ssh_options, {
   }
 
 set :deploy_to, '/opt/apps/vindicia-select/'
-set :branch, ask('Please enter the branch:', "jira tkt?")
+set :branch, ask('the branch:', "jira tkt?")
 set :rails_env, 'development'
 
 before "deploy:assets:precompile", :copy_app_config do
@@ -22,10 +22,12 @@ before "deploy:assets:precompile", :copy_app_config do
 end
 
 # Delayed jobs for this environment.
-set :delayed_job_queues, ['create_declined_batches','fetch_billing_results', 'send_for_capture']
+set :delayed_job_queues, ['create_declined_batches','fetch_billing_results',
+  'send_for_capture', 'failed_billing_results']
 set :delayed_job_pools, { 'create_declined_batches' => 1 }
 set :delayed_job_pools, { 'fetch_billing_results' => 3 }
 set :delayed_job_pools, { 'send_for_capture' => 3 }
+set :delayed_job_pools, { 'failed_billing_results' => 1 }
 set :delayed_job_pid_dir, '/tmp'
 
 

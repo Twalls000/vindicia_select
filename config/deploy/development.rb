@@ -17,13 +17,11 @@ set :rails_env, 'development'
 
 before "deploy:assets:precompile", :copy_app_config do
   on roles(:app) do
-    #execute "cp -fa #{release_path}/config/deploy/development/* #{release_path}/config/"
+    execute "cp -fa #{release_path}/config/deploy/development/* #{release_path}/config/"
   end
 end
 
 # Delayed jobs for this environment.
-set :delayed_job_queues, ['create_declined_batches','fetch_billing_results',
-  'send_for_capture', 'failed_billing_results']
 set :delayed_job_pools, { 'create_declined_batches' => 1 }
 set :delayed_job_pools, { 'fetch_billing_results' => 3 }
 set :delayed_job_pools, { 'send_for_capture' => 3 }

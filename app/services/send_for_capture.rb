@@ -5,14 +5,15 @@ class SendForCapture
   def self.process
     begin
       mp = get_next_batch
-      # Get the transactions and mark them for processing
-      transactions_to_send =
-        DeclinedCreditCardTransaction.oldest_unsent.
-          by_gci_unit_and_pub_code(mp.gci_unit, mp.pub_code).
-          limit(mp.vindicia_batch_size)
-      transactions_to_send.each { |t| t.queue_to_vindicia! }
+      if mp
+        # Get the transactions and mark them for processing
+        transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
+            by_gci_unit_and_pub_code(mp.gci_unit, mp.pub_code).
+            limit(mp.vindicia_batch_size)
+        transactions_to_send.each { |t| t.queue_to_vindicia! }
 
-      SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
+        SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
+      end
       mp = get_next_batch
     end until mp.nil?
   end

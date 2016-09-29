@@ -16,7 +16,7 @@ class DeclinedCreditCard < Base
   alias_attribute :avs_code,                :vsnavs
   alias_attribute :auth_code,               :vsrscd
   alias_attribute :select_transaction_id,   :vsvord
-  alias_attribute :expiration_yymm,         :vscexp
+  alias_attribute :expiration_mmyy,         :vscexp
   # These aliases are for the Credit Card model
   alias_attribute :card_number,             :crdnbr
   alias_attribute :card_type,               :ccctyp
@@ -122,7 +122,6 @@ class DeclinedCreditCard < Base
   end
 
   def expiration_date
-    expiration_yymm.to_s.rjust(4,'0')
-    "20#{}01".to_date
+    Date.strptime(expiration_mmyy.to_s.rjust(4,'0'), "%m%y")
   end
 end

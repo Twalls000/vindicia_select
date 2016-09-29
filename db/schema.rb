@@ -23,15 +23,15 @@ ActiveRecord::Schema.define(version: 20160926194731) do
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
+    t.string   "gci_unit",               limit: 255
+    t.string   "pub_code",               limit: 255
     t.string   "status",                 limit: 255
+    t.string   "end_keys",               limit: 255
+    t.string   "start_keys",             limit: 255
     t.datetime "create_start_timestamp"
     t.datetime "create_end_timestamp"
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
-    t.string   "start_keys",             limit: 255
-    t.string   "end_keys",               limit: 255
-    t.string   "pub_code",               limit: 255
-    t.string   "gci_unit",               limit: 255
   end
 
   create_table "declined_credit_card_transactions", force: :cascade do |t|
@@ -66,18 +66,18 @@ ActiveRecord::Schema.define(version: 20160926194731) do
     t.string   "auth_code",                     limit: 255
     t.string   "avs_code",                      limit: 255
     t.string   "cvn_code",                      limit: 255
-    t.string   "name_values",                   limit: 255
+    t.text     "name_values",                   limit: 65535
+    t.string   "charge_status",                 limit: 255
+    t.string   "gci_unit",                      limit: 255
+    t.string   "pub_code",                      limit: 255
+    t.integer  "account_number",                limit: 4
+    t.integer  "batch_date",                    limit: 4
+    t.string   "batch_id",                      limit: 255
     t.integer  "declined_credit_card_batch_id", limit: 4
     t.datetime "created_at",                                  null: false
     t.datetime "updated_at",                                  null: false
     t.boolean  "payment_method_tokenized"
-    t.string   "charge_status",                 limit: 255
     t.integer  "market_publication_id",         limit: 4
-    t.string   "gci_unit",                      limit: 255
-    t.string   "pub_code",                      limit: 255
-    t.string   "batch_id",                      limit: 255
-    t.integer  "batch_date",                    limit: 4
-    t.integer  "account_number",                limit: 4
     t.text     "named_values",                  limit: 65535
   end
 

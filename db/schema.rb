@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20160926194731) do
     t.date     "subscription_start_date"
     t.date     "previous_billing_date"
     t.integer  "previous_billing_count",        limit: 4
-    t.integer  "customer_id",                   limit: 4
+    t.string   "customer_id",                   limit: 255
     t.string   "payment_method",                limit: 255
     t.string   "credit_card_number",            limit: 255
     t.string   "credit_card_account_hash",      limit: 255
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20160926194731) do
     t.string   "auth_code",                     limit: 255
     t.string   "avs_code",                      limit: 255
     t.string   "cvn_code",                      limit: 255
-    t.text     "name_values",                   limit: 65535
+    t.text     "named_values",                  limit: 65535
     t.string   "charge_status",                 limit: 255
     t.string   "gci_unit",                      limit: 255
     t.string   "pub_code",                      limit: 255
@@ -78,7 +78,6 @@ ActiveRecord::Schema.define(version: 20160926194731) do
     t.datetime "updated_at",                                  null: false
     t.boolean  "payment_method_tokenized"
     t.integer  "market_publication_id",         limit: 4
-    t.text     "named_values",                  limit: 65535
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

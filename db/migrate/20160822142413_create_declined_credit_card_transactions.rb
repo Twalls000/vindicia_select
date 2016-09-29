@@ -12,7 +12,7 @@ class CreateDeclinedCreditCardTransactions < ActiveRecord::Migration
       t.date :subscription_start_date
       t.date :previous_billing_date
       t.integer :previous_billing_count
-      t.integer :customer_id
+      t.string :customer_id
       t.string :payment_method
       t.string :credit_card_number
       t.string :credit_card_account_hash
@@ -32,7 +32,7 @@ class CreateDeclinedCreditCardTransactions < ActiveRecord::Migration
       t.string :auth_code
       t.string :avs_code
       t.string :cvn_code
-      t.text :name_values
+      t.text :named_values
       t.string :charge_status
       t.string :gci_unit
       t.string :pub_code

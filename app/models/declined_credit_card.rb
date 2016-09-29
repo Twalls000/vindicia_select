@@ -3,48 +3,44 @@ class DeclinedCreditCard < Base
   self.table_name = :ccvc
   self.primary_key = [:vsppub, :vsbtch, :vsbdat, :vspact]
 
-  alias_attribute :pub_code,        :vsppub
-  alias_attribute :batch_id,        :vsbtch
-  alias_attribute :batch_date,      :vsbdat
-  alias_attribute :account_number,  :vspact
-  alias_attribute :credit_amount,   :vscamt
-  alias_attribute :debit_amount,    :vsdamt
-  alias_attribute :decline_status,  :vsrscd
-  alias_attribute :decline_reason,  :vsrstx
-  alias_attribute :audit_date,      :udtdat
-  alias_attribute :audit_time,      :udttim
-  alias_attribute :auth_code,       :vsrscd
-  alias_attribute :avs_code,        :vsnavs
-  alias_attribute :customer_id,     :vsctid
-  alias_attribute :audit_timestamp, :vstmst
+  alias_attribute :pub_code,                :vsppub
+  alias_attribute :batch_id,                :vsbtch
+  alias_attribute :batch_date,              :vsbdat
+  alias_attribute :account_number,          :vspact
+  alias_attribute :amount,                  :vsamt
+  alias_attribute :declined_timestamp,      :vstmst
+  alias_attribute :merchant_transaction_id, :vstrid
+  alias_attribute :subscription_id,         :vssbid
+  alias_attribute :customer_id,             :vsctid
+  alias_attribute :division_number,         :vsdvsn
+  alias_attribute :avs_code,                :vsnavs
+  alias_attribute :auth_code,               :vsrscd
+  alias_attribute :select_transaction_id,   :vsvord
+  alias_attribute :expiration_yymm,         :vscexp
   # These aliases are for the Credit Card model
-  alias_attribute :card_number,     :crdnbr
-  alias_attribute :card_type,       :ccctyp
-  alias_attribute :expiration_date, :cccexd
-  alias_attribute :name,            :ccname
-  alias_attribute :address_line1,   :ccadr1
-  alias_attribute :address_line2,   :ccadr2
-  alias_attribute :city_state,      :ccctst
-  alias_attribute :zip_code,        :pozip5
+  alias_attribute :card_number,             :crdnbr
+  alias_attribute :card_type,               :ccctyp
+  alias_attribute :name,                    :ccname
+  alias_attribute :address_line1,           :ccadr1
+  alias_attribute :address_line2,           :ccadr2
+  alias_attribute :city_state,              :ccctst
+  alias_attribute :zip_code,                :pozip5
   # This alias is for the Customer model
-  alias_attribute :first_name,      :fnam
-  alias_attribute :last_name,       :lnam
+  alias_attribute :first_name,              :fnam
+  alias_attribute :last_name,               :lnam
   # This alias is for the Address model
-  alias_attribute :unit_number,     :unnbr
-  alias_attribute :pre_direction,   :predir
-  alias_attribute :street_name,     :street
-  alias_attribute :box_number,      :boxnbr
-  #alias_attribute :         ,      :suffix Let's use the actual suffix name
-  alias_attribute :post_direction,  :pstdir
-  alias_attribute :subunit_type,    :suntyp
-  alias_attribute :subunit_number,  :sunnbr
-  alias_attribute :city_name,       :city
-  alias_attribute :state,           :astate
-  alias_attribute :country,         :cntry
-  #alias_attribute :        ,       :pozip5 N/A because of name conflict
-
-  # This alias is for the Card Control model
-  alias_attribute :division_number, :'cmmer#'
+  alias_attribute :unit_number,             :unnbr
+  alias_attribute :pre_direction,           :predir
+  alias_attribute :street_name,             :street
+  alias_attribute :box_number,              :boxnbr
+  #alias_attribute :suffix Let's use the actual suffix name
+  alias_attribute :post_direction,          :pstdir
+  alias_attribute :subunit_type,            :suntyp
+  alias_attribute :subunit_number,          :sunnbr
+  alias_attribute :city_name,               :city
+  alias_attribute :state,                   :astate
+  alias_attribute :country,                 :cntry
+  #alias_attribute :pozip5 N/A because of name conflict
 
   belongs_to :subscription, foreign_key: [:vsppub, :vspact]
   belongs_to :credit_card, foreign_key: [:vsppub, :vspact]
@@ -53,14 +49,13 @@ class DeclinedCreditCard < Base
   def self.summary(gci_unit:, pub_code:, limit:, start_keys:, end_keys: {})
     self.on_db(gci_unit).
       where(*self.summary_where_params(pub_code, start_keys, end_keys)).
-      select("#{gci_unit}, ccvc.*, ccrd.crdnbr, ccrd.ccctyp, ccrd.cccexd, " +
-        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, crdctl.cmmer#, " +
+      select("#{gci_unit}, ccvc.*, ccrd.crdnbr, ccrd.ccctyp, " +
+        "ccrd.ccname, ccrd.ccadr1, ccrd.ccadr2, ccrd.ccctst, ccrd.pozip5, " +
         "prbs.fnam, prbs.lnam, addr.unnbr, addr.predir, addr.street, addr.boxnbr, addr.suffix, " +
         "addr.pstdir, addr.suntyp, addr.sunnbr, addr.city, addr.astate, addr.cntry, addr.pozip5 ").
       joins(:subscription, :credit_card,
-        " INNER JOIN crdctl ON crdctl.cmpub = '#{ pub_code }' and crdctl.cmctyp = ccrd.ccctyp",
-        " INNER JOIN prbs ON prbs.cusnbr = ccvc.vsctid ",
-        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ").
+        " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ",
+        " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ").
       limit(limit).
       order("ccvc.vsppub ASC, ccvc.vsbtch ASC, ccvc.vsbdat ASC, ccvc.vspact ASC")
   end
@@ -88,18 +83,6 @@ class DeclinedCreditCard < Base
     { batch_id: batch_id.strip,
       batch_date: batch_date.zero? ? Date.today.strftime("%Y%m%d").to_i : batch_date,
       account_number: account_number }
-  end
-
-  def declined_timestamp
-    begin
-      Time.strptime(audit_timestamp)
-    rescue
-      Time.strptime("#{audit_date} #{audit_time.to_s.rjust(6, '0')}", "%Y%m%d %H%M%S")  rescue nil
-    end
-  end
-
-  def merchant_transaction_id
-    "#{ gci_unit }-#{ vsppub }-#{ vsbtch }-#{ vsbdat }-#{ vspact }"
   end
 
   def account_holder_name
@@ -136,5 +119,10 @@ class DeclinedCreditCard < Base
 
   def build_address_line2
     "#{subunit_type.strip} #{subunit_number.strip}".strip
+  end
+
+  def expiration_date
+    expiration_yymm.to_s.rjust(4,'0')
+    "20#{}01".to_date
   end
 end

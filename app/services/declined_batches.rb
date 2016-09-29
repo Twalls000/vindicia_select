@@ -49,7 +49,6 @@ class DeclinedBatches
       transaction.gci_unit = declined_batch.gci_unit
       transaction.market_publication_id = transaction.market_publication.id
       transaction.attributes = trans_attributes
-      binding.pry
       transaction.save
     end
 

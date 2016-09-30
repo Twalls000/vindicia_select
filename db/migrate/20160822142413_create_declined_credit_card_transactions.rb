@@ -32,7 +32,7 @@ class CreateDeclinedCreditCardTransactions < ActiveRecord::Migration
       t.string :auth_code
       t.string :avs_code
       t.string :cvn_code
-      t.text :named_values
+      t.text :name_values
       t.string :charge_status
       t.string :gci_unit
       t.string :pub_code

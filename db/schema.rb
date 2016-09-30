@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20160926194731) do
     t.string   "auth_code",                     limit: 255
     t.string   "avs_code",                      limit: 255
     t.string   "cvn_code",                      limit: 255
-    t.text     "named_values",                  limit: 65535
+    t.text     "name_values",                   limit: 65535
     t.string   "charge_status",                 limit: 255
     t.string   "gci_unit",                      limit: 255
     t.string   "pub_code",                      limit: 255

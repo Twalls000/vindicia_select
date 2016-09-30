@@ -4,7 +4,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
   delegate :market_publication, to: :declined_credit_card_batch
-  serialize :named_values
+  serialize :name_values
 
   INITIAL_CHARGE_STATUS = 'Failed'
   DEFAULT_CURRENCY = 'USD'

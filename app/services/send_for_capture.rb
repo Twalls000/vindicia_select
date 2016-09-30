@@ -39,7 +39,7 @@ class SendForCapture
         transactions.each { |t| t.send_to_vindicia! }
       else
         transactions.each do |t|
-          t.audit_trails.build(event: "Failed to send")
+          t.audit_trails.build(event: "Failed to send", exception: response)
           t.error_sending_to_vindicia
           t.save
         end

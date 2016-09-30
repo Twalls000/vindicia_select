@@ -2,6 +2,7 @@ class FetchBillingResultsJob < ActiveJob::Base
   queue_as :fetch_billing_results
 
   def perform
+    Rails.logger.error("Starting the FetchBillingResultsJob #{Time.now}")
     #
     # Complete and total hack!
     # This code redefines the Transaction class, instantiates an object,
@@ -32,5 +33,6 @@ class FetchBillingResultsJob < ActiveJob::Base
       start_timestamp:Time.now-return_notification_setting.checking_number_of_days.days,
       end_timestamp:Time.now-return_notification_setting.range_to_check.days)
     fetch_billing_results.fetch_billing_results
+    Rails.logger.error("Completing the FetchBillingResultsJob #{Time.now}")
   end
 end

@@ -49,6 +49,9 @@ class DeclinedBatches
       transaction.gci_unit = declined_batch.gci_unit
       transaction.market_publication_id = transaction.market_publication.id
       transaction.attributes = trans_attributes
+      if Rails.env=="development"
+        transaction[:merchant_transaction_id] = declined_cc.mixed_merchant_transaction_id.strip
+      end
       transaction.save
     end
 

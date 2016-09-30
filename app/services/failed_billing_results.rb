@@ -7,10 +7,10 @@ class FailedBillingResults
   #
   def self.process
     # Get the transactions and mark them as failed
-    ReturnNotificationSettingJob.perform_later
+    FailedBillingResultsJob.perform_later
   end
 
   def self.failed_billing_results
-    ReturnNotificationSetting.first.return_notification_setting
+    ReturnNotificationSetting.first.set_failed_transactions
   end
 end

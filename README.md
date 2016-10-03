@@ -24,3 +24,6 @@ This job will call Vindicia Select's API to retrieve transactions that are ready
 ### failed_billing_results: This is a daily job to set status for transactions with no reply.
 
 * Status: no_reply
+
+## Application Setup
+This application is an API for communicating with the Vindicia Select system. For it to work properly communication with Vindicia Select's API is necessary, communication with the software sites for installation (Bit Bucket, Rubygems). This application uses MySQL tables for temporarily storing the values.

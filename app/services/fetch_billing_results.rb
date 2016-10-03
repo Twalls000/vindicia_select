@@ -30,7 +30,7 @@ class FetchBillingResults
     begin
       response = Select.fetch_billing_results(@start_timestamp, @end_timestamp,
         @page, @page_size)
-      process_response response
+      process_response(response) unless response.empty?
       @page+=1
     end until response.empty?
   end
@@ -41,7 +41,7 @@ class FetchBillingResults
         declined_card = DeclinedCreditCardTransaction.
           find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
         if declined_card
-          declined_card.named_values = transaction.name_values
+          declined_card.name_values = transaction.name_values
           declined_card.charge_status = transaction.status
           declined_card.select_transaction_id = transaction.select_transaction_id
           declined_card.auth_code = transaction.auth_code

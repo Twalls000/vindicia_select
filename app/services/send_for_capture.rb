@@ -35,17 +35,21 @@ class SendForCapture
           vtvr.code.to_s == "200" ? trans.send_to_vindicia : trans.error_sending_to_vindicia
           trans.save
         end
+      elsif response==true
+        transactions.each { |t| t.send_to_vindicia! }
+      else
+        transactions.each do |t|
+          t.audit_trails.build(event: "Failed to send", exception: response)
+          t.error_sending_to_vindicia
+          t.save
+        end
       end
-
-      response == true ? true : false
     rescue => e
       transactions.each do |trans|
         trans.audit_trails.build(event: e.message, exception: e)
-        trans.mark_in_error
+        trans.error_sending_to_vindicia
+        trans.save
       end
-      transactions.map(&:save)
-      # maybe send an email?
-      false
     end
   end
 end

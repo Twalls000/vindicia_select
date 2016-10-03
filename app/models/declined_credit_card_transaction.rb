@@ -4,7 +4,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
   delegate :market_publication, to: :declined_credit_card_batch
-  serialize :named_values
+  serialize :name_values
 
   INITIAL_CHARGE_STATUS = 'Failed'
   DEFAULT_CURRENCY = 'USD'
@@ -54,7 +54,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   scope :failed_billing_results, ->(days_before_failure) {
-    where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day) }
+    pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day) }
 
   def vindicia_fields
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')

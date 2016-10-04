@@ -3,14 +3,17 @@ class DashboardsController < ApplicationController
   # GET /dashboards
   # GET /dashboards.json
   def index
-    @dashboards = []
-    @total_by_batches = DeclinedCreditCardBatch.where("created_at > ?",Time.now.beginning_of_day-7.days).group(:status).order(:status).count
+    @total_by_batches = DeclinedCreditCardBatch.created_within_n_days(7).grouped_and_ordered_by_status.count
     @batch_statuses = DeclinedCreditCardBatch.aasm.states.map(&:name)
-    @total_by_transactions = DeclinedCreditCardTransaction.where("created_at > ?",Time.now.beginning_of_day-21.days).group(:status).order(:status).count
+    @total_by_transactions = DeclinedCreditCardTransaction.created_within_n_days(21).grouped_and_ordered_by_status.count
     @statuses = DeclinedCreditCardTransaction.aasm.states.map(&:name)
     @market_pubs = MarketPublication.all
     @market_pubs = @market_pubs.inject({}) do |hash, mp|
-      trans_for_mp = DeclinedCreditCardTransaction.where("created_at > ? AND gci_unit = ? AND pub_code = ?",Time.now.beginning_of_day-21.days, mp.gci_unit, mp.pub_code).group(:status).order(:status).count
+      trans_for_mp = DeclinedCreditCardTransaction.
+                       created_within_n_days(21).
+                       by_gci_unit(mp.gci_unit).
+                       by_pub_code(mp.pub_code).
+                       grouped_and_ordered_by_status.count
       hash[mp] = trans_for_mp
       hash
     end
@@ -23,9 +26,9 @@ class DashboardsController < ApplicationController
     @total_transactions =
       case @type
       when "batch"
-        DeclinedCreditCardBatch.where("created_at > ?",Time.now.beginning_of_day-7.days).where(status:params[:status])
+        DeclinedCreditCardBatch.created_within_n_days(7).where(status: params[:status])
       when "transaction"
-        DeclinedCreditCardTransaction.where("created_at > ?",Time.now.beginning_of_day-7.days).where(page_params)
+        DeclinedCreditCardTransaction.created_within_n_days(21).where(page_params)
     end
   end
 

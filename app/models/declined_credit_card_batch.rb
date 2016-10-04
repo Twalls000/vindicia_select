@@ -9,6 +9,13 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
 
   has_many :declined_credit_card_transactions
 
+  scope :created_within_n_days, ->(n){
+    where("created_at > ?", Time.now.beginning_of_day - n.days)
+  }
+  scope :grouped_and_ordered_by_status, ->{
+    group(:status).order(:status)
+  }
+
   aasm column: "status" do
     state :entry, initial: true
     state :processing, :completed

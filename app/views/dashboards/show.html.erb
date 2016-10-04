@@ -1,20 +1,13 @@
 <p id="notice"><%= notice %></p>
 
 <h1> <%= page_title(@type) %> </h1>
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left;"></th>
-      <th></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @total_transactions.each do |transaction| %>
-      <tr>
-        <td><%= raw(ap transaction) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<ol>
+  <% @total_transactions.each do |transaction| %>
+    <li>
+      <%= raw(ap transaction) %>
+    </li>
+  <% end %>
+</ol>
+
 <%= link_to 'Back', dashboards_path %>

@@ -8,7 +8,7 @@ class DashboardsControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:dashboards)
+    assert_not_nil assigns(:total_by_batches)
   end
 
   test "should show dashboard" do

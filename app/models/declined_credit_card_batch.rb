@@ -11,6 +11,13 @@ class DeclinedCreditCardBatch < ActiveRecord::Base
 
   aasm column: "status" do
     state :entry, initial: true
+    state :processing, :completed
+    event :ready_to_process do
+      transitions from: :entry, to: :processing
+    end
+    event :done_processing do
+      transitions from: :processing, to: :completed
+    end
   end
 
   def size

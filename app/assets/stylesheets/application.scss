@@ -15,7 +15,7 @@
  */
  @import "materialize/components/color";
 
- $primary-color: color("red", "darken-2") !default;
+ $primary-color: color("teal", "darken-2") !default;
  // $primary-color-light: lighten($primary-color, 15%) !default;
  // $primary-color-dark: darken($primary-color, 15%) !default;
  // $secondary-color: color("blue-grey", "darken-3") !default;
@@ -23,3 +23,11 @@
  // $error-color: color("red", "base") !default;
  // $link-color: color("deep-purple", "darken-4") !default;
  @import 'materialize';
+
+pre {
+  background-color: #e0e0e0;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 15px;
+}

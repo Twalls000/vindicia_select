@@ -4,8 +4,9 @@ class DashboardsController < ApplicationController
   # GET /dashboards.json
   def index
     @dashboards = []
-    @batches = DeclinedCreditCardBatch.all.order("created_at desc").limit(20)
-    @total_by_status = DeclinedCreditCardTransaction.where("created_at > ?",Time.now.beginning_of_day-21.days).group(:status).order(:status).count
+    @total_by_batches = DeclinedCreditCardBatch.where("created_at > ?",Time.now.beginning_of_day-7.days).group(:status).order(:status).count
+    @batch_statuses = DeclinedCreditCardBatch.aasm.states.map(&:name)
+    @total_by_transactions = DeclinedCreditCardTransaction.where("created_at > ?",Time.now.beginning_of_day-21.days).group(:status).order(:status).count
     @statuses = DeclinedCreditCardTransaction.aasm.states.map(&:name)
     @market_pubs = MarketPublication.all
     @market_pubs = @market_pubs.inject({}) do |hash, mp|
@@ -13,20 +14,23 @@ class DashboardsController < ApplicationController
       hash[mp] = trans_for_mp
       hash
     end
-    # @trans_by_status = @statuses.reduce({}) do |hash,status|
-    #   hash[status] =
-    #     if @total_by_status[status.to_s]
-    #       DeclinedCreditCardTransaction.where("created_at > ? AND status = ?",Time.now.beginning_of_day-21.days, status)
-    #     else
-    #       []
-    #     end
-    #   hash
-    # end
-    # binding.pry
   end
 
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
+    @type = params[:id]
+    @total_transactions =
+      case @type
+      when "batch"
+        DeclinedCreditCardBatch.where("created_at > ?",Time.now.beginning_of_day-7.days).where(status:params[:status])
+      when "transaction"
+        DeclinedCreditCardTransaction.where("created_at > ?",Time.now.beginning_of_day-7.days).where(page_params)
+    end
+  end
+
+private
+  def page_params
+    params.permit(:status, :gci_unit, :pub_code)
   end
 end

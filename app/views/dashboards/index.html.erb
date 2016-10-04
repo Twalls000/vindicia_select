@@ -1,6 +1,7 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Dashboard</h1>
+<br>
 
 <h2>Declined Credit Card Batches</h2>
 <table>
@@ -22,7 +23,7 @@
     <% end %>
   </tbody>
 </table>
-
+<br>
 
 <h2>Declined Credit Card Transactions</h2>
 <table>
@@ -44,31 +45,31 @@
     <% end %>
   </tbody>
 </table>
+<br>
 
 <h3>Breakdown by site</h3>
 <% @market_pubs.each do |mp, status_counts| %>
-<table>
-  <thead>
-    <tr>
-      <th colspan="2"><%= mp.gci_unit %> - <%= mp.pub_code %></th>
-    </tr>
-    <tr>
-      <th style="text-align: left;">Status</th>
-      <th>Count</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @statuses.each do |status| %>
-      <% count = status_counts[status.to_s] || 0 %>
+  <table>
+    <thead>
       <tr>
-        <td style="padding-right: 20px;"><%= link_to status,
-          dashboard_path("transaction", {status:status, gci_unit:mp.gci_unit, pub_code:mp.pub_code}) %></td>
-        <td><%= count %></td>
+        <th colspan="2"><%= mp.gci_unit %> - <%= mp.pub_code %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-<% end %>
+      <tr>
+        <th style="text-align: left;">Status</th>
+        <th>Count</th>
+      </tr>
+    </thead>
 
-<br>
+    <tbody>
+      <% @statuses.each do |status| %>
+        <% count = status_counts[status.to_s] || 0 %>
+        <tr>
+          <td style="padding-right: 20px;"><%= link_to status,
+            dashboard_path("transaction", {status:status, gci_unit:mp.gci_unit, pub_code:mp.pub_code}) %></td>
+          <td><%= count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br>
+<% end %>

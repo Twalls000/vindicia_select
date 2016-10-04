@@ -11,9 +11,11 @@ class DashboardsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:dashboards)
   end
 
-
   test "should show dashboard" do
+    get :show, { id: "batch" }
+    assert_response :success
+    get :show, { id: "transaction", gci_unit:"9999" }
+    assert_response :success
   end
-
 
 end

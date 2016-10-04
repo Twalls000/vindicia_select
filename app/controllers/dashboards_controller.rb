@@ -32,6 +32,9 @@ class DashboardsController < ApplicationController
     end
   end
 
+  def about
+  end
+
 private
   def page_params
     params.permit(:status, :gci_unit, :pub_code)

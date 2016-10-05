@@ -10,11 +10,16 @@ module SendToGenesys
         set_as_successful(transaction)
       else
         set_to_printed_bill(transaction)
-      end 
+      end
     end
 
     def chargeback_success?(transaction)
-      # determine if transaction is set to print
+      case transaction.charge_status
+      when "Captured" then true
+      when "BillingNotAttempted", "Cancelled", "Failed", "Refunded" then false
+      else
+        false # TODO: Mark in error for having unrecognized charge status?
+      end
     end
 
     def set_as_successful(transaction)

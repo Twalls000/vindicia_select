@@ -97,16 +97,6 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     end
   end
 
-  # Combine status to present back to Genesys
-  def transaction_status
-    case aasm.current_state
-      when :entry, :pending then "pending"
-      when :processed then "CC"
-      when :printed_bill then "PB"
-      when :in_error then "error"
-    end
-  end
-
 private
   def set_defaults
     self.currency = DEFAULT_CURRENCY

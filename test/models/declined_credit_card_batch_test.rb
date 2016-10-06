@@ -27,12 +27,21 @@ class DeclinedCreditCardBatchTest < ActiveSupport::TestCase
       assert @trans.entry?
     end
     test "workflow states" do
-      assert_equal [:entry], DeclinedCreditCardBatch.aasm.states.map(&:name)
+      assert_equal [:entry, :processing, :completed], DeclinedCreditCardBatch.aasm.states.map(&:name)
     end
     test "workflow events" do
-      assert_equal [], DeclinedCreditCardBatch.aasm.events.map(&:name)
+      assert_equal [:ready_to_process, :done_processing], DeclinedCreditCardBatch.aasm.events.map(&:name)
     end
     test "workflow permitted based on entry state" do
+      assert_equal [:ready_to_process], @trans.aasm.events(:permitted => true).map(&:name)
+    end
+    test "workflow permitted based on processing state" do
+      @trans.ready_to_process
+      assert_equal [:done_processing], @trans.aasm.events(:permitted => true).map(&:name)
+    end
+    test "workflow not permitted based on completed state" do
+      @trans.ready_to_process
+      @trans.done_processing
       assert_equal [], @trans.aasm.events(:permitted => true).map(&:name)
     end
   end

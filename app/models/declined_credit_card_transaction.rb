@@ -39,22 +39,30 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     end
   end
 
-  scope :by_gci_unit_and_pub_code, ->(gci_unit, pub_code){
-    where(gci_unit:gci_unit, pub_code:pub_code)
+  scope :created_within_n_days, ->(n){
+    where("created_at > ?", Time.now.beginning_of_day - n.days)
   }
-
+  scope :grouped_and_ordered_by_status, ->{
+    group(:status).order(:status)
+  }
+  scope :by_gci_unit, ->(gci_unit){
+    where(gci_unit: gci_unit)
+  }
+  scope :by_pub_code, ->(pub_code){
+    where(pub_code: pub_code)
+  }
   scope :oldest_unsent, ->{
     where(status: "entry").order("created_at ASC")
   }
-
-  scope :get_queued_to_send_transactions, ->(ids){ where("id in (?)", ids).where(:status=>"queued_to_send") }
-
+  scope :get_queued_to_send_transactions, ->(ids){
+    where("id in (?)", ids).where(:status=>"queued_to_send")
+  }
   scope :find_by_merchant_transaction_id, ->(merchant_transaction_id){
     where(merchant_transaction_id:merchant_transaction_id)
   }
-
   scope :failed_billing_results, ->(days_before_failure) {
-    pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day) }
+    pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day)
+  }
 
   def vindicia_fields
     attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')

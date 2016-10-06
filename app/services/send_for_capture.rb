@@ -8,7 +8,7 @@ class SendForCapture
       if mp
         # Get the transactions and mark them for processing
         transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
-            by_gci_unit_and_pub_code(mp.gci_unit, mp.pub_code).
+            by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
             limit(mp.vindicia_batch_size)
         transactions_to_send.each { |t| t.queue_to_vindicia! }
 

@@ -30,6 +30,7 @@ class DeclinedBatches
   #
   def self.create_declined_batch(declined_batch_id)
     declined_batch = DeclinedCreditCardBatch.find(declined_batch_id)
+    declined_batch.ready_to_process!
     credit_cards = DeclinedCreditCard.summary(gci_unit:declined_batch.gci_unit,
       pub_code:declined_batch.pub_code, limit:nil, start_keys:declined_batch.start_keys,
       end_keys:declined_batch.end_keys)
@@ -60,6 +61,7 @@ class DeclinedBatches
 
   def self.finish_batch(batch)
     batch.create_end_timestamp = Time.now
+    declined_batch.done_processing
     batch.save
   end
 

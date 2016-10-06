@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<h1> <%= page_title(@type) %> </h1>
+
+<ol>
+  <% @total_transactions.each do |transaction| %>
+    <li>
+      <%= raw(ap transaction) %>
+    </li>
+  <% end %>
+</ol>
+
+<%= link_to 'Back', dashboards_path %>

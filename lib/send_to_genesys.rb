@@ -10,7 +10,7 @@ module SendToGenesys
     end
 
     def get_genesys_record_by_merchant_transaction_id(merchant_transaction_id)
-      self.where(vstrid: merchant_transaction_id)
+      self.where(vstrid: merchant_transaction_id).first
     end
 
     def update_genesys_record(transaction)

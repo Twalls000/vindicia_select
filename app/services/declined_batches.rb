@@ -62,7 +62,7 @@ class DeclinedBatches
 
   def self.finish_batch(batch)
     batch.create_end_timestamp = Time.now
-    declined_batch.done_processing
+    batch.done_processing
     batch.save
   end
 

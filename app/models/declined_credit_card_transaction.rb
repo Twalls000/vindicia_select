@@ -71,15 +71,15 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'timestamp'                   => Select.date_to_vindicia(declined_timestamp),
       'subscription_id'             => merchant_transaction_id,
       # Will be the token when they are supported
-      'payment_method_id'           => '4111_1111_1111_1111',
+      'payment_method_id'           => payment_method_id,
       'previous_billing_count'      => previous_billing_count.to_i,
-      'credit_card_account_hash'    => credit_card_account_hash.to_s,
+      'credit_card_account_hash'    => credit_card_account_hash,
       'payment_method_is_tokenized' => payment_method_tokenized,
       'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date),
     })
 
     # TODO: remove the following line when tokens supported by Vindicia
-    attrs.merge!({ 'payment_method_is_tokenized' => false, 'credit_card_account' => 4111_1111_1111_1111 })
+    # attrs.merge!({ 'payment_method_is_tokenized' => false, 'credit_card_account' => 4111_1111_1111_1111 })
     # TODO: revmove the following line when the fields are populated properly
     attrs.merge!({ 'amount' => 25.0 })
 
@@ -113,5 +113,6 @@ private
     self.charge_status = INITIAL_CHARGE_STATUS
     self.payment_method_tokenized = DEFAULT_TOKENIZED
     self.billing_address_country = DEFAULT_COUNTRY
+    self.credit_card_account_hash = ''
   end
 end

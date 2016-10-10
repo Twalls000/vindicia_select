@@ -17,6 +17,12 @@ class MarketPublication < ActiveRecord::Base
   def select_next_batch
     declined_ccs = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code,
       limit:declined_credit_card_batch_size, start_keys:declined_credit_card_batch_keys)
+    # Fix for endless loop
+    #if declined_ccs.size==1 &&
+    #  declined_ccs.first.account_number == declined_credit_card_batch_keys[:account_number]
+    #  return []
+    #end
+
     self.declined_credit_card_batch_keys = declined_ccs.last.try(:batch_keys)
     save  if declined_credit_card_batch_keys
 

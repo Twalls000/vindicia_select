@@ -33,7 +33,8 @@ class DeclinedBatches
     declined_batch = DeclinedCreditCardBatch.find(declined_batch_id)
     declined_batch.ready_to_process!
     credit_cards = DeclinedCreditCard.summary(gci_unit:declined_batch.gci_unit,
-      pub_code:declined_batch.pub_code, limit:nil, start_keys:declined_batch.start_keys,
+      pub_code:declined_batch.pub_code, limit:nil,
+      start_keys:declined_batch.start_keys,
       end_keys:declined_batch.end_keys)
 
     credit_cards.each do |declined_cc|

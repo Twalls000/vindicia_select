@@ -8,6 +8,8 @@ module Vindicia::Connection
           return {return_code: return_code, soap_id: response.body["#{action}_response".to_sym][:return][:soap_id]}
         else
           res = response.body["#{action}_response".to_sym][response.body["#{action}_response".to_sym].keys[1]]
+          res[:soap_id] = response.body["#{action}_response".to_sym][:return][:soap_id]
+          res
         end
       else
         Rails.logger.error("Response #{ response.class }")

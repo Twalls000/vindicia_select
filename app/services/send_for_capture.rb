@@ -32,6 +32,7 @@ class SendForCapture
         response.select { |r| r.is_a? Vindicia::TransactionValidationResponse }.each do |vtvr|
           trans = transactions.select { |t| t.merchant_transaction_id == vtvr.merchant_transaction_id }.first
           trans.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+          trans.soap_id = vtvr.soap_id
           vtvr.code.to_s == "200" ? trans.send_to_vindicia : trans.error_sending_to_vindicia
           trans.save
         end

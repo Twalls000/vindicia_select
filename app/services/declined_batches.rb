@@ -7,15 +7,16 @@ class DeclinedBatches
   #
   def self.process
     include_markets_and_pub.map do |mp|
-      declined_batch = DeclinedCreditCardBatch.new
       card_batch = mp.select_next_batch
-      unless card_batch.empty?
+      until card_batch.empty?
+        declined_batch = DeclinedCreditCardBatch.new
         declined_batch.start_keys = card_batch.first.batch_keys
         declined_batch.end_keys = card_batch.last.batch_keys
         declined_batch.gci_unit = mp.gci_unit
         declined_batch.pub_code = mp.pub_code
         declined_batch.save
         DeclinedBatchesJob.perform_later declined_batch.id
+        card_batch = mp.select_next_batch
       end
     end
   end
@@ -32,7 +33,8 @@ class DeclinedBatches
     declined_batch = DeclinedCreditCardBatch.find(declined_batch_id)
     declined_batch.ready_to_process!
     credit_cards = DeclinedCreditCard.summary(gci_unit:declined_batch.gci_unit,
-      pub_code:declined_batch.pub_code, limit:nil, start_keys:declined_batch.start_keys,
+      pub_code:declined_batch.pub_code, limit:nil,
+      start_keys:declined_batch.start_keys,
       end_keys:declined_batch.end_keys)
 
     credit_cards.each do |declined_cc|
@@ -61,7 +63,7 @@ class DeclinedBatches
 
   def self.finish_batch(batch)
     batch.create_end_timestamp = Time.now
-    declined_batch.done_processing
+    batch.done_processing
     batch.save
   end
 

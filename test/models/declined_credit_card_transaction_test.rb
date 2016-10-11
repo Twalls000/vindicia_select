@@ -53,32 +53,4 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert @trans.printed_bill?
     end
   end
-
-  class TransactionStatus < DeclinedCreditCardTransactionTest
-    def assert_trans_status(status)
-      assert_equal status, @trans.transaction_status
-    end
-
-    test '"pending" should be returned when in entry or pending state' do
-      assert_trans_status "pending"
-
-      @trans.status = "pending"
-      assert_trans_status "pending"
-    end
-
-    test '"CC" should be returned when in processed state'  do
-      @trans.status = "processed"
-      assert_trans_status "CC"
-    end
-
-    test '"PB" should be returned when in printed_bill state'  do
-      @trans.status = "printed_bill"
-      assert_trans_status "PB"
-    end
-
-    test '"error" should be returned when in printed_bill state'  do
-      @trans.status = "in_error"
-      assert_trans_status "error"
-    end
-  end
 end

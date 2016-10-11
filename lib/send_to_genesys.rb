@@ -6,25 +6,24 @@ module SendToGenesys
   class_methods do
 
     def send_transaction(transaction)
-      if chargeback_success?(transaction)
-        set_as_successful(transaction)
-      else
-        set_to_printed_bill(transaction)
-      end 
+      update_genesys_record(transaction)
     end
 
-    def chargeback_success?(transaction)
-      # determine if transaction is set to print
+    def get_genesys_record_by_merchant_transaction_id(merchant_transaction_id)
+      self.where(vstrid: merchant_transaction_id).first
     end
 
-    def set_as_successful(transaction)
-      # send transaction details to Genesys
+    def update_genesys_record(transaction)
+      card = get_genesys_record_by_merchant_transaction_id(transaction.merchant_transaction_id)
+      card.vsaust = transaction.charge_status
+      card.vsvord = transaction.select_transaction_id
+      card.save
     end
-
-    def set_to_printed_bill(transaction)
-      # notify Genesys that the account should be set to printed bill
-    end
-
   end
 
+  included do
+    def save
+      new_trans = GenericTransaction.write_to_genesys(self)
+    end
+  end
 end

@@ -11,7 +11,11 @@ class SendForCaptureTest < ActiveSupport::TestCase
       assert_equal @send_for_capture.class, SendForCapture
     end
   end
-
+  class GetNextBatch < SendForCaptureTest
+    test "the next batch can be nil" do
+      assert_nil SendForCapture.get_next_batch
+    end
+  end
   class Process < SendForCaptureTest
     # Tests
   end

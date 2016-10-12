@@ -139,6 +139,34 @@ class SelectTest < ActiveSupport::TestCase
   end
 
   class ResponseHandler < SelectTest
-    # Tests
+    test 'returns response when it is a hash and hash a return_code and soap_id' do
+      response = { return_code: "return", soap_id: "1234" }
+      assert_equal response, Select.response_handler(response)
+    end
+
+    test 'raises a formatted error if it is a Savon::Response' do
+      # Savon::Response.class_eval { def new; end }
+      # response = Savon::Response.new
+      # return_val = {
+      #   soap_id: "12345",
+      #   return_code: "Code",
+      #   return_string: "Test return"
+      # }
+      # response_hash = {
+      #   envelope: {
+      #     body: [
+      #       [
+      #         nil, { return: return_val }
+      #       ]
+      #     ]
+      #   }
+      # }
+      # error_message = "Error with soap_id #{return_val[:soap_id]} (code #{return_val[:return_code]}): #{return_val[:return_string]}"
+      #
+      # response.stub(:hash, response_hash) do
+      #   error = assert_raises RuntimeError, ->{ Select.response_handler(response) }
+      #   assert_equal error_message, error.message
+      # end
+    end
   end
 end

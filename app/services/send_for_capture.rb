@@ -19,8 +19,7 @@ class SendForCapture
   end
 
   def self.get_next_batch
-    sample_trans = DeclinedCreditCardTransaction.oldest_unsent.first
-    sample_trans ? sample_trans.market_publication : nil
+    DeclinedCreditCardTransaction.oldest_unsent.first.try(:market_publication)
   end
 
   def self.send_transactions_for_capture(transactions_array)

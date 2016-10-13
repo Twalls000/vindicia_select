@@ -6,6 +6,8 @@ module Vindicia::Connection
       if (response.success? && return_code == "200")
         if class_name == "Vindicia::Select" && action == :bill_transactions && !response.body["#{action}_response".to_sym][:response]
           return {return_code: return_code, soap_id: response.body["#{action}_response".to_sym][:return][:soap_id]}
+        elsif class_name == "Vindicia::Select" && action == :fetch_billing_results && !response.body["#{action}_response".to_sym][:transactions]
+          return []
         else
           res = response.body["#{action}_response".to_sym][response.body["#{action}_response".to_sym].keys[1]]
           soap_id = response.body["#{action}_response".to_sym][:return][:soap_id]

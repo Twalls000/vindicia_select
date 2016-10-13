@@ -8,7 +8,14 @@ module Vindicia::Connection
           return {return_code: return_code, soap_id: response.body["#{action}_response".to_sym][:return][:soap_id]}
         else
           res = response.body["#{action}_response".to_sym][response.body["#{action}_response".to_sym].keys[1]]
-          res[:soap_id] = response.body["#{action}_response".to_sym][:return][:soap_id]
+          soap_id = response.body["#{action}_response".to_sym][:return][:soap_id]
+
+          if res.is_a? Hash
+            res[:soap_id] = soap_id
+          elsif res.is_a? Array
+            res.each { |t| t[:soap_id] = soap_id }
+          end
+
           res
         end
       else

@@ -41,15 +41,17 @@ class FetchBillingResults
       declined_cards = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtids)
       declined_cards.each do |declined_card|
         transaction = response.select { |r| r.merchant_transaction_id == declined_card.merchant_transaction_id }.first
-        declined_card.name_values = transaction.name_values
-        declined_card.charge_status = transaction.status
-        declined_card.select_transaction_id = transaction.select_transaction_id
-        declined_card.auth_code = transaction.auth_code
-        declined_card.fetch_soap_id = transaction.soap_id
-        declined_card.status_update
+        if transaction && transaction.pending?
+          declined_card.name_values = transaction.name_values
+          declined_card.charge_status = transaction.status
+          declined_card.select_transaction_id = transaction.select_transaction_id
+          declined_card.auth_code = transaction.auth_code
+          declined_card.fetch_soap_id = transaction.soap_id
+          declined_card.status_update
 
-        declined_card.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_card)
-        declined_card.save
+          declined_card.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_card)
+          declined_card.save
+        end
       end
     end
   end

@@ -45,6 +45,7 @@ class FetchBillingResults
           declined_card.charge_status = transaction.status
           declined_card.select_transaction_id = transaction.select_transaction_id
           declined_card.auth_code = transaction.auth_code
+          declined_card.fetch_soap_id = transaction.soap_id
           declined_card.status_update
           DeclinedCreditCard.send_transaction(declined_card)  if declined_card.save
         end

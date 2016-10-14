@@ -15,9 +15,13 @@ module SendToGenesys
 
     def update_genesys_record(transaction)
       card = get_genesys_record_by_merchant_transaction_id(transaction.merchant_transaction_id)
-      card.vsaust = transaction.charge_status
-      card.vsvord = transaction.select_transaction_id
-      card.save
+      if card
+        card.vsaust = transaction.charge_status
+        card.vsvord = transaction.select_transaction_id
+        card.save
+      else
+        false
+      end
     end
   end
 

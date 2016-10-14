@@ -37,16 +37,20 @@ class FetchBillingResults
 
   def process_response response
     if response.is_a?(Array) && response.map(&:class).include?(Vindicia::Transaction)
-      response.select { |r| r.is_a? Vindicia::Transaction }.each do |transaction|
-        declined_card = DeclinedCreditCardTransaction.
-          find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
-        if declined_card
+      mtids = response.select { |r| r.is_a? Vindicia::Transaction }.map(&:merchant_transaction_id)
+      declined_cards = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtids)
+      declined_cards.each do |declined_card|
+        transaction = response.select { |r| r.merchant_transaction_id == declined_card.merchant_transaction_id }.first
+        if transaction && declined_card.pending?
           declined_card.name_values = transaction.name_values
           declined_card.charge_status = transaction.status
           declined_card.select_transaction_id = transaction.select_transaction_id
           declined_card.auth_code = transaction.auth_code
+          declined_card.fetch_soap_id = transaction.soap_id
           declined_card.status_update
-          DeclinedCreditCard.send_transaction(declined_card)  if declined_card.save
+
+          declined_card.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_card)
+          declined_card.save
         end
       end
     end

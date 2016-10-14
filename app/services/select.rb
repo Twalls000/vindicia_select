@@ -28,7 +28,7 @@ class Select
 
   def self.response_handler(response, default_return = true)
     case response
-    when Hash && { return_code: response.try(:[], :return_code), soap_id: response.try(:[], :soap_id) }
+    when Hash
       return response
     when Savon::Response
       return_val = response.hash[:envelope][:body].first[1][:return]

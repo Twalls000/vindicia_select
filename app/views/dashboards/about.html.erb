@@ -5,15 +5,50 @@
 <table>
   <tr>
     <td>
-      Get workflow status for models: <br>
+      Batch Status: <br>
       <pre>
-DeclinedCreditCardBatch.aasm.states.map(&:name)
-DeclinedCreditCardTransaction.aasm.states.map(&:name)</pre>
+<%= DeclinedCreditCardBatch.aasm.states.map(&:name) %><br/></pre>
     </td>
   </tr>
   <tr>
     <td>
-      More to come later
+      Transaction Status <br/>
+      <pre><%= DeclinedCreditCardTransaction.aasm.states.map(&:name) %></pre>
     </td>
   </tr>
+</table>
+<h3>Market Publications</h3>
+<table>
+  <tr>
+    <th>GCI Unit</th>
+    <th>Pub Code</th>
+    <th>Load Batch Size</th>
+    <th>Send Batch Size</th>
+  </tr>
+  <% MarketPublication.all.each do |mp| %>
+    <tr>
+      <td><%= mp.gci_unit %></td>
+      <td><%= mp.pub_code %></td>
+      <td><%= mp.declined_credit_card_batch_size %></td>
+      <td><%= mp.vindicia_batch_size %></td>
+    </tr>
+  <% end %>
+</table>
+
+<h3>Return Notification Settings</h3>
+<table>
+  <tr>
+    <th>Checking Number of Days</th>
+    <th>Range to Check</th>
+    <th>Page</th>
+    <th>Days Before Failure</th>
+  </tr>
+  <% MarketPublication.all.each do |mp| %>
+    <tr>
+      <td><%= mp.gci_unit %></td>
+      <td><%= mp.pub_code %></td>
+      <td><%= mp.declined_credit_card_batch_size %></td>
+      <td><%= mp.vindicia_batch_size %></td>
+    </tr>
+  <% end %>
 </table>

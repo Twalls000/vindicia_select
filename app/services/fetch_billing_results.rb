@@ -27,12 +27,17 @@ class FetchBillingResults
   # centralized table.
   #
   def fetch_billing_results
+    previous_response = nil
     begin
       response = Select.fetch_billing_results(@start_timestamp, @end_timestamp,
         @page, @page_size)
-      process_response(response) unless response.empty?
+      unless !response.is_a?(Array)
+        process_response(response)
+        previous_response = response
+      end
       @page+=1
-    end until response.empty?
+    end until !response.is_a?(Array)
+    set_empty_last_fetch_soap_id(response, previous_response)
   end
 
   def process_response response
@@ -53,6 +58,17 @@ class FetchBillingResults
           declined_tran.save
         end
       end
+    end
+  end
+
+  def set_empty_last_fetch_soap_id(last_response, previous_response)
+    if last_response && previous_response
+      soap_id = last_response[:soap_id] || "No soap_id"
+      last_mtid = previous_response.last.merchant_transaction_id
+      last_declined_card = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(last_mtid).first
+
+      last_declined_card.empty_last_fetch_soap_id = soap_id
+      last_declined_card.save
     end
   end
 end

@@ -208,4 +208,8 @@ class ResponseCode
     "R2" => "270",
     "R1" => "269"
   }
+
+  def self.get_long_code(short_code)
+    CODES[short_code]
+  end
 end

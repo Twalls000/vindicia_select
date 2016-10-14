@@ -41,7 +41,7 @@ class FetchBillingResults
       declined_cards = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtids)
       declined_cards.each do |declined_card|
         transaction = response.select { |r| r.merchant_transaction_id == declined_card.merchant_transaction_id }.first
-        if transaction && transaction.pending?
+        if transaction && declined_card.pending?
           declined_card.name_values = transaction.name_values
           declined_card.charge_status = transaction.status
           declined_card.select_transaction_id = transaction.select_transaction_id

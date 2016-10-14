@@ -93,11 +93,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   end
 
   def status_update
-    if charge_status == "Captured"
-      self.captured_funds
-    else
-      self.failed_to_capture_funds
-    end
+    charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
   end
 
 private

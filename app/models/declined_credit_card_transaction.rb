@@ -35,7 +35,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       transitions from: :pending, to: :printed_bill
     end
     event :failed_to_send_to_genesys do
-      transitions from: :pending, to: :genesys_error
+      transitions from: :printed_bill, to: :genesys_error
+      transitions from: :processed, to: :genesys_error
     end
     event :failed_to_get_reply do
       transitions from: :pending, to: :no_reply

@@ -36,8 +36,7 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
     end
     test "workflow permitted based on pending" do
       @trans.status="pending"
-      assert_equal [:captured_funds, :failed_to_capture_funds,
-          :failed_to_send_to_genesys, :failed_to_get_reply],
+      assert_equal [:captured_funds, :failed_to_capture_funds, :failed_to_get_reply],
         @trans.aasm.events(:permitted => true).map(&:name)
     end
     test "workflow permitted based on in error" do

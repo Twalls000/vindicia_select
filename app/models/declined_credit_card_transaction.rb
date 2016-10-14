@@ -68,11 +68,11 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   def vindicia_fields
-    attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
+    attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
     attrs.merge!({
       'status'                      => charge_status,
       'timestamp'                   => Select.date_to_vindicia(declined_timestamp),
-      'subscription_id'             => merchant_transaction_id,
+      'affiliate_id'                => id,
       # Will be the token when they are supported
       'payment_method_id'           => '4111_1111_1111_1111',
       'previous_billing_count'      => previous_billing_count.to_i,
@@ -88,7 +88,6 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
     attrs.delete_if { |key,value| value.nil? }
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
-
     attrs
   end
 

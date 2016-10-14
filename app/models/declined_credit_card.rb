@@ -129,12 +129,4 @@ class DeclinedCreditCard < Base
   def expiration_date
     Date.strptime(expiration_mmyy.to_s.rjust(4,'0'), "%m%y")
   end
-
-  def mixed_merchant_transaction_id
-    pieces = merchant_transaction_id.split("-")
-    pieces[3] = rand(9999999).to_s.rjust(7, "0")
-    puts "Before #{merchant_transaction_id}"
-    puts "After #{pieces.join("-")}"
-    pieces.join("-")
-  end
 end

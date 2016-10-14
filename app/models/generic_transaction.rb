@@ -36,8 +36,8 @@ class GenericTransaction < ActiveRecord::Base
   # Simply put, we are supporting 1 model w/1 possible SQL statement.
   # If that changes then make this class inheritable and this code dynamic.
   def self.generate_sql(model)
-    "UPDATE #{ get_circ_database(model.gci_unit).strip }.CCVC SET VSAUST = '#{ model.vsaust }', " +
-    "VSVORD = '#{ model.vsvord }' " +
+    "UPDATE crfile.ccvc SET VSAUST = '#{ model.charge_status }', " +
+    "VSVORD = '#{ model.select_transaction_id }' " +
     "WHERE VSPPUB = '#{ model.pub_code }' and VSBTCH = '#{ model.batch_id}' and " +
     "VSBDAT = #{ model.batch_date } and VSPACT = #{ model.account_number }"
   end

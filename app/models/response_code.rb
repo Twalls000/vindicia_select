@@ -210,6 +210,6 @@ class ResponseCode
   }
 
   def self.translate_code(short_code)
-    CODES[short_code] || short_code
+    CODES[short_code.to_s.rjust(2,"0")] || short_code
   end
 end

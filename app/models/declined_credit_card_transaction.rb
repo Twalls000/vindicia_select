@@ -80,6 +80,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'credit_card_account_hash'    => credit_card_account_hash.to_s,
       'payment_method_is_tokenized' => payment_method_tokenized,
       'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date),
+      'auth_code'                   => ResponseCode.translate_code(attrs['auth_code'])
     })
 
     # TODO: remove the following line when tokens supported by Vindicia

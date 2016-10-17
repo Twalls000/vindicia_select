@@ -1,9 +1,6 @@
 module SimpleEncryption
 
-<<<<<<< HEAD
-=======
   @@credentials = nil
->>>>>>> master
   # Encrypt text using AES. For highest security, the key should be 32
   # characters long, and the initialization vector 16 characters long.
   # Shorter keys and seeds are padded. You can even leave them blank, to
@@ -75,23 +72,12 @@ module SimpleEncryption
     # (i.e., app lives in /opt/apps/circportal/releases/nnnnnnnn,
     # and passwords.yml lives in /opt/apps/circportal)
     require 'base64'
-<<<<<<< HEAD
-    file_name = File.join(File.dirname(__FILE__), '../../../passwords.yml')
-    raw_text = YAML.load_file(file_name)[username]
-    SimpleEncryption.aes_decrypt(Base64.decode64(raw_text))
-  end
-
-  def self.get_password_for_user(username)
-    file_name = File.join(File.dirname(__FILE__), '../../../passwords.yml')
-    raw_text = YAML.load_file(file_name)[username]
-    raw_text  
-=======
 
     load_credentials
 
     raw_text = @@credentials["#{username}"]  rescue ''
     SimpleEncryption.aes_decrypt(Base64.decode64(raw_text))
- 
+
   end
 
   def self.load_credentials
@@ -105,7 +91,6 @@ module SimpleEncryption
 
   def self.credentials
     @@credentials
->>>>>>> master
   end
 
 end

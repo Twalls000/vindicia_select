@@ -67,6 +67,17 @@ class FetchBillingResults
       last_mtid = previous_response.last.merchant_transaction_id
       last_declined_card = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(last_mtid).first
 
+      # Attempt to find a Transaction in the DB from the last response to attach the soap ID to
+      unless last_declined_card
+        previous_response.map(&:merchant_transaction_id).each do |mtid|
+          found_tran = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtid).first
+          if found_tran
+            last_declined_card = found_tran
+            break
+          end
+        end
+      end
+
       if last_declined_card
         last_declined_card.empty_last_fetch_soap_id = soap_id
         last_declined_card.save

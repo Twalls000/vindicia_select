@@ -209,7 +209,7 @@ class ResponseCode
     "R1" => "269"
   }
 
-  def self.get_long_code(short_code)
-    CODES[short_code]
+  def self.translate_code(short_code)
+    CODES[short_code] || short_code
   end
 end

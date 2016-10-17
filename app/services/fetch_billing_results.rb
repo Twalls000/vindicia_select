@@ -67,8 +67,12 @@ class FetchBillingResults
       last_mtid = previous_response.last.merchant_transaction_id
       last_declined_card = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(last_mtid).first
 
-      last_declined_card.empty_last_fetch_soap_id = soap_id
-      last_declined_card.save
+      if last_declined_card
+        last_declined_card.empty_last_fetch_soap_id = soap_id
+        last_declined_card.save
+      else
+        AuditTrail.create(event: "Problem assigning last soap ID #{soap_id}: DeclinedCreditCardTransaction with merchant_transaction_id \"#{last_mtid}\" does not exist in database")
+      end
     end
   end
 end

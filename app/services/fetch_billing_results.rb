@@ -27,28 +27,48 @@ class FetchBillingResults
   # centralized table.
   #
   def fetch_billing_results
+    previous_response = nil
     begin
       response = Select.fetch_billing_results(@start_timestamp, @end_timestamp,
         @page, @page_size)
-      process_response(response) unless response.empty?
+      unless !response.is_a?(Array)
+        process_response(response)
+        previous_response = response
+      end
       @page+=1
-    end until response.empty?
+    end until !response.is_a?(Array)
+    set_empty_last_fetch_soap_id(response, previous_response)
   end
 
   def process_response response
     if response.is_a?(Array) && response.map(&:class).include?(Vindicia::Transaction)
-      response.select { |r| r.is_a? Vindicia::Transaction }.each do |transaction|
-        declined_card = DeclinedCreditCardTransaction.
-          find_by_merchant_transaction_id(transaction.merchant_transaction_id).first
-        if declined_card
-          declined_card.name_values = transaction.name_values
-          declined_card.charge_status = transaction.status
-          declined_card.select_transaction_id = transaction.select_transaction_id
-          declined_card.auth_code = transaction.auth_code
-          declined_card.status_update
-          DeclinedCreditCard.send_transaction(declined_card)  if declined_card.save
+      mtids = response.select { |r| r.is_a? Vindicia::Transaction }.map(&:merchant_transaction_id)
+      declined_trans = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtids)
+      declined_trans.each do |declined_tran|
+        transaction = response.select { |r| r.merchant_transaction_id == declined_tran.merchant_transaction_id }.first
+        if transaction && declined_tran.pending?
+          declined_tran.name_values = transaction.name_values
+          declined_tran.charge_status = transaction.status
+          declined_tran.select_transaction_id = transaction.select_transaction_id
+          declined_tran.auth_code = transaction.auth_code
+          declined_tran.fetch_soap_id = transaction.soap_id
+          declined_tran.status_update
+
+          declined_tran.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_tran)
+          declined_tran.save
         end
       end
+    end
+  end
+
+  def set_empty_last_fetch_soap_id(last_response, previous_response)
+    if last_response && previous_response
+      soap_id = last_response[:soap_id] || "No soap_id"
+      last_mtid = previous_response.last.merchant_transaction_id
+      last_declined_card = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(last_mtid).first
+
+      last_declined_card.empty_last_fetch_soap_id = soap_id
+      last_declined_card.save
     end
   end
 end

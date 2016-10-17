@@ -14,7 +14,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   aasm column: "status" do
     state :entry, initial: true
     state :queued_to_send, :pending, :in_error, :processed, :printed_bill,
-      :no_reply
+      :no_reply, :genesys_error
 
     event :queue_to_vindicia do
       transitions from: :entry, to: :queued_to_send
@@ -33,6 +33,10 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     end
     event :failed_to_capture_funds do
       transitions from: :pending, to: :printed_bill
+    end
+    event :failed_to_send_to_genesys do
+      transitions from: :printed_bill, to: :genesys_error
+      transitions from: :processed, to: :genesys_error
     end
     event :failed_to_get_reply do
       transitions from: :pending, to: :no_reply
@@ -65,12 +69,11 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   }
 
   def vindicia_fields
-    attrs = attributes.except('batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'status', 'updated_at')
+    attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
     attrs.merge!({
       'status'                      => charge_status,
       'timestamp'                   => Select.date_to_vindicia(declined_timestamp),
-      'subscription_id'             => merchant_transaction_id,
-      # Will be the token when they are supported
+      'affiliate_id'                => id,
       'payment_method_id'           => payment_method_id,
       'previous_billing_count'      => previous_billing_count.to_i,
       'credit_card_account_hash'    => credit_card_account_hash,
@@ -78,23 +81,13 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date),
     })
 
-    # TODO: remove the following line when tokens supported by Vindicia
-    # attrs.merge!({ 'payment_method_is_tokenized' => false, 'credit_card_account' => 4111_1111_1111_1111 })
-    # TODO: revmove the following line when the fields are populated properly
-    attrs.merge!({ 'amount' => 25.0 })
-
     attrs.delete_if { |key,value| value.nil? }
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
-
     attrs
   end
 
   def status_update
-    if charge_status == "Captured"
-      self.captured_funds
-    else
-      self.failed_to_capture_funds
-    end
+    charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
   end
 
 private

@@ -18,6 +18,7 @@ class DeclinedCreditCard < Base
   alias_attribute :select_transaction_id,   :vsvord
   alias_attribute :expiration_mmyy,         :vscexp
   alias_attribute :payment_method_id,       :vsccno
+
   # These aliases are for the Credit Card model
   alias_attribute :card_number,             :crdnbr
   alias_attribute :card_type,               :ccctyp
@@ -129,13 +130,5 @@ class DeclinedCreditCard < Base
 
   def expiration_date
     Date.strptime(expiration_mmyy.to_s.rjust(4,'0'), "%m%y")
-  end
-
-  def mixed_merchant_transaction_id
-    pieces = merchant_transaction_id.split("-")
-    pieces[3] = rand(9999999).to_s.rjust(7, "0")
-    puts "Before #{merchant_transaction_id}"
-    puts "After #{pieces.join("-")}"
-    pieces.join("-")
   end
 end

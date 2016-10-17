@@ -20,12 +20,14 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert @trans.entry?
     end
     test "workflow states" do
-      assert_equal [:entry, :queued_to_send, :pending, :in_error, :processed, :printed_bill, :no_reply],
+      assert_equal [:entry, :queued_to_send, :pending, :in_error, :processed,
+        :printed_bill, :no_reply, :genesys_error],
         DeclinedCreditCardTransaction.aasm.states.map(&:name)
     end
     test "workflow events" do
       assert_equal [:queue_to_vindicia, :send_to_vindicia, :error_sending_to_vindicia,
-        :mark_in_error, :captured_funds, :failed_to_capture_funds, :failed_to_get_reply],
+        :mark_in_error, :captured_funds, :failed_to_capture_funds,
+        :failed_to_send_to_genesys, :failed_to_get_reply],
         DeclinedCreditCardTransaction.aasm.events.map(&:name)
     end
     test "workflow permitted based on entry state" do

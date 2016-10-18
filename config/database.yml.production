@@ -1,0 +1,235 @@
+<% require 'gci-simple-encryption' %>
+defaults: &defaults
+  adapter: ibm_db_odbc
+  datasource: pocdb01
+  username: gsysicon
+  password: <%= SimpleEncryption.get_password_for_username('gsysicon') %>
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: <%= ENV['VINDICIA_SELECT_DB_USERNAME'] %>
+  password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['VINDICIA_SELECT_DB_PASSWORD'])) %>
+  database: vindicia_select_production
+  host: ent-mocdbnmas20
+
+ods_library:
+  adapter: ibm_db_odbc
+  datasource: pocdb01
+  username: <%= ENV['ICON_DB_USERNAME'] %>
+  password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['ICON_DB_PASSWORD'])) %>
+  schema: godsfiles2
+
+
+icon8872:
+  schema: g8872files
+  <<: *defaults
+
+icon1007:
+  schema: G1007FILES
+  <<: *defaults
+
+icon1008:
+  schema: G1008FILES
+  <<: *defaults
+
+icon1010:
+  schema: G1010FILES
+  <<: *defaults
+
+icon1011:
+  schema: G1011FILES
+  <<: *defaults
+
+icon1013:
+  schema: G1013FILES
+  <<: *defaults
+
+icon1014:
+  schema: G1014FILES
+  <<: *defaults
+
+icon1019:
+  schema: G1019FILES
+  <<: *defaults
+
+icon1021:
+  schema: G1021FILES
+  <<: *defaults
+
+icon1026:
+  schema: G1026FILES
+  <<: *defaults
+
+icon1028:
+  schema: G1028FILES
+  <<: *defaults
+
+icon1033:
+  schema: G1033FILES
+  <<: *defaults
+
+icon1040:
+  schema: G1040FILES
+  <<: *defaults
+
+icon1042:
+  schema: G1042FILES
+  <<: *defaults
+
+icon1051:
+  schema: G1051FILES
+  <<: *defaults
+
+icon1052:
+  schema: G1052FILES
+  <<: *defaults
+
+icon1056:
+  schema: G1056FILES
+  <<: *defaults
+
+icon1063:
+  schema: G1063FILES
+  <<: *defaults
+
+icon1065:
+  schema: G1065FILES
+  <<: *defaults
+
+icon1066:
+  schema: G1066FILES
+  <<: *defaults
+
+icon1070:
+  schema: G1070FILES
+  <<: *defaults
+
+icon1074:
+  schema: G1074FILES
+  <<: *defaults
+
+icon1076:
+  schema: G1076FILES
+  <<: *defaults
+
+icon1078:
+  schema: G1078FILES
+  <<: *defaults
+
+icon1082:
+  schema: G1082FILES
+  <<: *defaults
+
+icon1084:
+  schema: G1084FILES
+  <<: *defaults
+
+icon1085:
+  schema: G1085FILES
+  <<: *defaults
+
+icon1087:
+  schema: G1087FILES
+  <<: *defaults
+
+icon1089:
+  schema: G1089FILES
+  <<: *defaults
+
+icon1094:
+  schema: G1094FILES
+  <<: *defaults
+
+icon1098:
+  schema: G1098FILES
+  <<: *defaults
+
+icon1099:
+  schema: G1099FILES
+  <<: *defaults
+
+icon1106:
+  schema: G1106FILES
+  <<: *defaults
+
+icon1107:
+  schema: G1107FILES
+  <<: *defaults
+
+icon1120:
+  schema: G1120FILES
+  <<: *defaults
+
+icon1122:
+  schema: G1122FILES
+  <<: *defaults
+
+icon1123:
+  schema: G1123FILES
+  <<: *defaults
+
+icon1125:
+  schema: G1125FILES
+  <<: *defaults
+
+icon1136:
+  schema: G1136FILES
+  <<: *defaults
+
+icon1150:
+  schema: G1150FILES
+  <<: *defaults
+
+icon1151:
+  schema: G1151FILES
+  <<: *defaults
+
+icon1171:
+  schema: G1171FILES
+  <<: *defaults
+
+icon1174:
+  schema: G1174FILES
+  <<: *defaults
+
+icon1528:
+  schema: G1528FILES
+  <<: *defaults
+
+icon1530:
+  schema: G1530FILES
+  <<: *defaults
+
+icon1532:
+  schema: G1532FILES
+  <<: *defaults
+
+icon1558:
+  schema: G1558FILES
+  <<: *defaults
+
+icon1030:
+  schema: G1030FILES
+  <<: *defaults
+
+icon1278:
+  schema: G1278FILES
+  <<: *defaults
+
+icon1287:
+  schema: G1287FILES
+  <<: *defaults
+
+icon1255:
+  schema: G1255FILES
+  <<: *defaults
+
+icon1262:
+  schema: G1262FILES
+  <<: *defaults
+
+icon1263:
+  schema: G1263FILES
+  <<: *defaults

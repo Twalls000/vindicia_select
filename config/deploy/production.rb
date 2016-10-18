@@ -7,13 +7,15 @@ role :db,  %w{ent-pocapnmas26}
 set :keep_releases, 2
 
 set :ssh_options, {
-    keys: ['~/.ssh/id_rsa'],
-    user: "capuser"
+    keys: %w(~/.ssh/id_rsa),
+    user: fetch(:user_id)
   }
 
-set :deploy_to, '/opt/apps/vindicia-select/'
+set :deploy_to, '/var/apps/vindicia-select/'
 set :branch, ask('the branch:', "master?")
+set :default_env, {path: "/opt/ruby21/bin/:$PATH"}
 set :rails_env, 'production'
+set :linked_files, %w(config/database.yml config/secrets.yml)
 
 before "deploy:assets:precompile", :copy_app_config do
   on roles(:app) do

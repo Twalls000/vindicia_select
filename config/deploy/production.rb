@@ -13,6 +13,7 @@ set :ssh_options, {
 
 set :deploy_to, '/var/apps/vindicia-select/'
 set :branch, ask('the branch:', "master?")
+set :user_id, ask('Deploy User:', nil)
 set :default_env, {path: "/opt/ruby21/bin/:$PATH"}
 set :rails_env, 'production'
 set :linked_files, %w(config/database.yml config/secrets.yml)

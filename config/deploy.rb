@@ -6,25 +6,22 @@ set :repo_url, 'https://deployer-gannett:gann3tt!@bitbucket.org/gannett_it/vindi
 
 # Setup SCM as git
 set :scm, :git
-# set :scm_verbose, true
+set :scm_verbose, true
 set :scm_user, "deployer-gannett" # The server's user for deploys
 set :scm_password, "gann3tt!"
-# set :use_sudo, false
+set :use_sudo, false
 set :local_scm_command, "git"
 set :scm_command, "/usr/local/bin/git"
 
 # Linux deploy to
-set :user, "capuser"
-# set :use_sudo, false
+set :user, "jrmoore"
+set :use_sudo, false
 set :deploy_via, :remote_cache
 set :ssh_options, { :forward_agent => true }
-set :rvm_type, :system
-set :default_env, { 'PATH' => '/opt/ruby216/bin:$PATH' }
-set :default_shell, '/bin/bash -l'
 set :format, :pretty
 set :log_level, :debug
 set :pty, true
-set :git_ssl_no_verify, true
+
 
 # Default value for linked_dirs is []
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system')

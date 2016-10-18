@@ -13,5 +13,9 @@ class ResponseCodeTest < ActiveSupport::TestCase
     test "lookup response numeric code test adjusted found" do
       assert_equal "530", ResponseCode.translate_code(5)
     end
+    test "lookup response code with padding test adjusted found" do
+      assert_equal "530", ResponseCode.translate_code("5 ")
+      assert_equal "530", ResponseCode.translate_code(" 5")
+    end
   end
 end

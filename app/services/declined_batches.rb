@@ -73,7 +73,8 @@ class DeclinedBatches
       billing_address_line2:       declined_cc.billing_address_line2.squeezed,
       billing_addr_city:           declined_cc.billing_addr_city.squeezed,
       billing_address_district:    declined_cc.billing_address_district,
-      billing_address_postal_code: declined_cc.billing_address_postal_code
+      billing_address_postal_code: declined_cc.billing_address_postal_code,
+      auth_code:                   declined_cc.auth_code
     }
   end
 end

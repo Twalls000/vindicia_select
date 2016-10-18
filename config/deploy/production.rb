@@ -1,10 +1,11 @@
-set :stage, :development
+set :stage, :production
 
 role :app, %w{ent-pocapnmas26}
 role :web, %w{ent-pocapnmas26}
 role :db,  %w{ent-pocapnmas26}
 
 set :keep_releases, 2
+set :user_id, ask('Deploy User:', nil)
 
 set :ssh_options, {
     keys: %w(~/.ssh/id_rsa),
@@ -13,8 +14,7 @@ set :ssh_options, {
 
 set :deploy_to, '/var/apps/vindicia-select/'
 set :branch, ask('the branch:', "master?")
-set :user_id, ask('Deploy User:', nil)
-set :default_env, {path: "/opt/ruby21/bin/:$PATH"}
+set :default_env, {path: "/opt/ruby2110/bin/:$PATH"}
 set :rails_env, 'production'
 set :linked_files, %w(config/database.yml config/secrets.yml)
 

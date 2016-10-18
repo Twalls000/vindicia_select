@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock '3.6.0'
+# lock '3.6.0'
 
 set :application, 'vindicia-select'
 set :repo_url, 'https://deployer-gannett:gann3tt!@bitbucket.org/gannett_it/vindicia_select.git'
@@ -64,5 +64,5 @@ task :set_database_yml do
       "#{fetch(:release_path)}/config/database.yml"
   end
 end
-before "deploy:starting", "set_umask"
+before 'deploy:starting', 'set_umask'
 before 'deploy:updated', 'set_database_yml'

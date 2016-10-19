@@ -46,7 +46,7 @@ class DeclinedBatches
       declined_cc.attributes.each do |name, value|
         attribute = cc_aliased_attributes[name]
         if transaction.attributes.keys.include? attribute
-          trans_attributes[attribute] = value.try(:strip) || value
+          trans_attributes[attribute.to_sym] = value.try(:strip) || value
         end
       end
       transaction.gci_unit = declined_batch.gci_unit

@@ -22,8 +22,11 @@ if Rails.env == "development"
 
   ReturnNotificationSetting.delete_all
 
-  ReturnNotificationSetting.new({checking_number_of_days:2,
-    range_to_check:1,
-    page:10,
-    days_before_failure:0}).save
+  ReturnNotificationSetting.new({
+    checking_number_of_days: 2,
+    range_to_check: 1,
+    page: 10,
+    days_before_failure: 0,
+    fetch_page_number: 0
+  }).save
 end

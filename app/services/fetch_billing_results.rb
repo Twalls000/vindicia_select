@@ -8,7 +8,6 @@ class FetchBillingResults
   def initialize(args = {})
     @start_timestamp = args.fetch(:start_timestamp)
     @end_timestamp = args[:end_timestamp]
-    @page = args.fetch(:page, 0)
     @page_size = args.fetch(:page_size)
   end
 
@@ -29,14 +28,17 @@ class FetchBillingResults
   def fetch_billing_results
     previous_response = nil
     begin
+      page = get_page_number
+
       response = Select.fetch_billing_results(@start_timestamp, @end_timestamp,
-        @page, @page_size)
+        page, @page_size)
       unless !response.is_a?(Array)
         process_response(response)
         previous_response = response
       end
-      @page+=1
     end until !response.is_a?(Array)
+    reset_page_number
+
     set_empty_last_fetch_soap_id(response, previous_response)
   end
 
@@ -84,6 +86,28 @@ class FetchBillingResults
       else
         AuditTrail.create(event: "Problem assigning last soap ID #{soap_id}: DeclinedCreditCardTransaction with merchant_transaction_id \"#{last_mtid}\" does not exist in database")
       end
+    end
+  end
+
+  def get_page_number
+    rns = ReturnNotificationSetting.first
+    page = rns.fetch_page_number
+    rns.fetch_page_number += 1
+    begin
+      rns.save
+      page
+    rescue ActiveRecord::StaleObjectError
+      get_page_number
+    end
+  end
+
+  def reset_page_number
+    rns = ReturnNotificationSetting.first
+    rns.fetch_page_number = 0
+    begin
+      rns.save
+    rescue ActiveRecord::StaleObjectError
+      reset_page_number
     end
   end
 end

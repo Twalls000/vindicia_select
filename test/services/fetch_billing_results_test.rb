@@ -20,11 +20,6 @@ class FetchBillingResultsTest < ActiveSupport::TestCase
       fbr = FetchBillingResults.new(start_timestamp: DateTime.now, page_size: 10)
       assert_nil fbr.end_timestamp
     end
-
-    test 'the default value for page is 0' do
-      fbr = FetchBillingResults.new(start_timestamp: DateTime.now, page_size: 10)
-      assert_equal 0, fbr.page
-    end
   end
 
   class Process < FetchBillingResultsTest

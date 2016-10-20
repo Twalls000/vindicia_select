@@ -5,21 +5,23 @@ class SendForCapture
   def self.process
     begin
       mp = get_next_batch
-      if mp
-        # Get the transactions and mark them for processing
-        transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
-            by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
-            limit(mp.vindicia_batch_size)
-        transactions_to_send.each { |t| t.queue_to_vindicia! }
-
-        SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
-      end
+      submit_send_for_capture_job(mp)  if mp
       mp = get_next_batch
     end until mp.nil?
   end
 
   def self.get_next_batch
     DeclinedCreditCardTransaction.oldest_unsent.first.try(:market_publication)
+  end
+
+  def self.submit_send_for_capture_job(mp)
+    # Get the transactions and mark them for processing
+    transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
+        by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
+        limit(mp.vindicia_batch_size)
+    transactions_to_send.each { |t| t.queue_to_vindicia! }
+
+    SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
   end
 
   def self.send_transactions_for_capture(transactions_array)

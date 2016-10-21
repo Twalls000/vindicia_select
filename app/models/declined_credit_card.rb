@@ -17,6 +17,8 @@ class DeclinedCreditCard < Base
   alias_attribute :orbital_auth_code,       :vsrscd
   alias_attribute :select_transaction_id,   :vsvord
   alias_attribute :expiration_mmyy,         :vscexp
+  alias_attribute :payment_method_id,       :vsccno
+
   # These aliases are for the Credit Card model
   alias_attribute :card_number,             :crdnbr
   alias_attribute :card_type,               :ccctyp

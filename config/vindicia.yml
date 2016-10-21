@@ -12,3 +12,5 @@ development:
   namespace: "http://soap.vindicia.com"
   password: z8wCZNE6bj85Qcg7mhnUDHMIWZrkph5N
   login: gannett-select_soap
+  open_timeout: 600
+  read_timeout: 600

@@ -39,7 +39,7 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'vindicia_cash_box_api', '2.1.6', :source=> 'http://gems.gcinmass.com'
+gem 'vindicia_cash_box_api', '2.2.1', :source=> 'http://gems.gcinmass.com'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

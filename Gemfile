@@ -40,6 +40,7 @@ gem 'whenever'
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
 gem 'vindicia_cash_box_api', '2.1.6', :source=> 'http://gems.gcinmass.com'
+gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

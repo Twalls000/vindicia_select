@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class SendForCaptureTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
   def setup
     @send_for_capture = SendForCapture.new
   end
@@ -22,7 +23,11 @@ class SendForCaptureTest < ActiveSupport::TestCase
     end
   end
   class Process < SendForCaptureTest
-    # Tests
+    test "it should submit a job for later processing" do
+      assert_enqueued_with(job: SendForCaptureJob) do
+        SendForCapture.submit_send_for_capture_job(market_publications(:one))
+      end
+    end
   end
 
   class SendTransactionsForCapture < SendForCaptureTest

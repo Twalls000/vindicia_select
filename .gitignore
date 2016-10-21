@@ -12,9 +12,10 @@
 !/log/.keep
 /tmp
 
-# Ignore Vagrant
+# Ignore Tools
 /Vagrantfile
 /.vagrant
+coverage
 
 # Ignore DB stuff
 config/database.yml

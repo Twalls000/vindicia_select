@@ -1,9 +1,7 @@
 require 'test_helper'
 
 class FetchBillingResultsTest < ActiveSupport::TestCase
-  def setup
-
-  end
+  include ActiveJob::TestHelper
 
   class Initialize < FetchBillingResultsTest
     test 'an error is thrown if no start_timestamp is passed' do
@@ -28,8 +26,8 @@ class FetchBillingResultsTest < ActiveSupport::TestCase
   end
 
   class Process < FetchBillingResultsTest
-    test 'FetchBillingResultsJob::perform_later is called' do
-      verify_class_method FetchBillingResultsJob, :perform_later do
+    test "it should submit a job for later processing" do
+      assert_enqueued_with(job: FetchBillingResultsJob) do
         FetchBillingResults.process
       end
     end

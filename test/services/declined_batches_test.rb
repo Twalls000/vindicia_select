@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class DeclinedBatchesTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def setup
     @declined_batches = DeclinedBatches.new
   end
@@ -11,8 +13,11 @@ class DeclinedBatchesTest < ActiveSupport::TestCase
     end
   end
 
-  class Process < DeclinedBatchesTest
-    # Tests
+  test "it should submit a job for later processing" do
+    assert_enqueued_with(job: DeclinedBatchesJob) do
+      DeclinedBatches.submit_card_batch_job([OpenStruct.new(:batch_keys => "123")],
+        market_publications(:one))
+    end
   end
 
   class DeclinedCreditCardBatchClass < DeclinedBatchesTest

@@ -78,7 +78,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'previous_billing_count'      => previous_billing_count.to_i,
       'credit_card_account_hash'    => credit_card_account_hash,
       'payment_method_is_tokenized' => payment_method_tokenized,
-      'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date),
+      'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date)
     })
 
     attrs.delete_if { |key,value| value.nil? }

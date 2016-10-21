@@ -14,7 +14,7 @@ class DeclinedCreditCard < Base
   alias_attribute :customer_id,             :vsctid
   alias_attribute :division_number,         :vsdvsn
   alias_attribute :avs_code,                :vsnavs
-  alias_attribute :auth_code,               :vsrscd
+  alias_attribute :orbital_auth_code,       :vsrscd
   alias_attribute :select_transaction_id,   :vsvord
   alias_attribute :expiration_mmyy,         :vscexp
   alias_attribute :payment_method_id,       :vsccno
@@ -130,5 +130,9 @@ class DeclinedCreditCard < Base
 
   def expiration_date
     Date.strptime(expiration_mmyy.to_s.rjust(4,'0'), "%m%y")
+  end
+
+  def auth_code
+    ResponseCode.translate_code(orbital_auth_code)
   end
 end

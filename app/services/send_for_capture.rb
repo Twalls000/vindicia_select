@@ -29,7 +29,8 @@ class SendForCapture
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
       response = Select.bill_transactions transactions
 
-      if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)
+      if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse) || response.is_a?(Vindicia::TransactionValidationResponse)
+        response = [response] if response.is_a?(Vindicia::TransactionValidationResponse)
         transactions.each do |t|
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first

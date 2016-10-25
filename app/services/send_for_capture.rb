@@ -30,12 +30,17 @@ class SendForCapture
       response = Select.bill_transactions transactions
 
       if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)
-        response.select { |r| r.is_a? Vindicia::TransactionValidationResponse }.each do |vtvr|
-          trans = transactions.select { |t| t.merchant_transaction_id == vtvr.merchant_transaction_id }.first
-          trans.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-          trans.soap_id = vtvr.soap_id
-          vtvr.code.to_s == "200" ? trans.send_to_vindicia : trans.error_sending_to_vindicia
-          trans.save
+        transactions.each do |t|
+          vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
+              r.merchant_transaction_id == t.merchant_transaction_id }.first
+          if vtvr
+            t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+            t.soap_id = vtvr.soap_id
+            t.error_sending_to_vindicia
+            t.save
+          else
+            t.send_to_vindicia!
+          end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
         transactions.each do |t|

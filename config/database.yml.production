@@ -12,7 +12,7 @@ production:
   username: <%= ENV['VINDICIA_SELECT_DB_USERNAME'] %>
   password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['VINDICIA_SELECT_DB_PASSWORD'])) %>
   database: vindicia_select_production
-  host: ent-mocdbnmas20
+  host: ent-pocdbnmas20
 
 ods_library:
   adapter: ibm_db_odbc

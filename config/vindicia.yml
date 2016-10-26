@@ -1,10 +1,4 @@
-<%# require 'gci-simple-encryption' %>
-# production:
-#   version: "1.1"
-#   endpoint: "https://soap.vindicia.com"
-#   namespace: "http://soap.vindicia.com"
-#   password: <%= GciSimpleEncryption.decrypt_hex("324c4b396f764e49352f4377475549595a6731706d5676437a684958584c427a48725643796f6c503548696165585262365058614f6a6e75584c466e0a513459410a") %>
-#   login: gannett_soap
+<% require 'gci-simple-encryption' #%>
 
 development:
   version: "1.1"

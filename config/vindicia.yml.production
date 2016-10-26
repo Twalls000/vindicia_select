@@ -1,0 +1,10 @@
+<% require 'gci-simple-encryption' %>
+
+production:
+  version: "1.1"
+  endpoint: "https://soap.vindicia.com"
+  namespace: "http://soap.vindicia.com"
+  password: <%= GciSimpleEncryption.decrypt_hex(ENV['VINDICIA_SELECT_SELECT_PASSWORD']) %>
+  login: <%= ENV['VINDICIA_SELECT_SELECT_USERNAME'] %>
+  open_timeout: 600
+  read_timeout: 600

@@ -16,7 +16,7 @@ set :deploy_to, '/var/apps/vindicia-select/'
 set :branch, ask('the branch:', "master?")
 set :default_env, {path: "/opt/ruby2110/bin/:$PATH"}
 set :rails_env, 'production'
-set :linked_files, %w(config/database.yml config/secrets.yml)
+set :linked_files, %w(config/database.yml config/secrets.yml config/vindicia.yml)
 
 before "deploy:assets:precompile", :copy_app_config do
   on roles(:app) do

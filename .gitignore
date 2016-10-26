@@ -20,3 +20,6 @@ coverage
 # Ignore DB stuff
 config/database.yml
 db/*.sqlite3
+
+# Ignore vindicia.yml
+config/vindicia.yml

@@ -64,5 +64,12 @@ task :set_database_yml do
       "#{fetch(:release_path)}/config/database.yml"
   end
 end
+task :set_vindicia_yml do
+  on roles(:all) do
+    execute "cp #{fetch(:release_path)}/config/vindicia.yml.#{fetch(:stage)} " +
+      "#{fetch(:release_path)}/config/vindicia.yml"
+  end
+end
 before 'deploy:starting', 'set_umask'
 before 'deploy:updated', 'set_database_yml'
+before 'deploy:updated', 'set_vindicia_yml'

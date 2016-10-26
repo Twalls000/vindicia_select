@@ -22,214 +22,214 @@ ods_library:
   schema: godsfiles2
 
 
-icon8872:
+g8872:
   schema: g8872files
   <<: *defaults
 
-icon1007:
+g1007:
   schema: G1007FILES
   <<: *defaults
 
-icon1008:
+g1008:
   schema: G1008FILES
   <<: *defaults
 
-icon1010:
+g1010:
   schema: G1010FILES
   <<: *defaults
 
-icon1011:
+g1011:
   schema: G1011FILES
   <<: *defaults
 
-icon1013:
+g1013:
   schema: G1013FILES
   <<: *defaults
 
-icon1014:
+g1014:
   schema: G1014FILES
   <<: *defaults
 
-icon1019:
+g1019:
   schema: G1019FILES
   <<: *defaults
 
-icon1021:
+g1021:
   schema: G1021FILES
   <<: *defaults
 
-icon1026:
+g1026:
   schema: G1026FILES
   <<: *defaults
 
-icon1028:
+g1028:
   schema: G1028FILES
   <<: *defaults
 
-icon1033:
+g1033:
   schema: G1033FILES
   <<: *defaults
 
-icon1040:
+g1040:
   schema: G1040FILES
   <<: *defaults
 
-icon1042:
+g1042:
   schema: G1042FILES
   <<: *defaults
 
-icon1051:
+g1051:
   schema: G1051FILES
   <<: *defaults
 
-icon1052:
+g1052:
   schema: G1052FILES
   <<: *defaults
 
-icon1056:
+g1056:
   schema: G1056FILES
   <<: *defaults
 
-icon1063:
+g1063:
   schema: G1063FILES
   <<: *defaults
 
-icon1065:
+g1065:
   schema: G1065FILES
   <<: *defaults
 
-icon1066:
+g1066:
   schema: G1066FILES
   <<: *defaults
 
-icon1070:
+g1070:
   schema: G1070FILES
   <<: *defaults
 
-icon1074:
+g1074:
   schema: G1074FILES
   <<: *defaults
 
-icon1076:
+g1076:
   schema: G1076FILES
   <<: *defaults
 
-icon1078:
+g1078:
   schema: G1078FILES
   <<: *defaults
 
-icon1082:
+g1082:
   schema: G1082FILES
   <<: *defaults
 
-icon1084:
+g1084:
   schema: G1084FILES
   <<: *defaults
 
-icon1085:
+g1085:
   schema: G1085FILES
   <<: *defaults
 
-icon1087:
+g1087:
   schema: G1087FILES
   <<: *defaults
 
-icon1089:
+g1089:
   schema: G1089FILES
   <<: *defaults
 
-icon1094:
+g1094:
   schema: G1094FILES
   <<: *defaults
 
-icon1098:
+g1098:
   schema: G1098FILES
   <<: *defaults
 
-icon1099:
+g1099:
   schema: G1099FILES
   <<: *defaults
 
-icon1106:
+g1106:
   schema: G1106FILES
   <<: *defaults
 
-icon1107:
+g1107:
   schema: G1107FILES
   <<: *defaults
 
-icon1120:
+g1120:
   schema: G1120FILES
   <<: *defaults
 
-icon1122:
+g1122:
   schema: G1122FILES
   <<: *defaults
 
-icon1123:
+g1123:
   schema: G1123FILES
   <<: *defaults
 
-icon1125:
+g1125:
   schema: G1125FILES
   <<: *defaults
 
-icon1136:
+g1136:
   schema: G1136FILES
   <<: *defaults
 
-icon1150:
+g1150:
   schema: G1150FILES
   <<: *defaults
 
-icon1151:
+g1151:
   schema: G1151FILES
   <<: *defaults
 
-icon1171:
+g1171:
   schema: G1171FILES
   <<: *defaults
 
-icon1174:
+g1174:
   schema: G1174FILES
   <<: *defaults
 
-icon1528:
+g1528:
   schema: G1528FILES
   <<: *defaults
 
-icon1530:
+g1530:
   schema: G1530FILES
   <<: *defaults
 
-icon1532:
+g1532:
   schema: G1532FILES
   <<: *defaults
 
-icon1558:
+g1558:
   schema: G1558FILES
   <<: *defaults
 
-icon1030:
+g1030:
   schema: G1030FILES
   <<: *defaults
 
-icon1278:
+g1278:
   schema: G1278FILES
   <<: *defaults
 
-icon1287:
+g1287:
   schema: G1287FILES
   <<: *defaults
 
-icon1255:
+g1255:
   schema: G1255FILES
   <<: *defaults
 
-icon1262:
+g1262:
   schema: G1262FILES
   <<: *defaults
 
-icon1263:
+g1263:
   schema: G1263FILES
   <<: *defaults

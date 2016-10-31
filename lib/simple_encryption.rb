@@ -77,7 +77,7 @@ module SimpleEncryption
 
     raw_text = @@credentials["#{username}"]  rescue ''
     SimpleEncryption.aes_decrypt(Base64.decode64(raw_text))
- 
+
   end
 
   def self.load_credentials

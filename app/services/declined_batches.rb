@@ -9,13 +9,7 @@ class DeclinedBatches
     include_markets_and_pub.map do |mp|
       card_batch = mp.select_next_batch
       until card_batch.empty?
-        declined_batch = DeclinedCreditCardBatch.new
-        declined_batch.start_keys = card_batch.first.batch_keys
-        declined_batch.end_keys = card_batch.last.batch_keys
-        declined_batch.gci_unit = mp.gci_unit
-        declined_batch.pub_code = mp.pub_code
-        declined_batch.save
-        DeclinedBatchesJob.perform_later declined_batch.id
+        submit_card_batch_job(card_batch, mp)
         card_batch = mp.select_next_batch
       end
     end
@@ -23,6 +17,16 @@ class DeclinedBatches
 
   def self.include_markets_and_pub
     MarketPublication.all
+  end
+
+  def self.submit_card_batch_job(card_batch, mp)
+    declined_batch = DeclinedCreditCardBatch.new
+    declined_batch.start_keys = card_batch.first.batch_keys
+    declined_batch.end_keys = card_batch.last.batch_keys
+    declined_batch.gci_unit = mp.gci_unit
+    declined_batch.pub_code = mp.pub_code
+    declined_batch.save
+    DeclinedBatchesJob.perform_later declined_batch.id
   end
 
   #

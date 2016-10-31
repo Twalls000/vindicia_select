@@ -29,9 +29,10 @@ class FetchBillingResultsJob < ActiveJob::Base
     # Get the definitions to pull the data back
     return_notification_setting = ReturnNotificationSetting.first
 
+    start_time = (Date.today - return_notification_setting.checking_number_of_days.days).in_time_zone("Pacific Time (US & Canada)").end_of_day + 1.second
+    end_time = (Date.today - return_notification_setting.range_to_check.days).in_time_zone("Pacific Time (US & Canada)").end_of_day
     fetch_billing_results = FetchBillingResults.new(page_size:return_notification_setting.page,
-      start_timestamp:Time.now-return_notification_setting.checking_number_of_days.days,
-      end_timestamp:Time.now-return_notification_setting.range_to_check.days)
+      start_timestamp: start_time, end_timestamp: end_time)
     fetch_billing_results.fetch_billing_results
     Rails.logger.warn("Completing the FetchBillingResultsJob #{Time.now}")
   end

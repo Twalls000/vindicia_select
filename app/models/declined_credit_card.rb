@@ -17,6 +17,8 @@ class DeclinedCreditCard < Base
   alias_attribute :orbital_auth_code,       :vsrscd
   alias_attribute :select_transaction_id,   :vsvord
   alias_attribute :expiration_mmyy,         :vscexp
+  alias_attribute :payment_method_id,       :vsccno
+
   # These aliases are for the Credit Card model
   alias_attribute :card_number,             :crdnbr
   alias_attribute :card_type,               :ccctyp
@@ -57,7 +59,7 @@ class DeclinedCreditCard < Base
         " INNER JOIN addr ON addr.adrnbr = subscrip.hsadr# ",
         " INNER JOIN prbs ON prbs.cusnbr = subscrip.hsper# ").
       limit(limit).
-      order("ccvc.vsppub ASC, ccvc.vsbtch ASC, ccvc.vsbdat ASC, ccvc.vspact ASC")
+      order("ccvc.vsppub ASC, ccvc.vsbdat ASC, ccvc.vsbtch ASC, ccvc.vspact ASC")
   end
 
   def self.first_record_by_date(date, gci_unit, pub_code)
@@ -68,17 +70,17 @@ class DeclinedCreditCard < Base
   def self.summary_where_params(pub_code, start_keys, end_keys)
     if end_keys.empty?
       query_string = ->(addl_params){
-        ["vsppub=? and ((vsbtch=? and vsbdat=? and vspact>?) or (vsbtch=? and vsbdat>?) or vsbtch>? ) #{addl_params}"] }
+        ["vsppub=? and ((vsbdat=? and vsbtch=? and vspact>?) or (vsbdat=? and vsbtch>?) or vsbdat>? ) #{addl_params}"] }
     else
       query_string = ->(addl_params){
-        ["vsppub=? and ((vsbtch=? and vsbdat=? and vspact>=?) or (vsbtch=? and vsbdat>?) or vsbtch>? ) #{addl_params}"] }
+        ["vsppub=? and ((vsbdat=? and vsbtch=? and vspact>=?) or (vsbdat=? and vsbtch>?) or vsbdat>? ) #{addl_params}"] }
     end
-    addl_params = " and ((vsbtch<?) or (vsbtch=? and vsbdat<?) or (vsbtch=? and vsbdat=? and vspact<=?))"  unless end_keys.empty?
+    addl_params = " and ((vsbdat<?) or (vsbdat=? and vsbtch<?) or (vsbtch=? and vsbdat=? and vspact<=?))"  unless end_keys.empty?
 
     params = query_string.call(addl_params)
-    params += [pub_code, start_keys[:batch_id], start_keys[:batch_date], start_keys[:account_number],
-      start_keys[:batch_id], start_keys[:batch_date], start_keys[:batch_id]]
-    params += [end_keys[:batch_id], end_keys[:batch_id], end_keys[:batch_date],
+    params += [pub_code, start_keys[:batch_date], start_keys[:batch_id], start_keys[:account_number],
+      start_keys[:batch_date], start_keys[:batch_id], start_keys[:batch_date]]
+    params += [end_keys[:batch_date], end_keys[:batch_date], end_keys[:batch_id],
       end_keys[:batch_id], end_keys[:batch_date], end_keys[:account_number]]  unless end_keys.empty?
 
     params

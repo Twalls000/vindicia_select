@@ -5,15 +5,7 @@ class SendForCapture
   def self.process
     begin
       mp = get_next_batch
-      if mp
-        # Get the transactions and mark them for processing
-        transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
-            by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
-            limit(mp.vindicia_batch_size)
-        transactions_to_send.each { |t| t.queue_to_vindicia! }
-
-        SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
-      end
+      submit_send_for_capture_job(mp)  if mp
       mp = get_next_batch
     end until mp.nil?
   end
@@ -22,18 +14,34 @@ class SendForCapture
     DeclinedCreditCardTransaction.oldest_unsent.first.try(:market_publication)
   end
 
+  def self.submit_send_for_capture_job(mp)
+    # Get the transactions and mark them for processing
+    transactions_to_send = DeclinedCreditCardTransaction.oldest_unsent.
+        by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
+        limit(mp.vindicia_batch_size)
+    transactions_to_send.each { |t| t.queue_to_vindicia! }
+
+    SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
+  end
+
   def self.send_transactions_for_capture(transactions_array)
     begin
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
       response = Select.bill_transactions transactions
 
-      if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse)
-        response.select { |r| r.is_a? Vindicia::TransactionValidationResponse }.each do |vtvr|
-          trans = transactions.select { |t| t.merchant_transaction_id == vtvr.merchant_transaction_id }.first
-          trans.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-          trans.soap_id = vtvr.soap_id
-          vtvr.code.to_s == "200" ? trans.send_to_vindicia : trans.error_sending_to_vindicia
-          trans.save
+      if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse) || response.is_a?(Vindicia::TransactionValidationResponse)
+        response = [response] if response.is_a?(Vindicia::TransactionValidationResponse)
+        transactions.each do |t|
+          vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
+              r.merchant_transaction_id == t.merchant_transaction_id }.first
+          if vtvr
+            t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+            t.soap_id = vtvr.soap_id
+            t.error_sending_to_vindicia
+            t.save
+          else
+            t.send_to_vindicia!
+          end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
         transactions.each do |t|

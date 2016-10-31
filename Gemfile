@@ -39,7 +39,8 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'vindicia_cash_box_api', '2.1.6', :source=> 'http://gems.gcinmass.com'
+gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
+gem 'vindicia_cash_box_api', '2.2.1', :source=> 'http://gems.gcinmass.com'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -59,7 +60,7 @@ group :development, :test do
   gem 'capistrano-bundler', '~> 1.1.1'
   gem 'capistrano-rails'
   gem 'capistrano3-delayed-job', '~> 1.0'
-  gem "minitest"
+  gem 'minitest'
 end
 
 group :development do
@@ -69,3 +70,4 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   #gem 'spring'
 end
+gem 'simplecov', :group => :test

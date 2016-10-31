@@ -14,6 +14,9 @@ set :ssh_options, {
 set :deploy_to, '/opt/apps/vindicia-select/'
 set :branch, ask('the branch:', "jira tkt?")
 set :rails_env, 'development'
+set :default_env, { 'PATH' => '/opt/ruby216/bin:$PATH' }
+set :default_shell, '/bin/bash -l'
+set :git_ssl_no_verify, true
 
 before "deploy:assets:precompile", :copy_app_config do
   on roles(:app) do

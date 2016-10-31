@@ -1,30 +1,27 @@
 # config valid only for current version of Capistrano
-lock '3.6.0'
+# lock '3.6.0'
 
 set :application, 'vindicia-select'
 set :repo_url, 'https://deployer-gannett:gann3tt!@bitbucket.org/gannett_it/vindicia_select.git'
 
 # Setup SCM as git
 set :scm, :git
-# set :scm_verbose, true
+set :scm_verbose, true
 set :scm_user, "deployer-gannett" # The server's user for deploys
 set :scm_password, "gann3tt!"
-# set :use_sudo, false
+set :use_sudo, false
 set :local_scm_command, "git"
 set :scm_command, "/usr/local/bin/git"
 
 # Linux deploy to
-set :user, "capuser"
-# set :use_sudo, false
+set :user, "jrmoore"
+set :use_sudo, false
 set :deploy_via, :remote_cache
 set :ssh_options, { :forward_agent => true }
-set :rvm_type, :system
-set :default_env, { 'PATH' => '/opt/ruby216/bin:$PATH' }
-set :default_shell, '/bin/bash -l'
 set :format, :pretty
 set :log_level, :debug
 set :pty, true
-set :git_ssl_no_verify, true
+
 
 # Default value for linked_dirs is []
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system')
@@ -67,5 +64,12 @@ task :set_database_yml do
       "#{fetch(:release_path)}/config/database.yml"
   end
 end
-before "deploy:starting", "set_umask"
+task :set_vindicia_yml do
+  on roles(:all) do
+    execute "cp #{fetch(:release_path)}/config/vindicia.yml.#{fetch(:stage)} " +
+      "#{fetch(:release_path)}/config/vindicia.yml"
+  end
+end
+before 'deploy:starting', 'set_umask'
 before 'deploy:updated', 'set_database_yml'
+before 'deploy:updated', 'set_vindicia_yml'

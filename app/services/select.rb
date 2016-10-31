@@ -28,7 +28,7 @@ class Select
     when Savon::Response
       return_val = response.hash[:envelope][:body].first[1][:return]
       raise("Error with soap_id #{return_val[:soap_id]} (code #{return_val[:return_code]}): #{return_val[:return_string]}")
-    when Vindicia::Transaction
+    when Vindicia::Transaction, Vindicia::TransactionValidationResponse
       Array(response)
     else
       response

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161014144658) do
+ActiveRecord::Schema.define(version: 20161019130346) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -118,6 +118,8 @@ ActiveRecord::Schema.define(version: 20161014144658) do
     t.integer  "days_before_failure",     limit: 4
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
+    t.integer  "lock_version"
+    t.integer  "fetch_page_number"
   end
 
 end

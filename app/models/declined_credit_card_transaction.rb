@@ -7,6 +7,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   delegate :market_publication, to: :declined_credit_card_batch
   serialize :name_values
 
+  validate :uniqueness_by_merchant_transaction_id_and_year
+
   INITIAL_CHARGE_STATUS = 'Failed'
   DEFAULT_CURRENCY = 'USD'
   DEFAULT_TOKENIZED = true
@@ -106,5 +108,11 @@ private
 
   def year=(year)
     super(year)
+  end
+
+  def uniqueness_by_merchant_transaction_id_and_year
+    unique = !self.class.where("merchant_transaction_id = ? AND year = ?", merchant_transaction_id, year).first
+    errors.add(:merchant_transaction_id, "is not unique by merchant_transaction_id and year") unless unique
+    unique
   end
 end

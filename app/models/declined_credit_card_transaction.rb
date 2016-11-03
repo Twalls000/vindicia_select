@@ -1,6 +1,7 @@
 class DeclinedCreditCardTransaction < ActiveRecord::Base
   include AASM
   before_create :set_defaults
+  before_validation :save_year
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
   delegate :market_publication, to: :declined_credit_card_batch
@@ -97,5 +98,13 @@ private
     self.payment_method_tokenized = DEFAULT_TOKENIZED
     self.billing_address_country = DEFAULT_COUNTRY
     self.credit_card_account_hash = ''
+  end
+
+  def save_year
+    self.year = declined_timestamp.year
+  end
+
+  def year=(year)
+    super(year)
   end
 end

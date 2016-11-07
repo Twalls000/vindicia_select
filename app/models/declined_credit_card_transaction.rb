@@ -71,6 +71,9 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day)
   }
 
+  scope :pheonix, by_gci_unit("PHX")
+  scope :non_pheonix, ->{where("gci_unit NOT ?", "PHX")}
+
   def vindicia_fields
     attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
     attrs.merge!({
@@ -91,6 +94,10 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
   def status_update
     charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
+  end
+
+  def pheonix?
+    gci_unit == "PHX"
   end
 
 private

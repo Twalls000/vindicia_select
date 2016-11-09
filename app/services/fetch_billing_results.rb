@@ -56,7 +56,7 @@ class FetchBillingResults
           declined_tran.fetch_soap_id = transaction.soap_id
           declined_tran.status_update
 
-          sent_successfully = declined_tran.phoenix? ? true : DeclinedCreditCard.send_transaction(declined_tran)
+          sent_successfully = declined_tran.pheonix? ? true : DeclinedCreditCard.send_transaction(declined_tran)
           declined_tran.failed_to_send_to_genesys unless sent_successfully
           declined_tran.save
         end

@@ -1,18 +1,8 @@
-class FetchBillingResultsJob < ActiveJob::Base
+class FetchBillingResultsJob < JobBase
   queue_as :fetch_billing_results
 
-  around_perform do |job, block|
-    Rails.logger.warn("Starting the FetchBillingResultsJob #{Time.now}")
-
-    begin
-      define_vindicia_class
-      block.call
-    rescue => e
-      # Send email
-      raise e
-    end
-
-    Rails.logger.warn("Completing the FetchBillingResultsJob #{Time.now}")
+  before_perform do
+    define_vindicia_class
   end
 
   def perform

@@ -1,18 +1,8 @@
-class SendForCaptureJob < ActiveJob::Base
+class SendForCaptureJob < JobBase
   queue_as :send_for_capture
 
-  around_perform do |job, block|
-    Rails.logger.warn("Starting the SendForCaptureJob #{Time.now}")
-
-    begin
-      define_vindicia_class
-      block.call
-    rescue => e
-      # Send email
-      raise e
-    end
-
-    Rails.logger.warn("Completing the SendForCaptureJob #{Time.now}")
+  before_perform do
+    define_vindicia_class
   end
 
   def perform(transactions)

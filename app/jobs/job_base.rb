@@ -5,8 +5,14 @@ class JobBase < ActiveJob::Base
     begin
       block.call
     rescue => e
-      # Send email
-      Rails.logger.error("Error performing #{self.class.name}: ")
+      DataDog.send_event(
+        "#{e.message}:\n#{e.backtrace.join("\n")}",
+        "#{self.class.name} failed",
+        "error",
+        ["delayed_job"]
+      )
+
+      Rails.logger.error("Error performing #{self.class.name}:\n#{e.backtrace}")
       raise e
     end
 

@@ -111,7 +111,7 @@ private
   end
 
   def uniqueness_by_merchant_transaction_id_and_year
-    unique = !self.class.where("merchant_transaction_id = ? AND year = ?", merchant_transaction_id, year).first
+    unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id != ?", merchant_transaction_id, year, id).first
     errors.add(:merchant_transaction_id, "is not unique by merchant_transaction_id and year") unless unique
     unique
   end

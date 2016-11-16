@@ -1,15 +1,38 @@
 class FetchBillingResultsJob < ActiveJob::Base
   queue_as :fetch_billing_results
 
-  def perform
+  around_perform do |job, block|
     Rails.logger.warn("Starting the FetchBillingResultsJob #{Time.now}")
-    #
-    # Complete and total hack!
-    # This code redefines the Transaction class, instantiates an object,
-    # and then saves the Vindicia::Transaction definition.
-    # This code only exists because we will be retiring this project
-    # once Vindicia goes live.
 
+    begin
+      define_vindicia_class
+      block.call
+    rescue => e
+      # Send email
+      raise e
+    end
+
+    Rails.logger.warn("Completing the FetchBillingResultsJob #{Time.now}")
+  end
+
+  def perform
+    return_notification_setting = ReturnNotificationSetting.first
+
+    start_time = (Date.today - return_notification_setting.checking_number_of_days.days).in_time_zone("Pacific Time (US & Canada)").end_of_day + 1.second
+    end_time = (Date.today - return_notification_setting.range_to_check.days).in_time_zone("Pacific Time (US & Canada)").end_of_day
+    fetch_billing_results = FetchBillingResults.new(page_size:return_notification_setting.page,
+      start_timestamp: start_time, end_timestamp: end_time)
+    fetch_billing_results.fetch_billing_results
+  end
+
+private
+
+  # Complete and total hack!
+  # This code redefines the Transaction class, instantiates an object,
+  # and then saves the Vindicia::Transaction definition.
+  # This code only exists because we will be retiring this project
+  # once Vindicia goes live.
+  def define_vindicia_class
     vs = Vindicia::Schema.new
     transaction_class = vs.classes.select {|x| x.name == "Transaction"}.first
     my_needed_class_attributes = [:amount, :currency, :division_number, :merchant_transaction_id,
@@ -21,19 +44,6 @@ class FetchBillingResultsJob < ActiveJob::Base
     transaction_class.attributes = my_needed_class_attributes
     Vindicia::SingleClassBuilder.new transaction_class
     eval "Vindicia::Transaction"
-
-    #
-    # End Of Complete and total hack!
-    #
-
-    # Get the definitions to pull the data back
-    return_notification_setting = ReturnNotificationSetting.first
-
-    start_time = (Date.today - return_notification_setting.checking_number_of_days.days).in_time_zone("Pacific Time (US & Canada)").end_of_day + 1.second
-    end_time = (Date.today - return_notification_setting.range_to_check.days).in_time_zone("Pacific Time (US & Canada)").end_of_day
-    fetch_billing_results = FetchBillingResults.new(page_size:return_notification_setting.page,
-      start_timestamp: start_time, end_timestamp: end_time)
-    fetch_billing_results.fetch_billing_results
-    Rails.logger.warn("Completing the FetchBillingResultsJob #{Time.now}")
   end
+  # End Of Complete and total hack!
 end

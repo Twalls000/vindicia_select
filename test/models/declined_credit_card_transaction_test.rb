@@ -7,6 +7,7 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
 
   class OnInitialize < DeclinedCreditCardTransactionTest
     test "defaults are set before save" do
+      @trans.declined_timestamp = DateTime.now
       @trans.save
       assert_equal @trans.charge_status, DeclinedCreditCardTransaction::INITIAL_CHARGE_STATUS
       assert_equal @trans.currency, DeclinedCreditCardTransaction::DEFAULT_CURRENCY

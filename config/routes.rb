@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  namespace :api do
-  get 'declined_transaction_status/show'
-  end
+  # namespace :api do
+  # get 'declined_transaction_status/show'
+  # end
 
   resources :dashboards
   # The priority is based upon order of creation: first created -> highest priority.
@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     post 'c2k_trans' => 'c2k_trans#create'
-    resources :declined_transaction_status, only: [:show]
+    resources :declined_transaction_status, only: [:index, :show]
   end
 
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]

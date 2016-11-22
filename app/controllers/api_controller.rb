@@ -5,6 +5,7 @@ private
 
   def authenticate
     # VINDICIA_SELECT_API_KEY comes from ~/.bashrc file
+    byebug
     render json: { error: { code: 401, message: 'Unauthorized', errors:[] }}, status: :unauthorized unless request.headers['HTTP_API_KEY'] == GciSimpleEncryption.decrypt_hex(ENV['VINDICIA_SELECT_API_KEY'])
   end
 

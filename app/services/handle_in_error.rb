@@ -13,13 +13,29 @@ class HandleInError
 
     transactions.each do |trans|
       if trans.audit_trails.length > 1
-        # Mark as failed and send to Genesys
+        send_failed_to_genesys trans
       elsif trans.audit_trails.first.event == SSL_ERROR_MESSAGE ||
             trans.audit_trails.first.event =~ VINDICIA_400_MESSAGE
-        # Move back to entry status to be picked up again
+        trans.status = "entry"
+        trans.save
       else
-        # Mark as failed and send to Genesys, also log a Datadog event
+        send_failed_to_genesys trans
+
+        DataDog.send_event(
+          "Transaction with ID #{trans.id}:\n\n#{trans.audit_trails.map(&:event).join("\n")}",
+          "Encountered unknown error when handling in_error transaction",
+          "error",
+          ["handle_in_error"]
+        )
       end
     end
+  end
+
+  private
+
+  def send_failed_to_genesys(transaction)
+    transaction.handle_error
+    transaction.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(transaction)
+    transaction.save
   end
 end

@@ -39,7 +39,6 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
 gem 'vindicia_cash_box_api', '2.2.1', :source=> 'http://gems.gcinmass.com'
 
 # DataDog API gem

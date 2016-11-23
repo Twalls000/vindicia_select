@@ -6,4 +6,8 @@ class HandleInErrorTest < ActiveJob::TestCase
   class Handle < HandleInErrorTest
     # Tests
   end
+
+  class SendFailedToGenesys < HandleInErrorTest
+    # Tests
+  end
 end

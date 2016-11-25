@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
   # ensuring that klass::method was called.
   def verify_class_method(klass,method,&block)
     test_var = false
-    verify_run = ->{
+    verify_run = ->(*args){
       test_var = true
     }
     klass.stub(method.to_sym, verify_run) do

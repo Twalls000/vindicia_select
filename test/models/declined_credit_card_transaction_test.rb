@@ -46,7 +46,7 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
     end
     test "workflow permitted based on error handled" do
       @trans.status="error_handled"
-      assert_equal [], @trans.aasm.events(:permitted => true).map(&:name)
+      assert_equal [:failed_to_send_to_genesys], @trans.aasm.events(:permitted => true).map(&:name)
     end
     test 'status_update should reflect results from Vindicia' do
       @trans.status = "pending"

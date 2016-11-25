@@ -51,6 +51,8 @@ handle_in_error:
   fetch_soap_id: nil
   empty_last_fetch_soap_id: nil
   year: 2016
+
+one: {}
 # column: value
 #
 two: {}

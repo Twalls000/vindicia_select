@@ -33,7 +33,7 @@ class HandleInError
 
   private
 
-  def send_failed_to_genesys(transaction)
+  def self.send_failed_to_genesys(transaction)
     transaction.handle_error
     transaction.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(transaction)
     transaction.save

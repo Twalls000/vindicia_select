@@ -10,6 +10,7 @@ class HandleInError
 
   def self.handle(ids)
     transactions = DeclinedCreditCardTransaction.find(ids)
+    transactions.select!(&:in_error?)
 
     transactions.each do |trans|
       if trans.audit_trails.length > 1

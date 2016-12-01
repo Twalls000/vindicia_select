@@ -13,10 +13,12 @@ class HandleInError
     transactions.select!(&:in_error?)
 
     transactions.each do |trans|
+      first_event = trans.audit_trails.first.try(:event)
+
       if trans.audit_trails.length > 1
         send_failed_to_genesys trans
-      elsif trans.audit_trails.first.event == SSL_ERROR_MESSAGE ||
-            trans.audit_trails.first.event =~ VINDICIA_400_MESSAGE
+      elsif first_event == SSL_ERROR_MESSAGE ||
+            first_event =~ VINDICIA_400_MESSAGE
         trans.status = "entry"
         trans.save
       else

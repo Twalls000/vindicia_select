@@ -21,7 +21,7 @@ class HandleInError
         trans.save
       else
         send_failed_to_genesys trans
-        events = Array(trans.audit_trails.try(:map, &:event))
+        events = trans.audit_trails.map(&:event)
         message = events.empty? ? "Transaction had no audit trails" : events.join("\n")
 
         DataDog.send_event(

@@ -18,3 +18,7 @@ end
 every :hour do
   rake "process_failed_billing_results"
 end
+
+every 1.day, :at => '9:00 pm' do
+  rake "handle_in_error"
+end

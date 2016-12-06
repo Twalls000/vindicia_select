@@ -17,7 +17,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   aasm column: "status" do
     state :entry, initial: true
     state :queued_to_send, :pending, :in_error, :processed, :printed_bill,
-      :no_reply, :genesys_error
+      :no_reply, :genesys_error, :error_handled
 
     event :queue_to_vindicia do
       transitions from: :entry, to: :queued_to_send
@@ -40,9 +40,13 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :failed_to_send_to_genesys do
       transitions from: :printed_bill, to: :genesys_error
       transitions from: :processed, to: :genesys_error
+      transitions from: :error_handled, to: :genesys_error
     end
     event :failed_to_get_reply do
       transitions from: :pending, to: :no_reply
+    end
+    event :handle_error do
+      transitions from: :in_error, to: :error_handled
     end
   end
 

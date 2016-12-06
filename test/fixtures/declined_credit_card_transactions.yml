@@ -52,6 +52,42 @@ handle_in_error:
   empty_last_fetch_soap_id: nil
   year: 2016
 
+validation:
+  declined_timestamp: <%= DateTime.parse("Fri, 02 Dec 2016 06:40:54 EST -05:00") %>
+  amount: 16.29
+  currency: "USD"
+  status: "entry"
+  division_number: "262098"
+  merchant_transaction_id: "TM-RC1129001-20161129-9133959-1278"
+  select_transaction_id: ""
+  subscription_id: "TM91339591278"
+  customer_id: "0002760281278"
+  credit_card_account_hash: ""
+  credit_card_expiration_date: <%= DateTime.parse("Sat 01 Feb 2020") %>
+  account_holder_name: "James Jones"
+  billing_address_line1: "1822 E Nevada Ave"
+  billing_address_line2: ""
+  billing_addr_city: "El Paso"
+  billing_address_county: nil
+  billing_address_district: "TX"
+  billing_address_postal_code: "79902"
+  billing_address_country: "US"
+  auth_code: "571"
+  avs_code: "IS"
+  cvn_code: nil
+  name_values: nil
+  charge_status: "Failed"
+  gci_unit: "1278"
+  pub_code: "TM"
+  account_number: 9133959
+  batch_date: 20161129
+  batch_id: "RC1129001"
+  declined_credit_card_batch_id: 2305
+  payment_method_tokenized: true
+  market_publication_id: 331
+  payment_method_id: "421271952"
+  year: 2016
+
 one: {}
 # column: value
 #

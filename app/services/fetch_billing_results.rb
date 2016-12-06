@@ -18,7 +18,16 @@ class FetchBillingResults
   #
   def self.process
     # Get the transactions and mark them for processing
-    FetchBillingResultsJob.perform_later
+    rns = ReturnNotificationSetting.first
+
+    start_time = (Date.today - rns.checking_number_of_days.days).
+                   in_time_zone("Pacific Time (US & Canada)").end_of_day + 1.second
+    end_time   = (Date.today - rns.range_to_check.days).
+                   in_time_zone("Pacific Time (US & Canada)").end_of_day
+
+    # Have to pass the times as strings because DelayedJob won't accept time
+    # objects as arguments.
+    FetchBillingResultsJob.perform_later(start_time.to_s, end_time.to_s, rns.id)
   end
 
   #

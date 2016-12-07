@@ -67,6 +67,7 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       dup_trans = DeclinedCreditCardTransaction.new(trans.attributes.except("id", "year"))
 
       assert dup_trans.invalid?
+      assert trans.valid?
     end
   end
 end

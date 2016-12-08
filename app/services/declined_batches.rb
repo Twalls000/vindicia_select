@@ -42,7 +42,7 @@ class DeclinedBatches
       end_keys:declined_batch.end_keys)
 
     credit_cards.each do |declined_cc|
-      transaction = declined_batch.declined_credit_card_transactions.build
+      transaction = DeclinedCreditCardTransaction.new
       trans_attributes = load_transaction_attributes(declined_cc)
 
       # This is to have the aliased attributes as keys, and the aliases the values
@@ -56,6 +56,7 @@ class DeclinedBatches
       transaction.gci_unit = declined_batch.gci_unit
       transaction.market_publication_id = transaction.market_publication.id
       transaction.attributes = trans_attributes
+      transaction.declined_credit_card_batch = declined_batch
       transaction.save
     end
 

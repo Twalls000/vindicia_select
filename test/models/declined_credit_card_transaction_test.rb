@@ -60,4 +60,14 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert @trans.printed_bill?
     end
   end
+
+  class Validations < DeclinedCreditCardTransactionTest
+    test "uniqueness_by_merchant_transaction_id_and_year" do
+      trans = DeclinedCreditCardTransaction.where(merchant_transaction_id: declined_credit_card_transactions(:validation).merchant_transaction_id).first
+      dup_trans = DeclinedCreditCardTransaction.new(trans.attributes.except("id", "year"))
+
+      assert dup_trans.invalid?
+      assert trans.valid?
+    end
+  end
 end

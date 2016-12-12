@@ -54,7 +54,7 @@ class DeclinedBatches
         end
       end
       transaction.gci_unit = declined_batch.gci_unit
-      transaction.market_publication_id = transaction.market_publication.id
+      transaction.market_publication_id = declined_batch.market_publication.id
       transaction.attributes = trans_attributes
       transaction.declined_credit_card_batch = declined_batch
       transaction.save

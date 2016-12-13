@@ -10,7 +10,7 @@
 
 <h2>Statuses</h2>
 
-<% [DeclinedCreditCardTransaction, DeclinedCreditCardBatch].each do |klass| %>
+<% @status_classes.each do |klass| %>
   <h3><%= klass %>:</h3>
   <% klass.group(:status).count.each do |status,count| %>
     <pre>"<%= status %>" => <%= count %></pre>

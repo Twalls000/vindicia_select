@@ -11,6 +11,8 @@ class StatusUpdateMailer < ApplicationMailer
   private
 
   def set_up_variables
+    @status_classes = [DeclinedCreditCardTransaction, DeclinedCreditCardBatch]
+
     @audit_trail_errors = AuditTrail.joins(:declined_credit_card_transaction).where("declined_credit_card_transactions.status = 'in_error'").group(:declined_credit_card_transaction_id).map(&:event)
 
     @in_error_jobs = Delayed::Job.where("last_error is not NULL").map(&:last_error)

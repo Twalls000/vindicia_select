@@ -1,6 +1,6 @@
 Statuses
 
-<% [DeclinedCreditCardTransaction, DeclinedCreditCardBatch].each do |klass| %>
+<% @status_classes.each do |klass| %>
   <%= klass %>:
   <% klass.group(:status).count.each do |status,count| %>
     "<%= status %>" => <%= count %>

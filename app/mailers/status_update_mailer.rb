@@ -1,0 +1,2 @@
+class StatusUpdateMailer < ApplicationMailer
+end

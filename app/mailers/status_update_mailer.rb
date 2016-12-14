@@ -1,6 +1,9 @@
 class StatusUpdateMailer < ApplicationMailer
-  default to:   Rails.env.production? ? "wspencer@gannett.com,hghavami@gannett.com,rverhey@gannett.com" : "rverhey@gannett.com",
-          from: "Vindicia Select #{Rails.env.capitalize} <vindicia_select_#{Rails.env}@gannett.com>"
+  RECIPIENTS = Rails.env.production? ? "wspencer@gannett.com,hghavami@gannett.com,rverhey@gannett.com" : "rverhey@gannett.com"
+  SENDER     = "Vindicia Select #{Rails.env.capitalize} <vindicia_select_#{Rails.env}@gannett.com>"
+
+  default to:   RECIPIENTS,
+          from: SENDER
 
   def status_email
     set_up_variables

@@ -1,0 +1,64 @@
+Statuses
+
+<% @status_classes.each do |klass| %>
+  <%= klass %>:
+  <% klass.group(:status).count.each do |status,count| %>
+    "<%= status %>" => <%= count %>
+  <% end %>
+
+<% end %>
+
+--------------------------------------------------------------------------------
+
+Errors
+
+in_error transactions
+Listing of unique errors
+<% if @audit_trail_errors.first %>
+  <% @audit_trail_errors.map{|e| e.truncate(75)}.uniq.each do |error| %>
+    "<%= error %>"
+  <% end %>
+<% else %>
+  No errors
+<% end %>
+
+Count of unique errors
+<% if @audit_trail_errors.first %>
+  <% @audit_trail_errors.group_by{|e| e.truncate(75)}.inject({}){|h,(k,v)| h[k] = v.count; h}.each do |error,count| %>
+    "<%= error %>" => <%= count %>
+  <% end %>
+<% else %>
+  No errors
+<% end %>
+
+---------------------------------------
+
+Delayed Job Errors
+Unique Errors
+<% if @in_error_jobs.first %>
+  <% @in_error_jobs.map{|e|e.truncate(100)}.uniq.each do |error| %>
+    "<%= error.gsub("\n", "\n    ") %>"
+  <% end %>
+<% else %>
+  No Errors
+<% end %>
+
+Count of unique errors
+<% if @in_error_jobs.first %>
+  <% @in_error_jobs.group_by{|e| e.truncate(100)}.inject({}){|h,(k,v)| h[k] = v.count; h}.each do |error,count| %>
+    "<%= error.gsub("\n", "\n    ") %>" => <%= count %>
+  <% end %>
+<% else %>
+  No errors
+<% end %>
+
+Total jobs in error: <%= @in_error_jobs.count %>
+
+--------------------------------------------------------------------------------
+
+CCVC status of non-added sites
+<% longest = @non_added_sites.keys.sort_by(&:length).last.length %>
+<% @non_added_sites.each do |name,count| %>
+    <%= name %>:<%= " " * (longest - name.length + 1) %><%= count %>
+
+<% end %>

@@ -22,3 +22,7 @@ end
 every 1.day, :at => '9:00 pm' do
   rake "handle_in_error"
 end
+
+every 1.day, :at => '8:00 am' do
+  rake "send_status_email"
+end

@@ -1,0 +1,72 @@
+<style media="screen">
+  body {
+    font-family: monospace;
+  }
+  hr.short {
+    width: 500px;
+    margin-left: 0;
+  }
+</style>
+
+<h2>Statuses</h2>
+
+<% @status_classes.each do |klass| %>
+  <h3><%= klass %>:</h3>
+  <% klass.group(:status).count.each do |status,count| %>
+    <pre>"<%= status %>" => <%= count %></pre>
+  <% end %>
+<% end %>
+<hr>
+
+<h2>Errors</h2>
+
+<h3>in_error transactions</h3>
+<h4>Listing of unique errors</h4>
+<% if @audit_trail_errors.first %>
+  <% @audit_trail_errors.map{|e| e.truncate(75)}.uniq.each do |error| %>
+    <pre>"<%= error %>"</pre>
+  <% end %>
+<% else %>
+  No errors<br>
+<% end %>
+
+<h4>Count of unique errors</h4>
+<% if @audit_trail_errors.first %>
+  <% @audit_trail_errors.group_by{|e| e.truncate(75)}.inject({}){|h,(k,v)| h[k] = v.count; h}.each do |error,count| %>
+    <pre>"<%= error %>" => <%= count %></pre>
+  <% end %>
+<% else %>
+  No errors<br>
+<% end %>
+
+<hr class="short">
+<h3>Delayed Job Errors</h3>
+<h4>Unique Errors</h4>
+<% if @in_error_jobs.first %>
+  <% @in_error_jobs.map{|e|e.truncate(100)}.uniq.each do |error| %>
+    <pre>"<%= error %>"</pre>
+  <% end %>
+<% else %>
+  No Errors<br>
+<% end %>
+
+<h4>Count of unique errors</h4>
+<% if @in_error_jobs.first %>
+  <% @in_error_jobs.group_by{|e| e.truncate(100)}.inject({}){|h,(k,v)| h[k] = v.count; h}.each do |error,count| %>
+    <pre>"<%= error %>" => <%= count %></pre>
+  <% end %>
+<% else %>
+  No errors<br>
+<% end %>
+<h4>Total jobs in error: <%= @in_error_jobs.count %></h4>
+<hr>
+
+<h3>CCVC status of non-added sites</h3>
+<table>
+<% @non_added_sites.each do |name,count| %>
+  <tr>
+    <td style="padding-right: 5px"><%= name %>:</td>
+    <td><%= count %></td>
+  </tr>
+<% end %>
+</table>

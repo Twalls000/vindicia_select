@@ -1,5 +1,5 @@
 class StatusUpdateMailer < ApplicationMailer
-  default to:   Rails.env.production? ? "wspencer@gannett.com,rverhey@gannett.com" : "rverhey@gannett.com",
+  default to:   Rails.env.production? ? "wspencer@gannett.com,hghavami@gannett.com,rverhey@gannett.com" : "rverhey@gannett.com",
           from: "Vindicia Select #{Rails.env.capitalize} <vindicia_select_#{Rails.env}@gannett.com>"
 
   def status_email

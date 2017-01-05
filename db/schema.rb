@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212175954) do
+ActiveRecord::Schema.define(version: 20170105193018) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event"

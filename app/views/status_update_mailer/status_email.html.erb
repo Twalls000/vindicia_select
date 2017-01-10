@@ -60,6 +60,8 @@
   No errors<br>
 <% end %>
 <h4>Total jobs in error: <%= @in_error_jobs.count %></h4>
+<% color = @too_many_jobs ? "red" : "inherit" %>
+<h4 style="color: <%= color %>;">Total jobs: <%= Delayed::Job.count %></h4>
 <hr>
 
 <h3>CCVC status of non-added sites</h3>

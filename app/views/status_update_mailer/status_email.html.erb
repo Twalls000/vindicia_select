@@ -13,7 +13,8 @@
 <% @status_classes.each do |klass| %>
   <h3><%= klass %>:</h3>
   <% klass.group(:status).count.each do |status,count| %>
-    <pre>"<%= status %>" => <%= count %></pre>
+    <% color = status == "queued_to_send" ? "red" : "inherit" %>
+    <pre style="color: <%= color %>;">"<%= status %>" => <%= count %></pre>
   <% end %>
 <% end %>
 <hr>

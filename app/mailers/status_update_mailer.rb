@@ -7,8 +7,10 @@ class StatusUpdateMailer < ApplicationMailer
 
   def status_email
     set_up_variables
+    subject = "Vindicia Select #{Rails.env.capitalize} Status"
+    subject += " - Potential Issue" if @potential_issues || @too_many_jobs
 
-    mail subject: "Vindicia Select #{Rails.env.capitalize} Status"
+    mail subject: subject
   end
 
   private
@@ -26,5 +28,9 @@ class StatusUpdateMailer < ApplicationMailer
         DeclinedCreditCard.on_db(site.gci_unit).count rescue "No CCVC"
       hash
     end
+
+    @potential_issues = @status_classes.map { |c| c.group(:status).count.keys }.flatten.include?("queued_to_send")
+
+    @too_many_jobs = Delayed::Job.count > @in_error_jobs.count && @in_error_jobs.count != 0
   end
 end

@@ -1,6 +1,10 @@
 class HandleInError
-  SSL_ERROR_MESSAGE = "SSL_connect SYSCALL returned=5 errno=0 state=SSLv3 read server session ticket A"
-  VINDICIA_400_MESSAGE = /Vindicia code 400: (.+) that has already been processed by CashBox Select/
+  SSL_ERROR = "SSL_connect SYSCALL returned=5 errno=0 state=SSLv3 read server session ticket A"
+  VINDICIA_400_ERROR = /Vindicia code 400: (.+) that has already been processed by CashBox Select/
+  INVALID_EXPIRATION_ERROR = "invalid credit card expiration date"
+
+  RETRY_ERRORS = [SSL_ERROR, VINDICIA_400_ERROR]
+  FAILURE_ERRORS = [INVALID_EXPIRATION_ERROR]
 
   def self.process
     DeclinedCreditCardTransaction.in_error.each_slice(10) do |slice|
@@ -15,10 +19,9 @@ class HandleInError
     transactions.each do |trans|
       first_event = trans.audit_trails.first.try(:event)
 
-      if trans.audit_trails.length > 1
+      if trans.audit_trails.length > 1 || matches_known_failure_errors?(first_event)
         send_failed_to_genesys trans
-      elsif first_event == SSL_ERROR_MESSAGE ||
-            first_event =~ VINDICIA_400_MESSAGE
+      elsif matches_known_retry_errors?(first_event)
         trans.status = "entry"
         trans.save
       else
@@ -42,5 +45,21 @@ class HandleInError
     transaction.handle_error
     transaction.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(transaction)
     transaction.save
+  end
+
+  def self.matches_known_retry_errors?(event)
+    matches_known_errors? event, RETRY_ERRORS
+  end
+
+  def self.matches_known_failure_errors?(event)
+    matches_known_errors? event, FAILURE_ERRORS
+  end
+
+  def self.matches_known_errors?(event, errors)
+    return false if !event.is_a?(String)
+    matches = errors.map do |error|
+      event.match error
+    end
+    !!matches.compact.first # Will return true for a value, or false if nil
   end
 end

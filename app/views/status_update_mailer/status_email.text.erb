@@ -53,6 +53,7 @@ Count of unique errors
 <% end %>
 
 Total jobs in error: <%= @in_error_jobs.count %>
+Total jobs: <%= Delayed::Job.count %>
 
 --------------------------------------------------------------------------------
 

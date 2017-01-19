@@ -24,11 +24,14 @@ class HandleInError
     transactions.select!(&:in_error?)
 
     transactions.each do |trans|
-      first_event = trans.audit_trails.first.try(:event)
+      event = trans.audit_trails.last
 
-      if trans.audit_trails.length > 1 || matches_known_failure_errors?(first_event)
+      if matches_known_pending_errors?(event)
+        trans.status = "pending"
+        trans.save
+      elsif trans.audit_trails.length > 1 || matches_known_failure_errors?(event)
         send_failed_to_genesys trans
-      elsif matches_known_retry_errors?(first_event)
+      elsif matches_known_retry_errors?(event)
         trans.status = "entry"
         trans.save
       else

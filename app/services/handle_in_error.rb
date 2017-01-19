@@ -24,7 +24,7 @@ class HandleInError
     transactions.select!(&:in_error?)
 
     transactions.each do |trans|
-      event = trans.audit_trails.last
+      event = trans.audit_trails.last.try(:event)
 
       if matches_known_pending_errors?(event)
         trans.status = "pending"

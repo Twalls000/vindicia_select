@@ -39,22 +39,26 @@ class SendForCapture
             t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
             t.soap_id = vtvr.soap_id
             t.error_sending_to_vindicia
-            t.save
+            t.save if t.sending?
           else
-            t.send_to_vindicia!
+            t.send_to_vindicia! if t.sending?
           end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
         transactions.each do |t|
-          t.soap_id = response[:soap_id]
-          t.send_to_vindicia
-          t.save
+          if t.sending?
+            t.soap_id = response[:soap_id]
+            t.send_to_vindicia
+            t.save
+          end
         end
       else
         transactions.each do |t|
-          t.audit_trails.build(event: "Failed to send", exception: response)
-          t.error_sending_to_vindicia
-          t.save
+          if t.sending?
+            t.audit_trails.build(event: "Failed to send", exception: response)
+            t.error_sending_to_vindicia
+            t.save
+          end
         end
       end
     rescue => e

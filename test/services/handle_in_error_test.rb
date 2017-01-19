@@ -101,6 +101,55 @@ class HandleInErrorTest < ActiveJob::TestCase
     end
   end
 
+  class MatchesKnownErrors < HandleInErrorTest
+    def get_error_type(type)
+      "HandleInError::#{type.upcase}_ERRORS".constantize
+    end
+
+    def setup
+      @error_types = ["pending", "retry", "failure"]
+      @errors = @error_types.map do |type|
+        get_error_type type
+      end
+    end
+
+    class Method < MatchesKnownErrors
+      test 'returns true if there are matching errors' do
+        @errors.each do |error_arr|
+          event = error_arr.sample.to_s
+
+          assert HandleInError.matches_known_errors? event, error_arr
+        end
+      end
+
+      test 'returns false if there are no matching errors' do
+        @errors.each do |error_arr|
+          event = "not a known error"
+
+          refute HandleInError.matches_known_errors? event, error_arr
+        end
+      end
+    end
+
+    class MatchesKnownErrorTypes < MatchesKnownErrors
+      test 'return true if there are matching errors' do
+        @error_types.each do |type|
+          event = get_error_type(type).sample.to_s
+
+          assert HandleInError.send("matches_known_#{type}_errors?".to_sym, event)
+        end
+      end
+
+      test 'return false if there are no matching errors' do
+        @error_types.each do |type|
+          event = "not a known error"
+
+          refute HandleInError.send("matches_known_#{type}_errors?".to_sym, event)
+        end
+      end
+    end
+  end
+
   class SendFailedToGenesys < HandleInErrorTest
     test 'transactions are put in the right state and sent to Genesys' do
       verify_send = ->(transaction){

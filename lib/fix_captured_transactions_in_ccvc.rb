@@ -5,7 +5,6 @@
 # update the CCVC records that were affected.
 
 class FixCapturedTransactionsInCcvc
-  include SendToGenesys
   attr_reader :gci_units
   # gci_units: A list of GCI Units, defaults to all
   # ignore: List of GCI Units to ignore
@@ -30,12 +29,12 @@ class FixCapturedTransactionsInCcvc
 
       transactions.each do |trans|
         trans.vsbtch = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"
-        trans.vsbdat = Date.today.strftime("%Y%m%d")
-        trans.vssts = ""
+        trans.vsbdat = Date.today.strftime("%Y%m%d").to_i
+        trans.vssts  = ""
         trans.vsaust = "Captured"
         trans.vsvord = @affected[trans.vstrid.strip]
 
-        # GenericTransaction.write_to_genesys(trans,:create)
+        result = GenericTransaction.write_to_genesys(trans, :insert)
       end
     end
   end

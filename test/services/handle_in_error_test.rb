@@ -4,7 +4,8 @@ class HandleInErrorTest < ActiveJob::TestCase
   include ActiveJob::TestHelper
 
   def setup
-    @trans = declined_credit_card_transactions(:handle_in_error)
+    @trans = declined_credit_card_transactions(:handle_in_error).dup
+    @trans.save
   end
 
   class Handle < HandleInErrorTest

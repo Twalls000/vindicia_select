@@ -43,9 +43,10 @@ class GenericTransaction < ActiveRecord::Base
       "WHERE VSPPUB = '#{ model.pub_code }' and VSBTCH = '#{ model.batch_id }' and " +
       "VSBDAT = #{ model.batch_date } and VSPACT = #{ model.account_number }"
     when :insert
-      "INSERT INTO crfile.ccvc (VSBTCH,VSDAT,VSSTS,VSAUST,VSVORD) " +
-      "VALUES ('#{ model.batch_id }',#{ model.batch_date },''," +
-      "'#{ model.charge_status }','#{ model.select_transaction_id }')"
+      "INSERT INTO crfile.ccvc " +
+      "(#{ model.attributes.keys.map { |k| k.to_s.upcase }.join(",") }) " +
+      "VALUES " +
+      "(#{ model.attributes.values.map { |a| a.is_a?(String) ? "'#{a}'" : a }.join(",") })"
     end
   end
 end

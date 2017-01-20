@@ -1,4 +1,5 @@
 class DeclinedCreditCardTransaction < ActiveRecord::Base
+  self.locking_column = :lock_version
   include AASM
   before_create :set_defaults
   before_validation :save_year

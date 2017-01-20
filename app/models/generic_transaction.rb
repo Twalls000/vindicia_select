@@ -12,14 +12,14 @@ class GenericTransaction < ActiveRecord::Base
   validates_inclusion_of :character_coding, :in => ['', ' ', 'A', 'E']
 
   ### Create transaction to support each site ###
-  def self.write_to_genesys(model)
+  def self.write_to_genesys(model, type = :update)
     now = Time.now
     tran = GenericTransaction.new
     tran.gci_unit = model.gci_unit
     tran.transaction_number = 0
     tran.sequence_number = HOSTING_LOCATION
     tran.function_type = FUNCTION_TYPE
-    tran.function_data = generate_sql(model)
+    tran.function_data = generate_sql(model, type)
     tran.character_coding = ' '
     tran.ascii_delimiter = ' '
     tran.last_changed_on = now.strftime("%Y%m%d")
@@ -35,10 +35,17 @@ class GenericTransaction < ActiveRecord::Base
   # Why is this hard coded?
   # Simply put, we are supporting 1 model w/1 possible SQL statement.
   # If that changes then make this class inheritable and this code dynamic.
-  def self.generate_sql(model)
-    "UPDATE crfile.ccvc SET VSAUST = '#{ model.charge_status }', " +
-    "VSVORD = '#{ model.select_transaction_id }' " +
-    "WHERE VSPPUB = '#{ model.pub_code }' and VSBTCH = '#{ model.batch_id}' and " +
-    "VSBDAT = #{ model.batch_date } and VSPACT = #{ model.account_number }"
+  def self.generate_sql(model, type = :update)
+    case type
+    when :update
+      "UPDATE crfile.ccvc SET VSAUST = '#{ model.charge_status }', " +
+      "VSVORD = '#{ model.select_transaction_id }' " +
+      "WHERE VSPPUB = '#{ model.pub_code }' and VSBTCH = '#{ model.batch_id }' and " +
+      "VSBDAT = #{ model.batch_date } and VSPACT = #{ model.account_number }"
+    when :insert
+      "INSERT INTO crfile.ccvc (VSBTCH,VSDAT,VSSTS,VSAUST,VSVORD) " +
+      "VALUES ('#{ model.batch_id }',#{ model.batch_date },''," +
+      "'#{ model.charge_status }','#{ model.select_transaction_id }')"
+    end
   end
 end

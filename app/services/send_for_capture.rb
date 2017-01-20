@@ -42,11 +42,15 @@ class SendForCapture
             begin
               t.save
             rescue ActiveRecord::StaleObjectError => e
+              t.reload
+              t.save if t.sending?
             end
           else
             begin
               t.send_to_vindicia!
             rescue ActiveRecord::StaleObjectError => e
+              t.reload
+              t.send_to_vindicia! if t.sending?
             end
           end
         end
@@ -57,6 +61,8 @@ class SendForCapture
           begin
             t.save
           rescue ActiveRecord::StaleObjectError => e
+            t.reload
+            t.save if t.sending?
           end
         end
       else
@@ -66,6 +72,8 @@ class SendForCapture
           begin
             t.save
           rescue ActiveRecord::StaleObjectError => e
+            t.reload
+            t.save if t.sending?
           end
         end
       end

@@ -5,5 +5,38 @@
 # update the CCVC records that were affected.
 
 class FixCapturedTransactionsInCcvc
+  include SendToGenesys
+  attr_reader :gci_units
+  # gci_units: A list of GCI Units, defaults to all
+  # ignore: List of GCI Units to ignore
+  # affected: A hash of all affected accounts, with merchant_transaction_id as
+  #   key, select_transaction_id as value
+  def initialize(gci_units: [], ignore: [], affected: {})
+    gci_units = Array(gci_units)
+    ignore = Array(ignore)
+    @affected = affected
 
+    @gci_units =
+      if gci_units.first
+        gci_units
+      else
+        MarketPublication.select(:gci_unit).distinct.map(&:gci_unit) - ignore
+      end
+  end
+
+  def fix
+    @gci_units.each do |unit|
+      transactions = DeclinedCreditCard.on_db(unit).where(vstrid: @affected.keys)
+
+      transactions.each do |trans|
+        trans.vsbtch = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"
+        trans.vsbdat = Date.today.strftime("%Y%m%d")
+        trans.vssts = ""
+        trans.vsaust = "Captured"
+        trans.vsvord = @affected[trans.vstrid.strip]
+
+        # GenericTransaction.write_to_genesys(trans,:create)
+      end
+    end
+  end
 end

@@ -27,7 +27,7 @@ class SendForCapture
   def self.send_transactions_for_capture(transactions_array)
     begin
       transactions = DeclinedCreditCardTransaction.get_queued_to_send_transactions(transactions_array)
-      transactions.each(&:sending_to_vindicia!)
+      transactions = set_transactions_as_sending(transactions)
       response = Select.bill_transactions transactions
 
       if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse) || response.is_a?(Vindicia::TransactionValidationResponse)
@@ -77,5 +77,22 @@ class SendForCapture
         trans.save
       end
     end
+  end
+
+  def self.set_transactions_as_sending(transactions)
+    transactions.map do |t|
+      begin
+        t.sending_to_vindicia!
+        t
+      rescue ActiveRecord::StaleObjectError => e
+        t.reload
+        if t.entry?
+          t.sending_to_vindicia!
+          t
+        else
+          nil
+        end
+      end
+    end.compact
   end
 end

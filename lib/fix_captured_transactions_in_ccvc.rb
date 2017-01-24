@@ -25,7 +25,10 @@ class FixCapturedTransactionsInCcvc
 
   def fix
     @gci_units.each do |unit|
-      transactions = DeclinedCreditCard.on_db(unit).where(vstrid: @affected.keys)
+      transactions = []
+      @affected.keys.each_slice(1000) do |slice|
+        transactions += DeclinedCreditCard.on_db(unit).where(vstrid: slice)
+      end
 
       transactions.each do |trans|
         trans.vsbtch = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"

@@ -43,6 +43,9 @@ class SendForCapture
               t.save
             rescue ActiveRecord::StaleObjectError => e
               t.reload
+              t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+              t.soap_id = vtvr.soap_id
+              t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
               t.save if t.sending?
             end
           else
@@ -62,6 +65,8 @@ class SendForCapture
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
+            t.soap_id = response[:soap_id]
+            t.send_to_vindicia if t.may_send_to_vindicia?
             t.save if t.sending?
           end
         end
@@ -73,6 +78,8 @@ class SendForCapture
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
+            t.audit_trails.build(event: "Failed to send", exception: response)
+            t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
             t.save if t.sending?
           end
         end

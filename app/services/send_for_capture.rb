@@ -36,13 +36,17 @@ class SendForCapture
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first
           if vtvr
-            t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-            t.soap_id = vtvr.soap_id
-            t.error_sending_to_vindicia
+            functions = ->{
+              t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+              t.soap_id = vtvr.soap_id
+              t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
+            }
+            functions.call
             begin
               t.save
             rescue ActiveRecord::StaleObjectError => e
               t.reload
+              functions.call
               t.save if t.sending?
             end
           else
@@ -56,23 +60,31 @@ class SendForCapture
         end
       elsif response.is_a?(Hash) && response[:soap_id]
         transactions.each do |t|
-          t.soap_id = response[:soap_id]
-          t.send_to_vindicia
+          functions = ->{
+            t.soap_id = response[:soap_id]
+            t.send_to_vindicia if t.may_send_to_vindicia?
+          }
+          functions.call
           begin
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
+            functions.call
             t.save if t.sending?
           end
         end
       else
         transactions.each do |t|
-          t.failure_audit_trails.build(event: "Failed to send", exception: response)
-          t.error_sending_to_vindicia
+          functions = ->{
+            t.failure_audit_trails.build(event: "Failed to send", exception: response)
+            t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
+          }
+          functions.call
           begin
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
+            functions.call
             t.save if t.sending?
           end
         end

@@ -5,6 +5,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   before_validation :save_year
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
+  has_many :failure_audit_trails, class_name: 'FailureAuditTrail'
+  has_many :success_audit_trails, class_name: 'SuccessAuditTrail'
   delegate :market_publication, to: :declined_credit_card_batch
   serialize :name_values
 

@@ -36,7 +36,7 @@ class SendForCapture
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first
           if vtvr
-            t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
+            t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
             t.soap_id = vtvr.soap_id
             t.error_sending_to_vindicia
             begin
@@ -67,7 +67,7 @@ class SendForCapture
         end
       else
         transactions.each do |t|
-          t.audit_trails.build(event: "Failed to send", exception: response)
+          t.failure_audit_trails.build(event: "Failed to send", exception: response)
           t.error_sending_to_vindicia
           begin
             t.save
@@ -79,7 +79,7 @@ class SendForCapture
       end
     rescue => e
       transactions.each do |trans|
-        trans.audit_trails.build(event: e.message, exception: "#{e.class} #{e.message}:\n#{e.backtrace}")
+        trans.failure_audit_trails.build(event: e.message, exception: "#{e.class} #{e.message}:\n#{e.backtrace}")
         trans.sending_to_vindicia if trans.may_sending_to_vindicia?
         trans.error_sending_to_vindicia
         trans.save

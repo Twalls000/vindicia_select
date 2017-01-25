@@ -31,11 +31,11 @@ class FixCapturedTransactionsInCcvc
       end
 
       transactions.each do |trans|
-        trans.vsbtch = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"
-        trans.vsbdat = Date.today.strftime("%Y%m%d").to_i
-        trans.vssts  = ""
-        trans.vsaust = "Captured"
-        trans.vsvord = @affected[trans.vstrid.strip]
+        trans.vsbtch = batch_id(trans)
+        trans.vsbdat = batch_date
+        trans.vssts  = vssts
+        trans.vsaust = charge_status
+        trans.vsvord = select_transaction_id(trans)
 
         result = GenericTransaction.write_to_genesys(trans, :insert)
       end
@@ -46,12 +46,38 @@ class FixCapturedTransactionsInCcvc
     transactions = DeclinedCreditCardTransaction.where(merchant_transaction_id: @affected.keys)
 
     transactions.each do |trans|
-      trans.status = "processed"
-      trans.batch_id = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"
-      trans.batch_date = Date.today.strftime("%Y%m%d").to_i
-      trans.charge_status = "Captured"
-      trans.select_transaction_id = @affected[trans.merchant_transaction_id]
+      trans.status = status
+      trans.batch_id = batch_id(trans)
+      trans.batch_date = batch_date
+      trans.charge_status = charge_status
+      trans.select_transaction_id = select_transaction_id(trans)
       trans.save
     end
+  end
+
+  private
+
+  def status
+    "processed"
+  end
+
+  def batch_id(trans)
+    "FX#{ Date.today.strftime("%m%d") }#{ trans.batch_id[-3..-1] }"
+  end
+
+  def batch_date
+    Date.today.strftime("%Y%m%d").to_i
+  end
+
+  def charge_status
+    "Captured"
+  end
+
+  def select_transaction_id(trans)
+    @affected[trans.merchant_transaction_id.strip]
+  end
+
+  def vssts
+    ""
   end
 end

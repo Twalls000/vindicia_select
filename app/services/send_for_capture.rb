@@ -46,7 +46,7 @@ class SendForCapture
               t.save
             rescue ActiveRecord::StaleObjectError => e
               t.reload
-              functions.call
+              functions.call # * See comment below
               t.save if t.sending?
             end
           else
@@ -69,7 +69,7 @@ class SendForCapture
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
-            functions.call
+            functions.call # * See comment below
             t.save if t.sending?
           end
         end
@@ -84,7 +84,7 @@ class SendForCapture
             t.save
           rescue ActiveRecord::StaleObjectError => e
             t.reload
-            functions.call
+            functions.call # * See comment below
             t.save if t.sending?
           end
         end
@@ -116,3 +116,8 @@ class SendForCapture
     end.compact
   end
 end
+
+# * When we get a ActiveRecord::StaleObjectError, the object is reloaded and we
+# attempt to save as long as it is in sending status. When the object is
+# reloaded, all of the changes we make (like with soap_id or status) get lost so
+# we need to make those changes again before we attempt to save again

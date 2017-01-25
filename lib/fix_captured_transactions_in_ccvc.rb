@@ -41,4 +41,19 @@ class FixCapturedTransactionsInCcvc
       end
     end
   end
+
+  def fix_in_vs_database
+    @gci_units.each do |unit|
+      transactions = DeclinedCreditCardTransaction.where(merchant_transaction_id: @affected.keys)
+
+      transactions.each do |trans|
+        trans.status = "processed"
+        trans.batch_id = "FX#{ Date.today.strftime("%m%d") }#{ trans.vsbtch[-3..-1] }"
+        trans.batch_date = Date.today.strftime("%Y%m%d").to_i
+        trans.charge_status = "Captured"
+        trans.select_transaction_id = @affected[trans.merchant_transaction_id]
+        trans.save
+      end
+    end
+  end
 end

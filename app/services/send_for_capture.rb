@@ -44,7 +44,7 @@ class SendForCapture
             end
           else
             save_transaction(t) do |trans|
-              trans.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+              trans.success_audit_trails.build(event: "SendForCapture successful", soap_id: soap_id)
               trans.soap_id = soap_id
               trans.send_to_vindicia
             end
@@ -54,7 +54,7 @@ class SendForCapture
         soap_id = response[:soap_id]
         transactions.each do |t|
           save_transaction(t) do |trans|
-            trans.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+            trans.success_audit_trails.build(event: "SendForCapture successful", soap_id: soap_id)
             trans.soap_id = soap_id
             trans.send_to_vindicia if trans.may_send_to_vindicia?
           end

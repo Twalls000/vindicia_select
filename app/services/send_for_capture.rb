@@ -32,13 +32,14 @@ class SendForCapture
 
       if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse) || response.is_a?(Vindicia::TransactionValidationResponse)
         response = [response] if response.is_a?(Vindicia::TransactionValidationResponse)
+        soap_id = response.first.soap_id
         transactions.each do |t|
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first
           if vtvr
             functions = ->{
-              t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-              t.soap_id = vtvr.soap_id
+              t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}", soap_id: soap_id)
+              t.soap_id = soap_id
               t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
             }
             functions.call
@@ -50,18 +51,27 @@ class SendForCapture
               t.save if t.sending?
             end
           else
+            functions = ->{
+              t.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+              t.soap_id = soap_id
+              t.send_to_vindicia
+            }
+            functions.call
             begin
-              t.send_to_vindicia!
+              t.save
             rescue ActiveRecord::StaleObjectError => e
               t.reload
-              t.send_to_vindicia! if t.sending?
+              functions.call
+              t.save if t.sending?
             end
           end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
+        soap_id = response[:soap_id]
         transactions.each do |t|
           functions = ->{
-            t.soap_id = response[:soap_id]
+            t.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+            t.soap_id = soap_id
             t.send_to_vindicia if t.may_send_to_vindicia?
           }
           functions.call

@@ -37,65 +37,33 @@ class SendForCapture
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first
           if vtvr
-            functions = ->{
-              t.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}", soap_id: soap_id)
-              t.soap_id = soap_id
-              t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
-            }
-            functions.call
-            begin
-              t.save
-            rescue ActiveRecord::StaleObjectError => e
-              t.reload
-              functions.call # * See comment below
-              t.save if t.sending?
+            save_transaction(t) do |trans|
+              trans.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}", soap_id: soap_id)
+              trans.soap_id = soap_id
+              trans.error_sending_to_vindicia if trans.may_error_sending_to_vindicia?
             end
           else
-            functions = ->{
-              t.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
-              t.soap_id = soap_id
-              t.send_to_vindicia
-            }
-            functions.call
-            begin
-              t.save
-            rescue ActiveRecord::StaleObjectError => e
-              t.reload
-              functions.call
-              t.save if t.sending?
+            save_transaction(t) do |trans|
+              trans.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+              trans.soap_id = soap_id
+              trans.send_to_vindicia
             end
           end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
         soap_id = response[:soap_id]
         transactions.each do |t|
-          functions = ->{
-            t.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
-            t.soap_id = soap_id
-            t.send_to_vindicia if t.may_send_to_vindicia?
-          }
-          functions.call
-          begin
-            t.save
-          rescue ActiveRecord::StaleObjectError => e
-            t.reload
-            functions.call # * See comment below
-            t.save if t.sending?
+          save_transaction(t) do |trans|
+            trans.success_audit_trails.build(event: "Transaction successfully sent", soap_id: soap_id)
+            trans.soap_id = soap_id
+            trans.send_to_vindicia if trans.may_send_to_vindicia?
           end
         end
       else
         transactions.each do |t|
-          functions = ->{
-            t.failure_audit_trails.build(event: "Failed to send", exception: response)
-            t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
-          }
-          functions.call
-          begin
-            t.save
-          rescue ActiveRecord::StaleObjectError => e
-            t.reload
-            functions.call # * See comment below
-            t.save if t.sending?
+          save_transaction(t) do |trans|
+            trans.failure_audit_trails.build(event: "Failed to send", exception: response)
+            trans.error_sending_to_vindicia if trans.may_error_sending_to_vindicia?
           end
         end
       end
@@ -124,6 +92,17 @@ class SendForCapture
         end
       end
     end.compact
+  end
+
+  def self.save_transaction(transaction, &block)
+    block.call(transaction)
+    begin
+      transaction.save
+    rescue ActiveRecord::StaleObjectError => e
+      transaction.reload
+      block.call(transaction) # * See comment below
+      transaction.save if transaction.sending?
+    end
   end
 end
 

@@ -6,6 +6,7 @@ class SendForCaptureJob < JobBase
   end
 
   def perform(transactions)
+    Rails.logger.info("SendForCaptureJob params: #{ transactions.join(",") }\n#{ DateTime.now }")
     SendForCapture.send_transactions_for_capture(transactions)
   end
 

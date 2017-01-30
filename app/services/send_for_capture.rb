@@ -20,7 +20,7 @@ class SendForCapture
         by_gci_unit(mp.gci_unit).by_pub_code(mp.pub_code).
         limit(mp.vindicia_batch_size)
     transactions_to_send.each { |t| t.queue_to_vindicia! }
-
+    Rails.logger.info("SendForCapture put the following on the queue: #{transactions_to_send.map { |t| t.id }.join(",")}\n#{DateTime.now}")
     SendForCaptureJob.perform_later transactions_to_send.map { |t| t.id }
   end
 

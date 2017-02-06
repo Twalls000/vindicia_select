@@ -32,66 +32,44 @@ class SendForCapture
 
       if response.is_a?(Array) && response.map(&:class).include?(Vindicia::TransactionValidationResponse) || response.is_a?(Vindicia::TransactionValidationResponse)
         response = [response] if response.is_a?(Vindicia::TransactionValidationResponse)
+        soap_id = response.first.soap_id
         transactions.each do |t|
           vtvr = response.select { |r| r.is_a?(Vindicia::TransactionValidationResponse) &&
               r.merchant_transaction_id == t.merchant_transaction_id }.first
           if vtvr
-            functions = ->{
-              t.audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}")
-              t.soap_id = vtvr.soap_id
-              t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
-            }
-            functions.call
-            begin
-              t.save
-            rescue ActiveRecord::StaleObjectError => e
-              t.reload
-              functions.call # * See comment below
-              t.save if t.sending?
+            save_transaction(t) do |trans|
+              trans.failure_audit_trails.build(event: "Vindicia code #{vtvr.code}: #{vtvr.description}", soap_id: soap_id)
+              trans.soap_id = soap_id
+              trans.error_sending_to_vindicia if trans.may_error_sending_to_vindicia?
             end
           else
-            begin
-              t.send_to_vindicia!
-            rescue ActiveRecord::StaleObjectError => e
-              t.reload
-              t.send_to_vindicia! if t.sending?
+            save_transaction(t) do |trans|
+              trans.success_audit_trails.build(event: "SendForCapture successful", soap_id: soap_id)
+              trans.soap_id = soap_id
+              trans.send_to_vindicia
             end
           end
         end
       elsif response.is_a?(Hash) && response[:soap_id]
+        soap_id = response[:soap_id]
         transactions.each do |t|
-          functions = ->{
-            t.soap_id = response[:soap_id]
-            t.send_to_vindicia if t.may_send_to_vindicia?
-          }
-          functions.call
-          begin
-            t.save
-          rescue ActiveRecord::StaleObjectError => e
-            t.reload
-            functions.call # * See comment below
-            t.save if t.sending?
+          save_transaction(t) do |trans|
+            trans.success_audit_trails.build(event: "SendForCapture successful", soap_id: soap_id)
+            trans.soap_id = soap_id
+            trans.send_to_vindicia if trans.may_send_to_vindicia?
           end
         end
       else
         transactions.each do |t|
-          functions = ->{
-            t.audit_trails.build(event: "Failed to send", exception: response)
-            t.error_sending_to_vindicia if t.may_error_sending_to_vindicia?
-          }
-          functions.call
-          begin
-            t.save
-          rescue ActiveRecord::StaleObjectError => e
-            t.reload
-            functions.call # * See comment below
-            t.save if t.sending?
+          save_transaction(t) do |trans|
+            trans.failure_audit_trails.build(event: "Failed to send", exception: response)
+            trans.error_sending_to_vindicia if trans.may_error_sending_to_vindicia?
           end
         end
       end
     rescue => e
       transactions.each do |trans|
-        trans.audit_trails.build(event: e.message, exception: "#{e.class} #{e.message}:\n#{e.backtrace}")
+        trans.failure_audit_trails.build(event: e.message, exception: "#{e.class} #{e.message}:\n#{e.backtrace}")
         trans.sending_to_vindicia if trans.may_sending_to_vindicia?
         trans.error_sending_to_vindicia
         trans.save
@@ -114,6 +92,17 @@ class SendForCapture
         end
       end
     end.compact
+  end
+
+  def self.save_transaction(transaction, &block)
+    block.call(transaction)
+    begin
+      transaction.save
+    rescue ActiveRecord::StaleObjectError => e
+      transaction.reload
+      block.call(transaction) # * See comment below
+      transaction.save if transaction.sending?
+    end
   end
 end
 

@@ -24,19 +24,19 @@ class HandleInError
     transactions.select!(&:in_error?)
 
     transactions.each do |trans|
-      event = trans.audit_trails.last.try(:event)
+      event = trans.failure_audit_trails.last.try(:event)
 
       if matches_known_pending_errors?(event)
         trans.status = "pending"
         trans.save
-      elsif trans.audit_trails.length > 1 || matches_known_failure_errors?(event)
+      elsif trans.failure_audit_trails.length > 1 || matches_known_failure_errors?(event)
         send_failed_to_genesys trans
       elsif matches_known_retry_errors?(event)
         trans.status = "entry"
         trans.save
       else
         send_failed_to_genesys trans
-        events = trans.audit_trails.map(&:event)
+        events = trans.failure_audit_trails.map(&:event)
         message = events.empty? ? "Transaction had no audit trails" : events.join("\n")
 
         DataDog.send_event(

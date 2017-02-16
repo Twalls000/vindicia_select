@@ -11,8 +11,8 @@ class HandleInErrorTest < ActiveJob::TestCase
   class Handle < HandleInErrorTest
     class WhenMoreThanOneAuditTrail < Handle
       test 'the transaction is sent to Genesys as failed' do
-        @trans.audit_trails.create(event: "Some event")
-        @trans.audit_trails.create(event: "Some other event")
+        @trans.failure_audit_trails.create(event: "Some event")
+        @trans.failure_audit_trails.create(event: "Some other event")
         verify = ->(trans){
           assert_equal @trans.id, trans.id
         }
@@ -33,19 +33,19 @@ class HandleInErrorTest < ActiveJob::TestCase
       end
 
       test 'Failure Errors are sent to Genesys as failed and marked as error_handled' do
-        @trans.audit_trails.create(event: HandleInError::FAILURE_ERRORS.sample.to_s)
+        @trans.failure_audit_trails.create(event: HandleInError::FAILURE_ERRORS.sample.to_s)
 
         status_change "error_handled"
       end
 
       test 'Retry errors are set as entry' do
-        @trans.audit_trails.create(event: HandleInError::RETRY_ERRORS.sample.to_s)
+        @trans.failure_audit_trails.create(event: HandleInError::RETRY_ERRORS.sample.to_s)
 
         status_change "entry"
       end
 
       test 'Pending errors are set as pending' do
-        @trans.audit_trails.create(event: HandleInError::PENDING_ERRORS.sample.to_s)
+        @trans.failure_audit_trails.create(event: HandleInError::PENDING_ERRORS.sample.to_s)
 
         status_change "pending"
       end
@@ -54,7 +54,7 @@ class HandleInErrorTest < ActiveJob::TestCase
     class WhenErrorIsUnknown < Handle
       def setup
         super
-        @trans.audit_trails.create(event: "this is some unknown error")
+        @trans.failure_audit_trails.create(event: "this is some unknown error")
       end
 
       def silence_datadog_call
@@ -85,7 +85,7 @@ class HandleInErrorTest < ActiveJob::TestCase
 
       test 'a DataDog event is created' do
         verify = ->(msg, title, alert_type, tags){
-          ex_msg = "Transaction with ID #{@trans.id}:\n\n#{@trans.audit_trails.map(&:event).join("\n")}"
+          ex_msg = "Transaction with ID #{@trans.id}:\n\n#{@trans.failure_audit_trails.map(&:event).join("\n")}"
           ex_title = "Encountered unknown error when handling in_error transaction"
           assert_equal ex_msg, msg
           assert_equal ex_title, title

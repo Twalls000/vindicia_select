@@ -1,0 +1,8 @@
+<%= @message_title %>
+Alert type: <%= @alert_type %>
+Tags: <%= @tags.join ", " %>
+
+Message
+<% @message_text_arr.each do |line| %>
+<%= line %>
+<% end %>

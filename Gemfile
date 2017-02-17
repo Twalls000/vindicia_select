@@ -1,5 +1,5 @@
-source 'https://rubygems.org'
-
+# source 'https://rubygems.org'
+source 'https://artifactory.gannettdigital.com/artifactory/api/gems/ecom-feature-all-gems/'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7.1'
@@ -41,9 +41,6 @@ gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
 gem 'gci-simple-encryption', '~> 0.1.3', :source=> 'http://gems.gcinmass.com'
 gem 'vindicia_cash_box_api', '2.2.1', :source=> 'http://gems.gcinmass.com'
-
-# DataDog API gem
-gem 'dogapi'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

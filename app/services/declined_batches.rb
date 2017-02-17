@@ -49,7 +49,7 @@ class DeclinedBatches
         rescue => e
           if e.message == "invalid date" && declined_cc.expiration_mmyy == 0
             transaction.status = "in_error"
-            transaction.audit_trails.build(event: "invalid credit card expiration date", exception: "#{e.class} - #{e.message}:\n#{e.backtrace.join("\n")}")
+            transaction.failure_audit_trails.build(event: "invalid credit card expiration date", exception: "#{e.class} - #{e.message}:\n#{e.backtrace.join("\n")}")
           else
             raise e
           end

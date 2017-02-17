@@ -1,8 +1,5 @@
 require 'test_helper'
 
-class Dogapi::Client
-  def emit_event; end
-end
 JobBase.send(:define_method, :perform, lambda { |error = false| raise "an error" if error })
 
 class JobBaseTest < ActiveJob::TestCase

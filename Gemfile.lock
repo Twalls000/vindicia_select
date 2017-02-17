@@ -1,5 +1,5 @@
 GEM
-  remote: https://rubygems.org/
+  remote: https://artifactory.gannettdigital.com/artifactory/api/gems/ecom-feature-all-gems/
   remote: http://gems.gcinmass.com/
   specs:
     aasm (4.11.1)

@@ -2,6 +2,8 @@ class DeclinedCreditCard < Base
   include SendToGenesys
   self.table_name = :ccvc
   self.primary_key = [:vsppub, :vsbtch, :vsbdat, :vspact]
+  # For writing to CCVC
+  attr_accessor :gci_unit
 
   alias_attribute :pub_code,                :vsppub
   alias_attribute :batch_id,                :vsbtch

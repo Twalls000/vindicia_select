@@ -141,12 +141,8 @@ private
   end
 
   def uniqueness_by_merchant_transaction_id_and_year
-<<<<<<< HEAD
-    unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id IS NOT NULL", merchant_transaction_id, year).first
-=======
     id_check_str = id.nil? ? "is not" : "!="
     unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id #{id_check_str} ?", merchant_transaction_id, year, id).first
->>>>>>> phoenix
     errors.add(:merchant_transaction_id, "is not unique by merchant_transaction_id and year") unless unique
     unique
   end

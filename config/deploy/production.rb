@@ -27,5 +27,4 @@ end
 # Delayed jobs for this environment.
 set :delayed_job_pools, { 'failed_billing_results' => 1,
   'create_declined_batches' => 1, 'fetch_billing_results' => 3,
-  'send_for_capture' => 3 }
-set :delayed_job_pid_dir, '/tmp'
+  'send_for_capture' => 1, 'handle_in_error' => 1 }

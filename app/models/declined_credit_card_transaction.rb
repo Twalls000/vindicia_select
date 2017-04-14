@@ -1,9 +1,12 @@
 class DeclinedCreditCardTransaction < ActiveRecord::Base
+  self.locking_column = :lock_version
   include AASM
   before_create :set_defaults
   before_validation :save_year
   belongs_to :declined_credit_card_batch
   has_many :audit_trails
+  has_many :failure_audit_trails, class_name: 'FailureAuditTrail'
+  has_many :success_audit_trails, class_name: 'SuccessAuditTrail'
   delegate :market_publication, to: :declined_credit_card_batch
   serialize :name_values
 
@@ -16,17 +19,20 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
   aasm column: "status" do
     state :entry, initial: true
-    state :queued_to_send, :pending, :in_error, :processed, :printed_bill,
-      :no_reply, :genesys_error
+    state :queued_to_send, :sending, :pending, :in_error, :processed,
+    :printed_bill, :no_reply, :genesys_error, :error_handled
 
     event :queue_to_vindicia do
       transitions from: :entry, to: :queued_to_send
     end
+    event :sending_to_vindicia do
+      transitions from: :queued_to_send, to: :sending
+    end
     event :send_to_vindicia do
-      transitions from: :queued_to_send, to: :pending
+      transitions from: :sending, to: :pending
     end
     event :error_sending_to_vindicia do
-      transitions from: :queued_to_send, to: :in_error
+      transitions from: :sending, to: :in_error
     end
     event :mark_in_error do
       transitions from: :entry, to: :in_error
@@ -40,9 +46,13 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :failed_to_send_to_genesys do
       transitions from: :printed_bill, to: :genesys_error
       transitions from: :processed, to: :genesys_error
+      transitions from: :error_handled, to: :genesys_error
     end
     event :failed_to_get_reply do
       transitions from: :pending, to: :no_reply
+    end
+    event :handle_error do
+      transitions from: :in_error, to: :error_handled
     end
   end
 
@@ -71,6 +81,9 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day)
   }
 
+  scope :pheonix, by_gci_unit("PHX")
+  scope :non_pheonix, ->{where("gci_unit NOT ?", "PHX")}
+
   def vindicia_fields
     attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
     attrs.merge!({
@@ -93,6 +106,10 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
   end
 
+  def pheonix?
+    gci_unit == "PHX"
+  end
+
 private
   def set_defaults
     self.currency = DEFAULT_CURRENCY
@@ -111,7 +128,8 @@ private
   end
 
   def uniqueness_by_merchant_transaction_id_and_year
-    unique = !self.class.where("merchant_transaction_id = ? AND year = ?", merchant_transaction_id, year).first
+    id_check_str = id.nil? ? "is not" : "!="
+    unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id #{id_check_str} ?", merchant_transaction_id, year, id).first
     errors.add(:merchant_transaction_id, "is not unique by merchant_transaction_id and year") unless unique
     unique
   end

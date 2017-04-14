@@ -1,0 +1,16 @@
+<style media="screen">
+  body {
+    font-family: monospace;
+  }
+</style>
+
+<h1><%= @message_title %></h1>
+<p>Alert type: <%= @alert_type %></p>
+<p>Tags: <%= @tags.join ", " %></p>
+
+<h2>Message</h2>
+<p>
+<% @message_text_arr.each do |line| %>
+  <%= line %><br>
+<% end %>
+</p>

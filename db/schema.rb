@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161102155218) do
+ActiveRecord::Schema.define(version: 20170124203051) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20161102155218) do
     t.datetime "created_at",                                        null: false
     t.datetime "updated_at",                                        null: false
     t.text     "exception",                           limit: 65535
+    t.string   "type",                                limit: 255
+    t.string   "soap_id",                             limit: 255
   end
 
   create_table "declined_credit_card_batches", force: :cascade do |t|
@@ -83,6 +85,7 @@ ActiveRecord::Schema.define(version: 20161102155218) do
     t.string   "fetch_soap_id",                 limit: 255
     t.string   "empty_last_fetch_soap_id",      limit: 255
     t.integer  "year",                          limit: 4
+    t.integer  "lock_version",                  limit: 4
   end
 
   add_index "declined_credit_card_transactions", ["year"], name: "index_declined_credit_card_transactions_on_year", using: :btree
@@ -123,6 +126,13 @@ ActiveRecord::Schema.define(version: 20161102155218) do
     t.datetime "updated_at",                        null: false
     t.integer  "lock_version",            limit: 4
     t.integer  "fetch_page_number",       limit: 4
+  end
+
+  create_table "sites", force: :cascade do |t|
+    t.string   "gci_unit",   limit: 255
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
 end

@@ -4,6 +4,90 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
+handle_in_error:
+  declined_timestamp: <%= DateTime.parse "Wed, 02 Nov 201 17:15:18 EDT -04:00" %>,
+  amount: 10.0
+  currency: "USD"
+  status: "in_error"
+  division_number: "254386"
+  merchant_transaction_id: "GN-RC1102001-20161102-0000008-1120"
+  select_transaction_id: ""
+  subscription_id: "GN00000081120"
+  subscription_start_date: nil
+  previous_billing_date: nil
+  previous_billing_count: nil
+  customer_id: "0000000081120"
+  payment_method: nil
+  credit_card_number: nil
+  credit_card_account_hash: ""
+  credit_card_expiration_date: <%= Date.parse "Wed, 01 Apr 2020" %>
+  account_holder_name: "REGINALD SMALL"
+  billing_address_line1: "110 SALUDA RDG"
+  billing_address_line2: ""
+  billing_address_line3: nil
+  billing_addr_city: "GREENVILLE"
+  billing_address_county: nil
+  billing_address_district: "SC"
+  billing_address_postal_code: "29611"
+  billing_address_country: "US"
+  affiliate_id: nil
+  affiliate_sub_id: nil
+  billing_statement_identifier: nil
+  auth_code: "522"
+  avs_code: "I3"
+  cvn_code: nil
+  name_values: nil
+  charge_status: "Failed"
+  gci_unit: "9999"
+  pub_code: "GN"
+  account_number: 8
+  batch_date: 20161102
+  batch_id: "RC1102001"
+  declined_credit_card_batch_id: 1
+  payment_method_tokenized: true
+  market_publication_id: 1
+  payment_method_id: "304181999"
+  soap_id: nil
+  fetch_soap_id: nil
+  empty_last_fetch_soap_id: nil
+  year: 2016
+
+validation:
+  declined_timestamp: <%= DateTime.parse("Fri, 02 Dec 2016 06:40:54 EST -05:00") %>
+  amount: 16.29
+  currency: "USD"
+  status: "entry"
+  division_number: "262098"
+  merchant_transaction_id: "TM-RC1129001-20161129-9133959-1278"
+  select_transaction_id: ""
+  subscription_id: "TM91339591278"
+  customer_id: "0002760281278"
+  credit_card_account_hash: ""
+  credit_card_expiration_date: <%= DateTime.parse("Sat 01 Feb 2020") %>
+  account_holder_name: "James Jones"
+  billing_address_line1: "1822 E Nevada Ave"
+  billing_address_line2: ""
+  billing_addr_city: "El Paso"
+  billing_address_county: nil
+  billing_address_district: "TX"
+  billing_address_postal_code: "79902"
+  billing_address_country: "US"
+  auth_code: "571"
+  avs_code: "IS"
+  cvn_code: nil
+  name_values: nil
+  charge_status: "Failed"
+  gci_unit: "1278"
+  pub_code: "TM"
+  account_number: 9133959
+  batch_date: 20161129
+  batch_id: "RC1129001"
+  declined_credit_card_batch_id: 2305
+  payment_method_tokenized: true
+  market_publication_id: 331
+  payment_method_id: "421271952"
+  year: 2016
+
 one: {}
 # column: value
 #

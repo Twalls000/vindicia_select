@@ -7,5 +7,9 @@ Rails.application.routes.draw do
   root 'dashboards#index'
   get  'about' => 'dashboards#about'
 
+  namespace :api do
+    post 'c2k_trans' => 'c2k_trans#create'
+  end
+
   match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 end

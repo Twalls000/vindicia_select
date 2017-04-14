@@ -39,8 +39,8 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'gci-simple-encryption', '~> 0.1.3'
 gem 'vindicia_cash_box_api', '2.2.1'
+gem 'gci-simple-encryption', '~> 0.1.3'
 
 # New Relic
 gem 'newrelic_rpm'

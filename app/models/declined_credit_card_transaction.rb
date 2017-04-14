@@ -106,6 +106,19 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
   end
 
+  def summary_status
+    return "error"   if status == 'in_error'
+    return "success" if status == 'processed'
+
+    return "pending" if ['entry',
+                         'pending',
+                         'queued_to_send'].include?(status)
+
+    return "failure" if ['failure',
+                          'printed_bill',
+                          'no_reply'].include?(status)
+  end
+
   def pheonix?
     gci_unit == "PHX"
   end
@@ -128,8 +141,12 @@ private
   end
 
   def uniqueness_by_merchant_transaction_id_and_year
+<<<<<<< HEAD
+    unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id IS NOT NULL", merchant_transaction_id, year).first
+=======
     id_check_str = id.nil? ? "is not" : "!="
     unique = !self.class.where("merchant_transaction_id = ? AND year = ? AND id #{id_check_str} ?", merchant_transaction_id, year, id).first
+>>>>>>> phoenix
     errors.add(:merchant_transaction_id, "is not unique by merchant_transaction_id and year") unless unique
     unique
   end

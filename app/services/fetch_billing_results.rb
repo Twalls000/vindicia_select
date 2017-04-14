@@ -68,7 +68,8 @@ class FetchBillingResults
           declined_tran.success_audit_trails.build(event: "FetchBillingResults successful", soap_id: soap_id)
           declined_tran.status_update
 
-          declined_tran.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_tran)
+          sent_successfully = declined_tran.pheonix? ? true : DeclinedCreditCard.send_transaction(declined_tran)
+          declined_tran.failed_to_send_to_genesys unless sent_successfully
           declined_tran.save
         end
       end

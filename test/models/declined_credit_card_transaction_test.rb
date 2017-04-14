@@ -22,14 +22,14 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
     end
     test "workflow states" do
       assert_equal [:entry, :queued_to_send, :pending, :in_error, :processed,
-        :printed_bill, :no_reply, :genesys_error],
-        DeclinedCreditCardTransaction.aasm.states.map(&:name)
+        :printed_bill, :no_reply, :genesys_error, :error_handled, :sending].sort,
+        DeclinedCreditCardTransaction.aasm.states.map(&:name).sort
     end
     test "workflow events" do
       assert_equal [:queue_to_vindicia, :send_to_vindicia, :error_sending_to_vindicia,
         :mark_in_error, :captured_funds, :failed_to_capture_funds,
-        :failed_to_send_to_genesys, :failed_to_get_reply],
-        DeclinedCreditCardTransaction.aasm.events.map(&:name)
+        :failed_to_send_to_genesys, :failed_to_get_reply, :handle_error, :sending_to_vindicia].sort,
+        DeclinedCreditCardTransaction.aasm.events.map(&:name).sort
     end
     test "workflow permitted based on entry state" do
       assert_equal [:queue_to_vindicia, :mark_in_error],
@@ -40,9 +40,18 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert_equal [:captured_funds, :failed_to_capture_funds, :failed_to_get_reply],
         @trans.aasm.events(:permitted => true).map(&:name)
     end
+    test "workflow permitted based on sending" do
+      @trans.status="sending"
+      assert_equal [:send_to_vindicia, :error_sending_to_vindicia],
+        @trans.aasm.events(:permitted => true).map(&:name)
+    end
     test "workflow permitted based on in error" do
       @trans.status="in_error"
-      assert_equal [], @trans.aasm.events(:permitted => true).map(&:name)
+      assert_equal [:handle_error], @trans.aasm.events(:permitted => true).map(&:name)
+    end
+    test "workflow permitted based on error handled" do
+      @trans.status="error_handled"
+      assert_equal [:failed_to_send_to_genesys], @trans.aasm.events(:permitted => true).map(&:name)
     end
     test 'status_update should reflect results from Vindicia' do
       @trans.status = "pending"
@@ -57,13 +66,12 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
     end
   end
 
-
   class SummaryStatus < DeclinedCreditCardTransactionTest
     def setup
       @trans = DeclinedCreditCardTransaction.create declined_timestamp: Date.today.to_datetime
     end
 
-    test "when status in entry, pending, queued_to_send" do 
+    test "when status in entry, pending, queued_to_send" do
       @trans.status = 'entry'
       @trans.save
       assert_equal @trans.summary_status, 'pending'
@@ -77,19 +85,19 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       assert_equal @trans.summary_status, 'pending'
     end
 
-    test "when status success" do 
+    test "when status success" do
       @trans.status = 'processed'
       @trans.save
       assert_equal @trans.summary_status, 'success'
     end
 
-    test "when status error" do 
+    test "when status error" do
       @trans.status = 'in_error'
       @trans.save
       assert_equal @trans.summary_status, 'error'
     end
 
-    test "when status failure" do 
+    test "when status failure" do
       @trans.status = 'printed_bill'
       @trans.save
       assert_equal @trans.summary_status, 'failure'
@@ -102,7 +110,15 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
       @trans.save
       assert_equal @trans.summary_status, 'failure'
     end
+  end
 
+  class Validations < DeclinedCreditCardTransactionTest
+    test "uniqueness_by_merchant_transaction_id_and_year" do
+      trans = DeclinedCreditCardTransaction.where(merchant_transaction_id: declined_credit_card_transactions(:validation).merchant_transaction_id).first
+      dup_trans = DeclinedCreditCardTransaction.new(trans.attributes.except("id", "year"))
 
+      assert dup_trans.invalid?
+      assert trans.valid?
+    end
   end
 end

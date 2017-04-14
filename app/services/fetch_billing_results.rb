@@ -18,7 +18,16 @@ class FetchBillingResults
   #
   def self.process
     # Get the transactions and mark them for processing
-    FetchBillingResultsJob.perform_later
+    rns = ReturnNotificationSetting.first
+
+    start_time = (Date.today - rns.checking_number_of_days.days).
+                   in_time_zone("Pacific Time (US & Canada)").end_of_day + 1.second
+    end_time   = (Date.today - rns.range_to_check.days).
+                   in_time_zone("Pacific Time (US & Canada)").end_of_day
+
+    # Have to pass the times as strings because DelayedJob won't accept time
+    # objects as arguments.
+    FetchBillingResultsJob.perform_later(start_time.to_s, end_time.to_s, rns.id)
   end
 
   #
@@ -44,8 +53,10 @@ class FetchBillingResults
 
   def process_response response
     if response.is_a?(Array) && response.map(&:class).include?(Vindicia::Transaction)
-      mtids = response.select { |r| r.is_a? Vindicia::Transaction }.map(&:merchant_transaction_id)
+      vindicia_transactions = response.select { |r| r.is_a? Vindicia::Transaction }
+      mtids = vindicia_transactions.map(&:merchant_transaction_id)
       declined_trans = DeclinedCreditCardTransaction.find_by_merchant_transaction_id(mtids)
+      soap_id = vindicia_transactions.first.soap_id
       declined_trans.each do |declined_tran|
         transaction = response.select { |r| r.merchant_transaction_id == declined_tran.merchant_transaction_id }.first
         if transaction && declined_tran.pending?
@@ -53,10 +64,12 @@ class FetchBillingResults
           declined_tran.charge_status = transaction.status
           declined_tran.select_transaction_id = transaction.select_transaction_id
           declined_tran.auth_code = transaction.auth_code
-          declined_tran.fetch_soap_id = transaction.soap_id
+          declined_tran.fetch_soap_id = soap_id
+          declined_tran.success_audit_trails.build(event: "FetchBillingResults successful", soap_id: soap_id)
           declined_tran.status_update
 
-          declined_tran.failed_to_send_to_genesys unless DeclinedCreditCard.send_transaction(declined_tran)
+          sent_successfully = declined_tran.pheonix? ? true : DeclinedCreditCard.send_transaction(declined_tran)
+          declined_tran.failed_to_send_to_genesys unless sent_successfully
           declined_tran.save
         end
       end

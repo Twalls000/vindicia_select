@@ -6,7 +6,7 @@ class JobBase < ActiveJob::Base
       block.call
     rescue => e
       DataDog.send_event(
-        "#{e.message}:\n#{e.backtrace.join("\n")}",
+        "#{e.class} - #{e.message}:\n#{e.backtrace.join("\n")}",
         "#{self.class.name} failed",
         "error",
         ["delayed_job"]

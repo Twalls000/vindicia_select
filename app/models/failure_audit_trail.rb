@@ -1,0 +1,3 @@
+class FailureAuditTrail < AuditTrail
+
+end

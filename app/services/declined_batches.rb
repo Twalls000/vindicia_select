@@ -42,8 +42,19 @@ class DeclinedBatches
       end_keys:declined_batch.end_keys)
 
     credit_cards.each do |declined_cc|
-      transaction = declined_batch.declined_credit_card_transactions.build
-      trans_attributes = load_transaction_attributes(declined_cc)
+      transaction = DeclinedCreditCardTransaction.new
+      trans_attributes =
+        begin
+          load_transaction_attributes(declined_cc)
+        rescue => e
+          if e.message == "invalid date" && declined_cc.expiration_mmyy == 0
+            transaction.status = "in_error"
+            transaction.failure_audit_trails.build(event: "invalid credit card expiration date", exception: "#{e.class} - #{e.message}:\n#{e.backtrace.join("\n")}")
+          else
+            raise e
+          end
+          {}
+        end
 
       # This is to have the aliased attributes as keys, and the aliases the values
       cc_aliased_attributes = declined_cc.attribute_aliases.invert
@@ -54,8 +65,9 @@ class DeclinedBatches
         end
       end
       transaction.gci_unit = declined_batch.gci_unit
-      transaction.market_publication_id = transaction.market_publication.id
+      transaction.market_publication_id = declined_batch.market_publication.id
       transaction.attributes = trans_attributes
+      transaction.declined_credit_card_batch = declined_batch
       transaction.save
     end
 

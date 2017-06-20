@@ -1,7 +1,7 @@
 class Api::DeclinedTransactionStatusController < ApiController
 
   def show
-    @transaction = DeclinedCreditCardTransaction.find(params[:id])
+    @transaction = DeclinedCreditCardTransaction.find_by(id: params[:id])
 
     if @transaction && @transaction.gci_unit.try(:upcase) == "PHX"
       render json: {status: @transaction.summary_status}

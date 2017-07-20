@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   # end
 
   resources :dashboards
+  namespace :dashboards do
+    resources :market_publications, only: :show
+    # get 'market_publications/:gci_unit-:pub_code' => 'market_publications#show'
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

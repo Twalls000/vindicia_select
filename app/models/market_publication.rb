@@ -16,6 +16,9 @@ class MarketPublication < ActiveRecord::Base
   validates :vindicia_batch_size,
     presence: true, numericality: { only_integer: true, greater_than: 1 }
 
+  scope :phoenix, -> { where gci_unit: PHOENIX }
+  scope :non_phoenix, -> { where.not gci_unit: PHOENIX }
+
   def select_next_batch
     declined_ccs = DeclinedCreditCard.summary(gci_unit:gci_unit, pub_code:pub_code,
       limit:declined_credit_card_batch_size, start_keys:declined_credit_card_batch_keys)

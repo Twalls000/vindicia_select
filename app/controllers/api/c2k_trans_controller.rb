@@ -7,8 +7,8 @@ class Api::C2kTransController < ApiController
     if saved_successfully
       @batch = DeclinedCreditCardBatch.create(gci_unit: @c2k_trans.gci_unit,
                                               pub_code: @c2k_trans.pub_code,
-                                              status: "completed",
-                                              declined_credit_card_transactions: [@c2k_trans])
+                                              status: "completed")
+      @batch.declined_credit_card_transactions << @c2k_trans
     end
 
     if saved_successfully

@@ -48,28 +48,8 @@
 <br>
 
 <h3 class='thin'>Breakdown by site</h3>
-<% @market_pubs.each do |mp, status_counts| %>
-  <table>
-    <thead>
-      <tr>
-        <th colspan="2"><%= mp.gci_unit %> - <%= mp.pub_code %></th>
-      </tr>
-      <tr>
-        <th style="text-align: left;">Status</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @statuses.each do |status| %>
-        <% count = status_counts[status.to_s] || 0 %>
-        <tr>
-          <td style="padding-right: 20px;"><%= link_to status,
-            dashboard_path("transaction", {status:status, gci_unit:mp.gci_unit, pub_code:mp.pub_code}) %></td>
-          <td><%= count %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <br>
-<% end %>
+<ul>
+  <% @market_pubs.each do |mp| %>
+    <li style="padding: 15px 5px"><%= link_to mp, dashboards_market_publication_path(mp.to_s) %></li>
+  <% end %>
+</ul>

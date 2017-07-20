@@ -2,7 +2,16 @@ class Api::C2kTransController < ApiController
 
   def create
     @c2k_trans = DeclinedCreditCardTransaction.new(api_params)
-    if @c2k_trans.save
+    saved_successfully = @c2k_trans.save
+
+    if saved_successfully
+      @batch = DeclinedCreditCardBatch.create(gci_unit: @c2k_trans.gci_unit,
+                                              pub_code: @c2k_trans.pub_code,
+                                              status: "completed",
+                                              declined_credit_card_transactions: [@c2k_trans])
+    end
+
+    if saved_successfully
       render json: {id: @c2k_trans.id}, status: :created
     else
       render json: json_error_response(@c2k_trans), status: 412

@@ -24,6 +24,10 @@ class MarketPublication < ActiveRecord::Base
     declined_ccs
   end
 
+  def to_s
+    "#{gci_unit}-#{pub_code}"
+  end
+
 private
   def initialize_declined_credit_card_batch_keys
     batch_keys =

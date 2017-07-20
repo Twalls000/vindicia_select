@@ -2,6 +2,7 @@ class Api::C2kTransController < ApiController
 
   def create
     @c2k_trans = DeclinedCreditCardTransaction.new(api_params)
+    @c2k_trans.gci_unit = MarketPublication::PHOENIX
     saved_successfully = @c2k_trans.save
 
     if saved_successfully

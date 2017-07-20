@@ -81,8 +81,8 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day)
   }
 
-  scope :phoenix, ->{ by_gci_unit("PHX") }
-  scope :non_phoenix, ->{ where("gci_unit NOT ?", "PHX") }
+  scope :phoenix, ->{ by_gci_unit(MarketPublication::PHOENIX) }
+  scope :non_phoenix, ->{ where("gci_unit NOT ?", MarketPublication::PHOENIX) }
 
   def vindicia_fields
     attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
@@ -120,7 +120,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   end
 
   def phoenix?
-    gci_unit == "PHX"
+    gci_unit == MarketPublication::PHOENIX
   end
 
 private

@@ -3,6 +3,8 @@ class MarketPublication < ActiveRecord::Base
   attr_accessor :batch_date
   serialize :declined_credit_card_batch_keys
 
+  PHOENIX = "PHX"
+
   scope :by_gci_unit_and_pub_code, -> (gci_unit, pub_code) { where(gci_unit:gci_unit, pub_code:pub_code) }
 
   validates :gci_unit, presence: true, length: { is: 4 }

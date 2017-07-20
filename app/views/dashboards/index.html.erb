@@ -3,7 +3,7 @@
 <h4 class='thin'>Dashboard</h4>
 <br>
 
-<h3 class='thin'>Declined Credit Card Batches</h3>
+<h3 id="batches" class='thin'>Declined Credit Card Batches</h3>
 <table>
   <thead>
     <tr>
@@ -25,7 +25,7 @@
 </table>
 <br>
 
-<h3 class='thin'>Declined Credit Card Transactions</h3>
+<h3 id="transactions" class='thin'>Declined Credit Card Transactions</h3>
 <table>
   <thead>
     <tr>
@@ -47,7 +47,7 @@
 </table>
 <br>
 
-<h3 class='thin'>Breakdown by site</h3>
+<h3 id="market_pubs" class='thin'>Breakdown by site</h3>
 <ul>
   <% @market_pubs.each do |mp| %>
     <li style="padding: 15px 5px"><%= link_to mp, dashboards_market_publication_path(mp.to_s) %></li>

@@ -6,7 +6,7 @@ class C2kTransControllerTest < ActionController::TestCase
     @controller = Api::C2kTransController.new
     @dashboard1 =
     {
-      gci_unit: "PHX",
+      gci_unit: MarketPublication::PHOENIX,
       pub_code: "AR",
       account_number: "1421",
       batch_date: "20161102",

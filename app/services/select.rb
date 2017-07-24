@@ -1,6 +1,6 @@
 class Select
   def self.bill_transactions(transactions)
-   call(:bill_transactions, { transactions: Array(transactions).map(&:vindicia_fields) })
+    call(:bill_transactions, { transactions: Array(transactions).map(&:vindicia_fields) })
  end
 
   def self.fetch_billing_results(timestamp, end_timestamp = nil, page = 0, page_size = 50)

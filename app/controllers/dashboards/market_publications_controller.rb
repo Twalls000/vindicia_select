@@ -1,7 +1,5 @@
 class Dashboards::MarketPublicationsController < ApplicationController
   def show
-    # gci_unit = params[:gci_unit]
-    # pub_code = params[:pub_code]
     gci_unit, pub_code = params[:id].split('-')
     @market_pub = MarketPublication.by_gci_unit_and_pub_code(gci_unit, pub_code).first
     @statuses = DeclinedCreditCardTransaction.aasm.states.map(&:name)

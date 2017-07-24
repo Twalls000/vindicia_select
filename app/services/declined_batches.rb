@@ -16,7 +16,7 @@ class DeclinedBatches
   end
 
   def self.include_markets_and_pub
-    MarketPublication.all
+    MarketPublication.non_phoenix
   end
 
   def self.submit_card_batch_job(card_batch, mp)

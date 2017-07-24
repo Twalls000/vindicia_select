@@ -4,7 +4,7 @@ class Api::DeclinedTransactionStatusControllerTest < ActionController::TestCase
 
   def setup
     @controller = Api::DeclinedTransactionStatusController.new
-    transaction = DeclinedCreditCardTransaction.new(declined_timestamp: Date.today.to_datetime, gci_unit: 'phx')
+    transaction = DeclinedCreditCardTransaction.new(declined_timestamp: Date.today.to_datetime, gci_unit: MarketPublication::PHOENIX)
     transaction.save
     request.headers['HTTP_API_KEY'] = GciSimpleEncryption.decrypt_hex(ENV['VINDICIA_SELECT_API_KEY'])
   end

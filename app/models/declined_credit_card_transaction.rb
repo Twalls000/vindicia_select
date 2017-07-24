@@ -96,7 +96,7 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'payment_method_is_tokenized' => payment_method_tokenized
     })
 
-    unless payment_method_tokenized
+    unless credit_card_expiration_date.blank?
       attrs['credit_card_expiration_date'] = Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date)
     end
 

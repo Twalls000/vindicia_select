@@ -48,6 +48,7 @@
 <br>
 
 <h3 id="market_pubs" class='thin'>Breakdown by site</h3>
+<hr style="border: 0px; border-bottom: 1px solid #d0d0d0;">
 <ul>
   <% @market_pubs.each do |mp| %>
     <li style="padding: 15px 5px"><%= link_to mp, dashboards_market_publication_path(mp.to_s) %></li>

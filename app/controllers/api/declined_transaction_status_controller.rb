@@ -5,7 +5,8 @@ class Api::DeclinedTransactionStatusController < ApiController
     @transaction = DeclinedCreditCardTransaction.where(*query).first
 
     if @transaction && @transaction.gci_unit.try(:upcase) == MarketPublication::PHOENIX
-      json = { status:                  @transaction.summary_status,
+      json = { id:                      @transaction.id,
+               status:                  @transaction.summary_status,
                select_transaction_id:   @transaction.select_transaction_id,
                merchant_transaction_id: @transaction.merchant_transaction_id }
       render json: json

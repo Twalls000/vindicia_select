@@ -1,7 +1,8 @@
 class Api::DeclinedTransactionStatusController < ApiController
 
   def show
-    @transaction = DeclinedCreditCardTransaction.find_by(id: params[:id])
+    query = ["id = :query OR merchant_transaction_id = :query", { query: params[:id] }]
+    @transaction = DeclinedCreditCardTransaction.where(*query).first
 
     if @transaction && @transaction.gci_unit.try(:upcase) == MarketPublication::PHOENIX
       json = { status:                  @transaction.summary_status,

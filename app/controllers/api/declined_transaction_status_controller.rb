@@ -22,6 +22,11 @@ class Api::DeclinedTransactionStatusController < ApiController
                status:                  @transaction.summary_status,
                select_transaction_id:   @transaction.select_transaction_id,
                merchant_transaction_id: @transaction.merchant_transaction_id }
+
+      if @transaction.summary_status == "error"
+        json['error'] = @transaction.failure_audit_trails.last.try(:event)
+      end
+
       render json: json
     else
       render json: {}, status: 404

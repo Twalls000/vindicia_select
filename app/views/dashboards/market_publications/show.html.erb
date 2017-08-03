@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+<h1><%= @market_pub %></h1>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left;">Status</th>
+      <th>Count</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @statuses.each do |status| %>
+      <% count = @total_by_transactions[status.to_s] || 0 %>
+      <tr>
+        <td style="padding-right: 20px;"><%= link_to status,
+          dashboard_path("transaction", {status:status, gci_unit:@market_pub.gci_unit, pub_code:@market_pub.pub_code}) %></td>
+        <td><%= count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Back', dashboards_path(anchor: 'market_pubs') %>

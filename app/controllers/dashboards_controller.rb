@@ -7,16 +7,7 @@ class DashboardsController < ApplicationController
     @batch_statuses = DeclinedCreditCardBatch.aasm.states.map(&:name)
     @total_by_transactions = DeclinedCreditCardTransaction.created_within_n_days(21).grouped_and_ordered_by_status.count
     @statuses = DeclinedCreditCardTransaction.aasm.states.map(&:name)
-    @market_pubs = MarketPublication.all
-    @market_pubs = @market_pubs.inject({}) do |hash, mp|
-      trans_for_mp = DeclinedCreditCardTransaction.
-                       created_within_n_days(21).
-                       by_gci_unit(mp.gci_unit).
-                       by_pub_code(mp.pub_code).
-                       grouped_and_ordered_by_status.count
-      hash[mp] = trans_for_mp
-      hash
-    end
+    @market_pubs = MarketPublication.order("gci_unit ASC")
   end
 
   # GET /dashboards/1

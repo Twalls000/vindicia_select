@@ -1,0 +1,30 @@
+<h4 class='thin'>Transaction Lookup</h4>
+<% if flash[:error] %>
+  <span id="toast-text" style="display:none;"><%= flash[:error] %></span>
+<% end %>
+
+<p>To find a transaction, enter the database ID or the Merchant Transaction ID in the field below and submit.</p>
+<%= form_tag dashboards_transactions_search_url, method: :get, id: "form" do %>
+  <div class="input-field">
+    <%= label_tag :trans_id, "Database ID or the Merchant Transaction ID" %>
+    <%= text_field_tag :trans_id, nil, class: "validate", required: true, value: params[:trans_id] %>
+  </div>
+  <%= submit_tag "Fetch", class: "waves-effect waves-light btn", id: "fetch-btn", data: { baseurl: dashboards_transactions_url } %>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(function() {
+      toastForError();
+    });
+
+    function toastForError() {
+      var $toast = $("span#toast-text"),
+          $input = $("input#trans_id");
+      if ( $toast.length > 0 ) {
+        Materialize.toast($toast.text(), 4000, "red rounded");
+        $input.addClass("invalid");
+      }
+    }
+  </script>
+<% end %>

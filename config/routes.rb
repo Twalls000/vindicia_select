@@ -3,10 +3,11 @@ Rails.application.routes.draw do
   # get 'declined_transaction_status/show'
   # end
 
-  resources :dashboards
   namespace :dashboards do
     resources :market_publications, only: :show
+    resources :transactions, only: [:index, :show]
   end
+  resources :dashboards
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

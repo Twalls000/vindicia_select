@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   namespace :dashboards do
     resources :market_publications, only: :show
+    get 'transactions/search' => "transactions#search"
     resources :transactions, only: [:index, :show]
   end
   resources :dashboards

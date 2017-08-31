@@ -233,3 +233,11 @@ g1262:
 g1263:
   schema: G1263FILES
   <<: *defaults
+
+g1264:
+  schema: G1264FILES
+  <<: *defaults
+
+g1267:
+  schema: G1267FILES
+  <<: *defaults

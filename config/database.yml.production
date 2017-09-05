@@ -234,10 +234,10 @@ g1263:
   schema: G1263FILES
   <<: *defaults
 
-g1264:
-  schema: G1264FILES
+g1026:
+  schema: G1026FILES
   <<: *defaults
 
-g1267:
-  schema: G1267FILES
+g1028:
+  schema: G1028FILES
   <<: *defaults

@@ -1,9 +1,12 @@
 <% require 'gci-simple-encryption' %>
-defaults: &defaults
+production_defaults: &production_defaults
   adapter: ibm_db_odbc
   datasource: pocdb01
   username: gsysicon
   password: <%= SimpleEncryption.get_password_for_username('gsysicon') %>
+
+production_defaults:
+  <<: *production_defaults
 
 production:
   adapter: mysql2
@@ -24,224 +27,224 @@ ods_library:
 
 g8872:
   schema: g8872files
-  <<: *defaults
+  <<: *production_defaults
 
 g1007:
   schema: G1007FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1008:
   schema: G1008FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1010:
   schema: G1010FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1011:
   schema: G1011FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1013:
   schema: G1013FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1014:
   schema: G1014FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1019:
   schema: G1019FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1021:
   schema: G1021FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1026:
   schema: G1026FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1028:
   schema: G1028FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1033:
   schema: G1033FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1040:
   schema: G1040FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1042:
   schema: G1042FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1051:
   schema: G1051FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1052:
   schema: G1052FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1056:
   schema: G1056FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1063:
   schema: G1063FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1065:
   schema: G1065FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1066:
   schema: G1066FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1070:
   schema: G1070FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1074:
   schema: G1074FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1076:
   schema: G1076FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1078:
   schema: G1078FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1082:
   schema: G1082FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1084:
   schema: G1084FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1085:
   schema: G1085FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1087:
   schema: G1087FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1089:
   schema: G1089FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1094:
   schema: G1094FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1098:
   schema: G1098FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1099:
   schema: G1099FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1106:
   schema: G1106FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1107:
   schema: G1107FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1120:
   schema: G1120FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1122:
   schema: G1122FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1123:
   schema: G1123FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1125:
   schema: G1125FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1136:
   schema: G1136FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1150:
   schema: G1150FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1151:
   schema: G1151FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1171:
   schema: G1171FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1174:
   schema: G1174FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1528:
   schema: G1528FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1530:
   schema: G1530FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1532:
   schema: G1532FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1558:
   schema: G1558FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1030:
   schema: G1030FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1278:
   schema: G1278FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1287:
   schema: G1287FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1255:
   schema: G1255FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1262:
   schema: G1262FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1263:
   schema: G1263FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1264:
   schema: G1264FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1267:
   schema: G1267FILES
-  <<: *defaults
+  <<: *production_defaults
 
 g1256:
   schema: G1256FILES
-  <<: *defaults
+  <<: *production_defaults

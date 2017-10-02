@@ -22,17 +22,26 @@ test:
   timeout: 5000
   database: db/test.sqlite3
 
-q9999: &gci
+development_defaults: &development_defaults
   adapter: ibm_db_odbc
   datasource: marvel
   username: <%= ENV['ICON_DB_USERNAME'] %>
   password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['ICON_DB_PASSWORD'])) %>
+
+development_defaults:
+  <<: *development_defaults
+
+test_defaults:
+  <<: *development_defaults
+
+q9999:
+  <<: *development_defaults
   schema: q9999files
 
 g8872:
-  <<: *gci
+  <<: *development_defaults
   schema: g8872files
 
 g1532:
-  <<: *gci
+  <<: *development_defaults
   schema: g1532files

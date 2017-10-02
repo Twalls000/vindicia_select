@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170124203051) do
+ActiveRecord::Schema.define(version: 20171002132638) do
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255
@@ -106,6 +106,19 @@ ActiveRecord::Schema.define(version: 20170124203051) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
   add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue", using: :btree
+
+  create_table "genesys_connections", force: :cascade do |t|
+    t.integer  "gci_unit",   limit: 4,   null: false
+    t.string   "schema",     limit: 255
+    t.string   "adapter",    limit: 255
+    t.string   "datasource", limit: 255
+    t.string   "username",   limit: 255
+    t.string   "password",   limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "genesys_connections", ["gci_unit", "schema"], name: "index_genesys_connections_on_gci_unit_and_schema", unique: true, using: :btree
 
   create_table "market_publications", force: :cascade do |t|
     t.string   "gci_unit",                        limit: 255

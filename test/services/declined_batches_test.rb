@@ -9,7 +9,7 @@ class DeclinedBatchesTest < ActiveSupport::TestCase
 
   class IncludeMarketsAndPub < DeclinedBatchesTest
     test "it should return all the MarketPublications" do
-      assert_equal DeclinedBatches.include_markets_and_pub, MarketPublication.all
+      assert_equal MarketPublication.all.to_a, DeclinedBatches.include_markets_and_pub.to_a
     end
   end
 

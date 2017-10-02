@@ -241,3 +241,7 @@ g1264:
 g1267:
   schema: G1267FILES
   <<: *defaults
+
+g1256:
+  schema: G1256FILES
+  <<: *defaults

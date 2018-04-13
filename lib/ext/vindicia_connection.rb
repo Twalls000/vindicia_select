@@ -3,13 +3,13 @@ module Vindicia::Connection
     puts "THIS IS WORKING CONNECTION"
     local_wsdl = "#{Rails.root}/config/wsdl/#{class_name}.wsdl" rescue ""
     local_wsdl = self.model_wsdl(class_name) unless !local_wsdl.blank? && File.exists?(local_wsdl)
+    puts local_wsdl
     @client_resource_model = Savon.client(wsdl: local_wsdl,
         endpoint: self.endpoint,
         namespace: self.namespace,
         open_timeout: self.open_timeout,
         read_timeout: self.read_timeout,
-        ssl_cert_file: VINDICIA_CERT_FILE,
-        ssl_ca_cert_file: VINDICIA_CERT_FILE)
+        ssl_verify_mode: :none)
     @client_resource_model
   end
 

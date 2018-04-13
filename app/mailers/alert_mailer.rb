@@ -1,5 +1,5 @@
 class AlertMailer < ApplicationMailer
-  RECIPIENTS = ENV['VINDICIA_SELECT_ALERT_EMAIL_RECIPIENTS']
+  RECIPIENTS = ['rverhey@gannett.com']
   SENDER     = "Vindicia Select #{Rails.env.capitalize} <vindicia_select_#{Rails.env}@gannett.com>"
 
   default to:   RECIPIENTS,

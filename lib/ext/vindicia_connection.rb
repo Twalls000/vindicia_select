@@ -8,7 +8,8 @@ module Vindicia::Connection
         namespace: self.namespace,
         open_timeout: self.open_timeout,
         read_timeout: self.read_timeout,
-        ssl_cert_file: VINDICIA_CERT_FILE)
+        ssl_cert_file: VINDICIA_CERT_FILE,
+        ssl_ca_cert_file: VINDICIA_CERT_FILE)
     @client_resource_model
   end
 

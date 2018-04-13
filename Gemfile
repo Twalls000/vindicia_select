@@ -39,7 +39,7 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'vindicia_cash_box_api', '2.2.1'
+gem 'vindicia_cash_box_api'
 
 # New Relic
 gem 'newrelic_rpm'

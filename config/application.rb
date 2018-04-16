@@ -15,6 +15,7 @@ module VindiciaSelect
     config.active_job.queue_adapter = :delayed_job
     require 'ext/string'
     require 'ext/vindicia_connection'
+    require 'ext/vindicia_base'
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.

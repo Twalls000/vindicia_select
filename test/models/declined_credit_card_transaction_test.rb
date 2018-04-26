@@ -66,6 +66,52 @@ class DeclinedCreditCardTransactionTest < ActiveSupport::TestCase
     end
   end
 
+  class SummaryStatus < DeclinedCreditCardTransactionTest
+    def setup
+      @trans = DeclinedCreditCardTransaction.create declined_timestamp: Date.today.to_datetime
+    end
+
+    test "when status in entry, pending, queued_to_send" do
+      @trans.status = 'entry'
+      @trans.save
+      assert_equal @trans.summary_status, 'pending'
+
+      @trans.status = 'pending'
+      @trans.save
+      assert_equal @trans.summary_status, 'pending'
+
+      @trans.status = 'queued_to_send'
+      @trans.save
+      assert_equal @trans.summary_status, 'pending'
+    end
+
+    test "when status success" do
+      @trans.status = 'processed'
+      @trans.save
+      assert_equal @trans.summary_status, 'success'
+    end
+
+    test "when status error" do
+      @trans.status = 'in_error'
+      @trans.save
+      assert_equal @trans.summary_status, 'error'
+    end
+
+    test "when status failure" do
+      @trans.status = 'printed_bill'
+      @trans.save
+      assert_equal @trans.summary_status, 'failure'
+
+      @trans.status = 'no_reply'
+      @trans.save
+      assert_equal @trans.summary_status, 'failure'
+
+      @trans.status = 'failure'
+      @trans.save
+      assert_equal @trans.summary_status, 'failure'
+    end
+  end
+
   class Validations < DeclinedCreditCardTransactionTest
     test "uniqueness_by_merchant_transaction_id_and_year" do
       trans = DeclinedCreditCardTransaction.where(merchant_transaction_id: declined_credit_card_transactions(:validation).merchant_transaction_id).first

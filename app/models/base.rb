@@ -1,4 +1,4 @@
-require "db_loader"
+require "change_db"
 class Base < ActiveRecord::Base
   self.abstract_class = true
 

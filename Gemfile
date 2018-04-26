@@ -5,7 +5,7 @@ source 'https://artifactory.gannettdigital.com/artifactory/api/gems/ecom-feature
 gem 'rails', '4.2.7.1'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.3.13', '< 0.5'
-gem 'ibm_db_odbc', '~> 0.8.3'
+gem 'ibm_db_odbc', '0.8.6'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -39,8 +39,7 @@ gem 'whenever'
 # Workflow
 gem 'aasm'
 # This is the Vindicia API gem. It includes Savon
-gem 'gci-simple-encryption', '~> 0.1.3'
-gem 'vindicia_cash_box_api', '2.2.1'
+gem 'vindicia_cash_box_api'
 
 # New Relic
 gem 'newrelic_rpm'

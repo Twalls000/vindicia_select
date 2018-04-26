@@ -81,8 +81,11 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     pending.where("created_at<?", (Time.now-days_before_failure.days).beginning_of_day)
   }
 
+  scope :phoenix, ->{ by_gci_unit(MarketPublication::PHOENIX) }
+  scope :non_phoenix, ->{ where("gci_unit NOT ?", MarketPublication::PHOENIX) }
+
   def vindicia_fields
-    attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id')
+    attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id', 'credit_card_expiration_date')
     attrs.merge!({
       'status'                      => charge_status,
       'timestamp'                   => Select.date_to_vindicia(declined_timestamp),
@@ -90,9 +93,12 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
       'payment_method_id'           => payment_method_id,
       'previous_billing_count'      => previous_billing_count.to_i,
       'credit_card_account_hash'    => credit_card_account_hash,
-      'payment_method_is_tokenized' => payment_method_tokenized,
-      'credit_card_expiration_date' => Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date)
+      'payment_method_is_tokenized' => payment_method_tokenized
     })
+
+    unless credit_card_expiration_date.blank?
+      attrs['credit_card_expiration_date'] = Select.convert_gci_cc_expiration_date_to_vindicia(credit_card_expiration_date)
+    end
 
     attrs.delete_if { |key,value| value.nil? }
     attrs.keys.each { |key| attrs[key.camelize(:lower)] = attrs.delete(key) }
@@ -101,6 +107,24 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
 
   def status_update
     charge_status == "Captured" ? self.captured_funds : self.failed_to_capture_funds
+  end
+
+  def summary_status
+    return "error"   if ['in_error',
+                         'error_handled'].include?(status)
+    return "success" if status == 'processed'
+
+    return "pending" if ['entry',
+                         'pending',
+                         'queued_to_send'].include?(status)
+
+    return "failure" if ['failure',
+                         'printed_bill',
+                         'no_reply'].include?(status)
+  end
+
+  def phoenix?
+    gci_unit == MarketPublication::PHOENIX
   end
 
 private

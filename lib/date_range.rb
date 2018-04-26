@@ -3,7 +3,7 @@ class DateRange
   attr_accessor :starting, :ending
 
   def initialize(starting = Date.today, ending = nil)
-    self.starting = Date.parse(starting) rescue Date.now
+    self.starting = Date.parse(starting) rescue Date.today
     self.ending = Date.parse(ending) rescue starting
   end
 

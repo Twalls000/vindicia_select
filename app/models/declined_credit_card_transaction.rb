@@ -98,21 +98,21 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
               count(pending.id) as pending_count,
               sum(in_error.amount) as error_amount,
               count(in_error.id) as error_count
-      FROM vindicia_select_production.declined_credit_card_transactions total
+      FROM declined_credit_card_transactions total
           LEFT OUTER JOIN (
-            SELECT * from vindicia_select_production.declined_credit_card_transactions
+            SELECT * from declined_credit_card_transactions
             WHERE status = 'processed') AS captured
           ON total.id = captured.id
           LEFT OUTER JOIN (
-            SELECT * from vindicia_select_production.declined_credit_card_transactions
+            SELECT * from declined_credit_card_transactions
             WHERE status = 'printed_bill') AS declined
           ON total.id = declined.id
           LEFT OUTER JOIN (
-            SELECT * from vindicia_select_production.declined_credit_card_transactions
+            SELECT * from declined_credit_card_transactions
             WHERE status = 'pending') AS pending
             ON total.id = pending.id
           LEFT OUTER JOIN (
-            SELECT * FROM vindicia_select_production.declined_credit_card_transactions
+            SELECT * FROM declined_credit_card_transactions
             WHERE status = 'in_error') AS in_error
           ON total.id = in_error.id
           LEFT OUTER JOIN sites

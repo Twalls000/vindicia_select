@@ -1,15 +1,14 @@
 class SummaryReportMailer < ApplicationMailer
-  RECIPIENTS = 'wspencer@gannett.com'
-  SENDER     = "Vindicia Select #{Rails.env.capitalize} <vindicia_select_#{Rails.env}@gannett.com>"
+  
+  default to:   SummaryReports::RECIPIENTS,
+          from: SummaryReports::SENDER
 
-  default to:   RECIPIENTS,
-          from: SENDER
-
-  def summary_report_email(records, range)
+  def summary_report_email(records, range, csv, type)
     @records = records
     @range = range
-
-    subject = "Summary Report - Vindicia Select #{ Rails.env.capitalize }"
+    @type = type
+    attachments["#{type}-#{range.begin.strftime('%F')}-#{range.end.strftime('%F')}.csv"] = csv
+    subject = "Summary Report [#{type}] - Vindicia Select #{ Rails.env.capitalize }"
     mail subject: subject
   end
 end

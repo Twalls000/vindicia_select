@@ -27,6 +27,4 @@ every 1.day, :at => '5:00 am' do
   rake "send_status_email"
 end
 
-every 1.week, :at => '6:00 am' do
-  
-end
+

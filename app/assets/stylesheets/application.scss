@@ -13,16 +13,15 @@
  *= require_tree .
  *= require_self
  */
- @import "materialize/components/color";
-
- $primary-color: color("teal", "darken-2") !default;
- // $primary-color-light: lighten($primary-color, 15%) !default;
- // $primary-color-dark: darken($primary-color, 15%) !default;
- // $secondary-color: color("blue-grey", "darken-3") !default;
- // $success-color: color("green", "base") !default;
- // $error-color: color("red", "base") !default;
- // $link-color: color("deep-purple", "darken-4") !default;
- @import 'materialize';
+@import "materialize/components/color";
+$primary-color: color("light-green", "darken-2") !default;
+$primary-color-light: lighten($primary-color, 15%) !default;
+$primary-color-dark: darken($primary-color, 15%) !default;
+$secondary-color: color("cyan", "accent-4") !default;
+$success-color: color("green", "base") !default;
+$error-color: color("red", "base") !default;
+$link-color: color("orange", "accent-4") !default;
+@import 'materialize';
 
 pre {
   background-color: #e0e0e0;
@@ -30,4 +29,29 @@ pre {
   padding: 10px;
   border-radius: 5px;
   font-size: 15px;
+}
+
+.brand-logo {
+  font-weight: 100 !important;
+  font-size: 1.8em !important;
+  color: #fff;
+  display: inline-block;
+
+  padding: 0;
+  white-space: nowrap;
+
+  span {
+    font-weight: 400 !important;
+  }
+}
+
+h1 {
+  font-weight: 200;
+  font-size: 2.0em;
+}
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 200;
 }

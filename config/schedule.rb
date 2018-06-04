@@ -41,6 +41,3 @@ end
 every '3 0 7 * *' do # every month on the 7th @12:03am'
   rake 'run_summary_report:monthly'
 end
-
-
-

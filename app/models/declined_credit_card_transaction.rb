@@ -84,6 +84,45 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
   scope :phoenix, ->{ by_gci_unit(MarketPublication::PHOENIX) }
   scope :non_phoenix, ->{ where("gci_unit NOT ?", MarketPublication::PHOENIX) }
 
+  scope :summary_by_unit_for_date_range, ->(range) {
+    find_by_sql(["
+      SELECT  total.gci_unit,
+              sites.name,
+              count(total.id) as all_count,
+              count(captured.id) as captured_count,
+              sum(total.amount) as all_amount,
+              sum(captured.amount) as captured_amount,
+              sum(declined.amount) as declined_amount,
+              count(declined.id) as declined_count,
+              sum(pending.amount) as pending_amount,
+              count(pending.id) as pending_count,
+              sum(in_error.amount) as error_amount,
+              count(in_error.id) as error_count
+      FROM declined_credit_card_transactions total
+          LEFT OUTER JOIN (
+            SELECT * from declined_credit_card_transactions
+            WHERE status = 'processed') AS captured
+          ON total.id = captured.id
+          LEFT OUTER JOIN (
+            SELECT * from declined_credit_card_transactions
+            WHERE status = 'printed_bill') AS declined
+          ON total.id = declined.id
+          LEFT OUTER JOIN (
+            SELECT * from declined_credit_card_transactions
+            WHERE status = 'pending') AS pending
+            ON total.id = pending.id
+          LEFT OUTER JOIN (
+            SELECT * FROM declined_credit_card_transactions
+            WHERE status = 'in_error') AS in_error
+          ON total.id = in_error.id
+          LEFT OUTER JOIN sites
+          ON total.gci_unit = sites.gci_unit
+      WHERE total.created_at BETWEEN ? AND ?
+      GROUP BY total.gci_unit
+      ORDER BY total.gci_unit
+    ", range.begin, range.end])
+  }
+
   def vindicia_fields
     attrs = attributes.except('id', 'batch_id', 'charge_status', 'created_at', 'credit_card_number', 'declined_credit_card_batch_id', 'declined_timestamp', 'gci_unit', 'market_publication_id', 'payment_method', 'payment_method_tokenized', 'pub_code', 'account_number', 'batch_date', 'status', 'updated_at', 'soap_id', 'fetch_soap_id', 'credit_card_expiration_date')
     attrs.merge!({

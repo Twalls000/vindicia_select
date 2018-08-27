@@ -275,6 +275,3 @@ DEPENDENCIES
   vindicia_cash_box_api
   web-console (~> 2.0)
   whenever
-
-BUNDLED WITH
-   1.12.5

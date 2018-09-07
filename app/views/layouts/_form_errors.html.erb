@@ -1,0 +1,11 @@
+<% if object.errors.any? %>
+	<div id="form-errors">
+	  <span><strong><%= pluralize(object.errors.count, "error") %> prohibited this app_config from being saved:</strong></span>
+
+	  <ul class='errors-list'>
+	  <% object.errors.full_messages.each do |message| %>
+	    <li><%= message %></li>
+	  <% end %>
+	  </ul>
+	</div>
+<% end %>

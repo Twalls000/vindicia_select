@@ -1,5 +1,7 @@
 # Vindicia Select
 
+
+
 ## Queue Processes
 We will process the background jobs to gather transactions into a temporary transaction table, to send the transactions to Vindicia Select, and to pull transactions back from Vindicia Select
 ### declined_batches

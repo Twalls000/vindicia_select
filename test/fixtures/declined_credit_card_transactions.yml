@@ -5,7 +5,7 @@
 # below each fixture, per the syntax in the comments below
 #
 handle_in_error:
-  declined_timestamp: <%= DateTime.parse "Wed, 02 Nov 201 17:15:18 EDT -04:00" %>,
+  declined_timestamp: <%= DateTime.parse "Wed, 02 Nov 2011 17:15:18 EDT -04:00" %>
   amount: 10.0
   currency: "USD"
   status: "in_error"

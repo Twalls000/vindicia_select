@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171002132638) do
+ActiveRecord::Schema.define(version: 20180904161343) do
+
+  create_table "app_configs", force: :cascade do |t|
+    t.string   "key",        limit: 255
+    t.text     "value",      limit: 65535
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "app_configs", ["key"], name: "index_app_configs_on_key", using: :btree
 
   create_table "audit_trails", force: :cascade do |t|
     t.string   "event",                               limit: 255

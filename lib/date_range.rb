@@ -27,4 +27,7 @@ class DateRange
     starting.end_of_week(end_day_of_week).end_of_day
   end
 
+  def to_s
+    "#{starting.strftime('%F')} - #{ending.strftime('%F')}"
+  end
 end

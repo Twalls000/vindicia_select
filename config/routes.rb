@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :app_configs
   # namespace :api do
   # get 'declined_transaction_status/show'
   # end

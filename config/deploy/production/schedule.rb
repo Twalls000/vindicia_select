@@ -26,3 +26,18 @@ end
 every 1.day, :at => '5:00 am' do
   rake "send_status_email"
 end
+
+#weekly report
+every :monday, :at => '12:01 am' do
+  rake 'run_summary_report:weekly'
+end
+
+#ytd report
+every :monday, :at => '12:02 am' do
+  rake 'run_summary_report:ytd'
+end
+
+#monthly report
+every '3 0 7 * *' do # every month on the 7th @12:03am'
+  rake 'run_summary_report:monthly'
+end

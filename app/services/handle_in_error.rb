@@ -34,8 +34,7 @@ class HandleInError
       elsif trans.failure_audit_trails.length > 1 || matches_known_failure_errors?(event)
         send_failed_to_genesys trans
       elsif matches_known_retry_immediately_errors?(event)
-        trans.status = "entry"
-        trans.save
+        transaction.queue_for_send!
       else
         send_failed_to_genesys trans
         events = trans.failure_audit_trails.map(&:event)

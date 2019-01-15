@@ -57,6 +57,9 @@ class DeclinedCreditCardTransaction < ActiveRecord::Base
     event :wait_to_send do
       transitions from: :in_error, to: :awaiting_send
     end
+    event :queue_for_send do
+      transitions from: [:in_error, :awaiting_send], to: :entry
+    end
   end
 
   scope :created_within_n_days, ->(n){

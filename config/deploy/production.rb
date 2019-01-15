@@ -27,4 +27,5 @@ end
 # Delayed jobs for this environment.
 set :delayed_job_pools, { 'failed_billing_results' => 1,
   'create_declined_batches' => 1, 'fetch_billing_results' => 3,
-  'send_for_capture' => 1, 'handle_in_error' => 1, 'summary_report' => 1 }
+  'send_for_capture' => 1, 'handle_in_error' => 1, 'summary_report' => 1,
+  'queue_transaction_for_send_for_capture' => 1 }

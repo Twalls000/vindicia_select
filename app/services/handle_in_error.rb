@@ -34,9 +34,10 @@ class HandleInError
       elsif trans.failure_audit_trails.length > 1 || matches_known_failure_errors?(event)
         send_failed_to_genesys trans
       elsif matches_known_retry_immediately_errors?(event)
-        transaction.queue_for_send!
+        QueueTransactionForSendForCaptureJob.perform_now(trans)
       elsif matches_known_retry_after_10_days_errors?(event)
-        QueueTransactionForSendForCaptureJob.set(wait: 10.days).perform_later(transaction)
+        trans.wait_to_send!
+        QueueTransactionForSendForCaptureJob.set(wait: 10.days).perform_later(trans)
       else
         send_failed_to_genesys trans
         events = trans.failure_audit_trails.map(&:event)

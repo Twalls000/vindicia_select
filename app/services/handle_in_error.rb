@@ -1,11 +1,13 @@
 class HandleInError
   SSL_ERROR = "SSL_connect SYSCALL returned=5 errno=0 state=SSLv3 read server session ticket A"
-  VINDICIA_400_ERROR = /Vindicia code 400: (.+) that has already been processed by CashBox Select/
+  VINDICIA_400_ALREADY_PROCESSED_ERROR = /Vindicia code 400: (.+) that has already been processed by CashBox Select/
+  VINDICIA_400_ALREADY_PROCESSING_ERROR = /Vindicia code 400: Failed to schedule billing attempts: (.+) that is currently being processed by CashBox Select/
   INVALID_EXPIRATION_ERROR = "invalid credit card expiration date"
   DUPLICATE_ERROR = "Vindicia code 400: Billing has already been attempted for Transaction ID"
 
   # Errors that are OK to try to resend
-  RETRY_ERRORS = [SSL_ERROR, VINDICIA_400_ERROR]
+  RETRY_IMMEDIATELY_ERRORS = [SSL_ERROR, VINDICIA_400_ALREADY_PROCESSED_ERROR]
+  RETRY_AFTER_10_DAYS_ERRORS = [VINDICIA_400_ALREADY_PROCESSING_ERROR]
 
   # Errors that need to be sent back to Genesys as failed
   FAILURE_ERRORS = [INVALID_EXPIRATION_ERROR]
@@ -31,9 +33,11 @@ class HandleInError
         trans.save
       elsif trans.failure_audit_trails.length > 1 || matches_known_failure_errors?(event)
         send_failed_to_genesys trans
-      elsif matches_known_retry_errors?(event)
-        trans.status = "entry"
-        trans.save
+      elsif matches_known_retry_immediately_errors?(event)
+        QueueTransactionForSendForCaptureJob.perform_now(trans)
+      elsif matches_known_retry_after_10_days_errors?(event)
+        trans.wait_to_send!
+        QueueTransactionForSendForCaptureJob.set(wait: 10.days).perform_later(trans)
       else
         send_failed_to_genesys trans
         events = trans.failure_audit_trails.map(&:event)
@@ -57,8 +61,12 @@ class HandleInError
     transaction.save
   end
 
-  def self.matches_known_retry_errors?(event)
-    matches_known_errors? event, RETRY_ERRORS
+  def self.matches_known_retry_immediately_errors?(event)
+    matches_known_errors? event, RETRY_IMMEDIATELY_ERRORS
+  end
+
+  def self.matches_known_retry_after_10_days_errors?(event)
+    matches_known_errors? event, RETRY_AFTER_10_DAYS_ERRORS
   end
 
   def self.matches_known_failure_errors?(event)

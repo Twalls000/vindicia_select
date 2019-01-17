@@ -38,10 +38,16 @@ class HandleInErrorTest < ActiveJob::TestCase
         status_change "error_handled"
       end
 
-      test 'Retry errors are set as entry' do
-        @trans.failure_audit_trails.create(event: HandleInError::RETRY_ERRORS.sample.to_s)
+      test 'Retry immediately errors are set as entry' do
+        @trans.failure_audit_trails.create(event: HandleInError::RETRY_IMMEDIATELY_ERRORS.sample.to_s)
 
         status_change "entry"
+      end
+
+      test 'Retry after 10 days errors are set as awaiting_send' do
+        @trans.failure_audit_trails.create(event: HandleInError::RETRY_AFTER_10_DAYS_ERRORS.sample.to_s)
+
+        status_change "awaiting_send"
       end
 
       test 'Pending errors are set as pending' do
@@ -108,7 +114,7 @@ class HandleInErrorTest < ActiveJob::TestCase
     end
 
     def setup
-      @error_types = ["pending", "retry", "failure"]
+      @error_types = ["pending", "retry_immediately", "retry_after_10_days", "failure"]
       @errors = @error_types.map do |type|
         get_error_type type
       end

@@ -1,5 +1,5 @@
 class GenerateTripleBalancingReportJob < ActiveJob::Base
-  queue_as :default
+  queue_as :default 
 
   def perform(start_date,end_date)
     type = "Weekly"

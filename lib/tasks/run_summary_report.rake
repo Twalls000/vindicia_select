@@ -25,7 +25,7 @@ namespace :run_summary_report do
     last_week = Date.new(2017,4,17)
     start_date = last_week.beginning_of_week.to_s
     end_date = last_week.end_of_week.to_s
-    GenerateTripleBalancingReportJob.new.perform(start_date,end_date)
+    GenerateTripleBalancingReportJob.new.perform(start_date,end_date) 
     #GenerateTripleBalancingReportJob.perform_later(start_date,end_date)
   end
 end

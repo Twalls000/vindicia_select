@@ -28,4 +28,5 @@ namespace :run_summary_report do
     GenerateTripleBalancingReportJob.new.perform(start_date,end_date) 
     #GenerateTripleBalancingReportJob.perform_later(start_date,end_date)
   end
+  
 end

@@ -7,6 +7,7 @@ class GenerateTripleBalancingReportJob < ActiveJob::Base
     
     ap "I found #{records.count} records"
 	csv = TripleBalancingReport.new(records).to_csv
+	
 
   end
 end

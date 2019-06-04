@@ -45,4 +45,4 @@ end
 #weekly report
 every :monday, :at => '3:00 am' do
   rake 'run_summary_report:triple_balancing_report'
-end 
+end

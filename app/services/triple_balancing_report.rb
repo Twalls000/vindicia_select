@@ -1,7 +1,7 @@
 require 'csv'
 class TripleBalancingReport
   include ActionView::Helpers::NumberHelper
-  
+
   def initialize(records)
     @records = records
   end
@@ -13,24 +13,22 @@ class TripleBalancingReport
       inject_header(csv)
 
       @records.each do |record|
-        
-        csv << [
-          record.name,
-          record.all_count,
-          record.captured_count,
-          number_to_percentage((record.captured_count.to_f / record.all_count.to_f)*100, precision: 2),
-          number_to_currency(record.all_amount),
-          number_to_currency(record.captured_amount),
-          number_to_percentage((record.captured_amount.to_f / record.all_amount.to_f)*100, precision: 2)
-        ]
+        csv << [record.amount,
+                record.merchant_transaction_id,
+                record.select_transaction_id,
+                record.pub_code,
+                record.account_number, 
+                record.gci_unit,
+                record.account_holder_name,
+                record.batch_id,
+                record.batch_date]        
       end
-
     end
   end
 
   def inject_header csv
     
-    date_range = "#{@range.begin} - #{@range.end}"
+    #date_range = "#{@range.begin} - #{@range.end}"
 
     csv << [nil,nil,"Triple Balancing Report",nil,nil,nil,nil]
     
@@ -44,6 +42,5 @@ class TripleBalancingReport
             "batch_id",
             "batch_date"]
   end
-  
 
 end

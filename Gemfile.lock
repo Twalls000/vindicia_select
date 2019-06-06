@@ -259,10 +259,12 @@ DEPENDENCIES
   ibm_db_odbc (= 0.8.6)
   jbuilder (~> 2.0)
   jquery-rails
+  json (~> 1.8.3)
   materialize-sass
   minitest
   mysql2 (>= 0.3.13, < 0.5)
   newrelic_rpm
+  nokogiri
   pry-byebug
   rails (= 4.2.7.1)
   sass-rails (~> 5.0)

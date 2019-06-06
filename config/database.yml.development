@@ -16,11 +16,11 @@ ods_library:
   password: <%= GciSimpleEncryption.aes_decrypt(Base64.decode64(ENV['ICON_DB_PASSWORD'])) %>
   schema: godsfiles2
 
-test:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/test.sqlite3
+# test:
+#   adapter: sqlite3
+#   pool: 5
+#   timeout: 5000
+#   database: db/test.sqlite3
 
 development_defaults: &development_defaults
   adapter: ibm_db_odbc

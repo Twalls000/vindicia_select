@@ -14,7 +14,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
-
+gem 'json', '~> 1.8.3'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -22,6 +22,7 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'materialize-sass'
+gem 'nokogiri'  
 
 # Project specific tools
 gem 'httplog'
@@ -57,7 +58,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem 'pry-byebug'
-  gem 'sqlite3'
+  #gem 'sqlite3'
   gem "capistrano", '= 3.6.0'
   gem 'capistrano-bundler', '~> 1.1.1'
   gem 'capistrano-rails'
